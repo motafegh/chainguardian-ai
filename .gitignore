@@ -1,0 +1,97 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+.venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Poetry
+# DO NOT ignore poetry.lock - needed for reproducible builds
+
+# Jupyter checkpoints (but keep notebooks themselves)
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# Data (CAREFUL - keep small samples for portfolio)
+# Ignore large raw datasets
+data/raw/
+data/external/
+data/temp/
+
+# Keep processed/sample data for demonstration
+# data/processed/*.csv  # Uncomment if files get too large
+# data/*.csv  # NEVER ignore blindly
+
+# ML Artifacts
+mlruns/
+wandb/
+.mlflow/
+
+# Large model files (use Git LFS or model registry instead)
+*.h5
+models/*/*.pt
+models/*/*.pth
+models/*/*.pkl
+# Keep model configs
+!models/*/config.json
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Airflow
+airflow/logs/
+airflow/*.pid
+airflow/*.db
+
+# Slither temporary files
+slither_report.txt
+crytic-export/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/*.tfstate
+infrastructure/terraform/*.tfstate.backup
+
+# Secrets (CRITICAL)
+*.pem
+*.key
+credentials.json
+service-account.json
