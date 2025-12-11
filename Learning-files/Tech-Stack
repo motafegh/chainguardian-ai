@@ -1,0 +1,128 @@
+
+🛠️ EXPANDED TECH STACK (We'll Use Everything)
+ML/AI Core
+python# Model Training
+- scikit-learn (classical ML baseline)
+- XGBoost, LightGBM, CatBoost (gradient boosting)
+- PyTorch (neural networks + GNN)
+- PyTorch Geometric (graph neural networks)
+- TensorFlow (optional, for comparison)
+
+# Deep Learning
+- Hugging Face Transformers (LLMs)
+- PEFT (LoRA, QLoRA)
+- Unsloth (efficient fine-tuning)
+- DeepSpeed (distributed training)
+- Flash Attention (optimization)
+
+# NLP/Embeddings
+- sentence-transformers (embeddings)
+- OpenAI API (comparison baseline)
+- Cohere (enterprise embeddings)
+- Local models (Llama 3.2, Mistral)
+MLOps Infrastructure
+python# Experiment Tracking
+- MLflow (primary)
+- Weights & Biases (comparison)
+- TensorBoard (visualization)
+
+# Orchestration
+- Airflow (primary workflow)
+- Prefect (modern alternative)
+- Dagster (data pipeline)
+
+# Model Serving
+- FastAPI (primary)
+- BentoML (ML-specific serving)
+- TorchServe (PyTorch native)
+- Triton Inference Server (NVIDIA)
+
+# Monitoring
+- Prometheus (metrics)
+- Grafana (dashboards)
+- Evidently AI (ML drift)
+- WhyLabs (data quality)
+
+# Feature Engineering
+- Feast (feature store)
+- Tecton (alternative)
+Vector DB & RAG
+python# Vector Stores
+- FAISS (start here - simple)
+- Pinecone (cloud, production)
+- Qdrant (Rust-based, fast)
+- Weaviate (GraphQL support)
+- Chroma (lightweight)
+- Milvus (distributed)
+
+# RAG Frameworks
+- LangChain (ecosystem)
+- LlamaIndex (data connectors)
+- Haystack (enterprise)
+
+# Document Processing
+- PyMuPDF (PDF extraction)
+- Unstructured (multi-format)
+- Docling (IBM's tool)
+Blockchain Stack
+solidity// Smart Contracts
+- Foundry (development)
+- Hardhat (alternative)
+- OpenZeppelin (libraries)
+- Slither (static analysis)
+
+// Oracles
+- Chainlink Functions (primary)
+- Chainlink CCIP (cross-chain)
+- API3 (first-party oracles)
+- Pyth Network (price feeds)
+
+// ZK Proofs
+- Circom (circuit language)
+- snarkjs (proof generation)
+- Noir (modern ZK language)
+
+// Storage
+- IPFS (decentralized storage)
+- Arweave (permanent storage)
+- Filecoin (storage market)
+Infrastructure & DevOps
+yaml# Containerization
+- Docker (primary)
+- Docker Compose (local)
+- Kubernetes (production)
+- Helm (K8s packages)
+
+# CI/CD
+- GitHub Actions (primary)
+- GitLab CI (comparison)
+- ArgoCD (K8s deployments)
+
+# Databases
+- PostgreSQL (primary)
+- Redis (caching)
+- MongoDB (optional NoSQL)
+- TimescaleDB (time-series)
+
+# Cloud (Pick one or try all)
+- AWS (EC2, S3, ECS)
+- GCP (GKE, Cloud Run)
+- Azure (AKS)
+- Railway (simple deploy)
+Developer Tools
+bash# Code Quality
+- ruff (linting)
+- black (formatting)
+- mypy (type checking)
+- pytest (testing)
+- coverage.py (test coverage)
+
+# Version Control
+- Git + GitHub
+- DVC (data version control)
+- Git LFS (large files)
+
+# Documentation
+- Sphinx (API docs)
+- MkDocs (project docs)
+- Swagger/OpenAPI (API specs)
