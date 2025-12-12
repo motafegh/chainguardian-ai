@@ -1,0 +1,35 @@
+dataset:
+  target_size: 10
+  min_size: 5
+
+sampling_strategy:
+  strata:
+    - name: "high_quality"
+      percentage: 40
+      criteria:
+        - top_by_tvl: 10
+        
+    - name: "random_verified"
+      percentage: 30
+      criteria:
+        - random_sample: true
+        
+    - name: "known_vulnerable"
+      percentage: 20
+      criteria:
+        - from_database: "rekt_news"
+        
+    - name: "version_diversity"
+      percentage: 10
+      criteria:
+        - solidity_version: ["0.4.x"]
+
+filters:
+  exclude:
+    - unverified: true
+    - duplicates: true
+
+output:
+  format: "csv"
+  path: "data/test_production_dataset.csv"
+  metadata: true
