@@ -1,13 +1,27 @@
 """
-Unified Feature Extraction Pipeline
-====================================
+Unified Feature Extraction Pipeline - PRODUCTION VERSION
+=========================================================
 
-Orchestrates multi-version Solidity compilation, static analysis, and feature extraction.
-Thread-safe for parallel processing.
+Thread-safe multi-version Solidity compilation with comprehensive error handling.
+
+KEY FEATURES:
+- Handles caret (^), range (>=...<), and exact pragmas correctly
+- Thread-safe parallel processing with compiler version locking
+- Multi-file contract support with proper import resolution
+- Comprehensive error categorization with full error messages
+- 85+ Solidity compiler versions supported
+
+FIXES APPLIED:
+1. Direct solc-select calls (more reliable than sys.executable -m)
+2. Proper caret pragma handling (uses highest compatible version)
+3. Range pragma support (>=0.6.0 <0.8.0 → uses 0.7.6)
+4. Multi-file contracts (analyzes main file with import resolution)
+5. Full error messages (no truncation in exceptions)
+6. AST extractor receives pre-compiled Slither object (no re-compilation)
 """
 
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Tuple
 import pandas as pd
 import logging
 import re
@@ -17,7 +31,7 @@ from slither import Slither
 
 import slither.detectors.all_detectors as detector_module
 
-from chainguardian.feature_extraction.contract_analyzer import SlitherAnalyzer, ContractFeatures
+from chainguardian.feature_extraction.contract_analyzer import SlitherAnalyzer
 from chainguardian.feature_extraction.ast_analyzer import ASTFeatureExtractor
 
 logger = logging.getLogger(__name__)
@@ -28,143 +42,307 @@ class FeaturePipeline:
     End-to-end pipeline: Contract → Feature Vector → ML-ready format
     
     Thread-safe for parallel feature extraction across multiple contracts.
+    Caches installed Solidity versions for performance.
     """
     
     def __init__(self):
-        """
-        Initialize with empty feature list and thread safety lock.
-        """
+        """Initialize pipeline with version cache and thread safety."""
         self.features: list[Dict] = []
-        self._lock = Lock()  # Thread-safe feature collection
-    
-    def _detect_solidity_version(self, contract_path: Path) -> str:
-        """
-        Extract Solidity version from pragma with better compatibility.
+        self._lock = Lock()  # Protects version switching + compilation
         
-        Returns version that's installed and compatible with Slither.
+        # Cache installed versions (call once, use many times)
+        self._installed_versions = self._get_installed_versions()
+        logger.info(f"✓ Found {len(self._installed_versions)} installed Solidity versions")
+        
+        if len(self._installed_versions) == 0:
+            logger.error(
+                "⚠️ NO Solidity versions detected!\n"
+                "   Install with: poetry run solc-select install 0.8.20"
+            )
+    
+    def _get_installed_versions(self) -> set:
+        """
+        Get list of installed Solidity compiler versions.
+        
+        Uses direct solc-select call for reliability.
+        
+        Returns:
+            Set of version strings (e.g., {'0.4.26', '0.5.17', '0.8.20'})
+        """
+        try:
+            result = subprocess.run(
+                ["solc-select", "versions"],
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=10
+            )
+            
+            versions = set()
+            for line in result.stdout.split('\n'):
+                if line.strip():
+                    # Extract version (first token before space/paren)
+                    version = line.split()[0]
+                    if version and version[0].isdigit():
+                        versions.add(version)
+            
+            return versions
+            
+        except Exception as e:
+            logger.error(f"Failed to get installed versions: {e}")
+            return set()
+    
+    def _detect_solidity_version(self, contract_path: Path) -> Tuple[str, bool]:
+        """
+        Extract Solidity version from pragma.
+        
+        HANDLES ALL PRAGMA TYPES:
+        - pragma solidity 0.8.3;           → (0.8.3, False) exact
+        - pragma solidity ^0.8.0;          → (0.8.0, True) caret
+        - pragma solidity >=0.6.0 <0.8.0;  → (0.7.6, False) range (uses highest)
+        - pragma solidity =0.8.17;         → (0.8.17, False) exact
+        
+        Args:
+            contract_path: Path to Solidity file
+            
+        Returns:
+            (version_to_use, has_caret) tuple
         """
         try:
             content = contract_path.read_text(encoding="utf-8")
             
-            # Look for pragma solidity statement
-            match = re.search(
-                r'pragma\s+solidity\s+[\^=~<>]*\s*([\d.]+)',
-                content
-            )
+            # Find pragma line
+            pragma_match = re.search(r'pragma\s+solidity\s+([^;]+);', content)
             
-            if match:
-                version = match.group(1)
-                
-                # Map old versions to compatible ones
-                version_tuple = tuple(map(int, version.split('.')))
-                
-                # Very old versions (0.4.0-0.4.10) → 0.4.26
-                if version_tuple < (0, 4, 11):
-                    logger.warning(
-                        f"Contract uses very old Solidity {version}, "
-                        f"mapping to 0.4.26 for compatibility"
-                    )
-                    return "0.4.26"
-                
-                # Old 0.4.x versions → 0.4.26 (most stable)
-                elif version_tuple < (0, 5, 0):
-                    logger.info(f"Mapping Solidity {version} → 0.4.26")
-                    return "0.4.26"
-                
-                # 0.5.x versions → 0.5.17 (most stable)
-                elif version_tuple < (0, 6, 0):
-                    logger.info(f"Mapping Solidity {version} → 0.5.17")
-                    return "0.5.17"
-                
-                # 0.6.x versions → 0.6.12
-                elif version_tuple < (0, 7, 0):
-                    logger.info(f"Mapping Solidity {version} → 0.6.12")
-                    return "0.6.12"
-                
-                # 0.7.x versions → 0.7.6
-                elif version_tuple < (0, 8, 0):
-                    logger.info(f"Mapping Solidity {version} → 0.7.6")
-                    return "0.7.6"
-                
-                # 0.8.x use as-is (modern)
-                else:
-                    logger.info(f"Using detected Solidity version: {version}")
-                    return version
+            if not pragma_match:
+                logger.warning(f"No pragma in {contract_path.name}")
+                return "0.8.20", False
             
+            pragma_text = pragma_match.group(1).strip()
+            
+            # ================================================================
+            # CASE 1: CARET PRAGMA (^0.8.0)
+            # ================================================================
+            if '^' in pragma_text:
+                version_match = re.search(r'([\d.]+)', pragma_text)
+                if version_match:
+                    version = version_match.group(1)
+                    logger.debug(f"Caret pragma: ^{version}")
+                    return version, True
+            
+            # ================================================================
+            # CASE 2: RANGE PRAGMA (>=0.6.0 <0.8.0)
+            # ================================================================
+            elif '>=' in pragma_text or '<' in pragma_text:
+                versions = re.findall(r'([\d.]+)', pragma_text)
+                
+                if not versions:
+                    logger.warning(f"No versions in range pragma: {pragma_text}")
+                    return "0.8.20", False
+                
+                # Find highest compatible version in installed versions
+                try:
+                    min_version = versions[0]
+                    max_version = versions[1] if len(versions) > 1 else None
+                    
+                    min_parts = tuple(map(int, min_version.split('.')))
+                    
+                    compatible = []
+                    for v in self._installed_versions:
+                        v_parts = tuple(map(int, v.split('.')))
+                        
+                        # Check if >= min_version
+                        if v_parts < min_parts:
+                            continue
+                        
+                        # Check if < max_version (if specified)
+                        if max_version:
+                            max_parts = tuple(map(int, max_version.split('.')))
+                            if v_parts >= max_parts:
+                                continue
+                        
+                        compatible.append(v)
+                    
+                    if compatible:
+                        best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
+                        logger.debug(f"Range pragma {pragma_text} → using {best}")
+                        return best, False
+                    else:
+                        logger.warning(f"No compatible versions for {pragma_text}")
+                        return min_version, False
+                        
+                except Exception as e:
+                    logger.error(f"Failed to parse range pragma: {e}")
+                    return versions[0], False
+            
+            # ================================================================
+            # CASE 3: EXACT VERSION (0.8.3 or =0.8.17)
+            # ================================================================
             else:
-                logger.warning(
-                    f"No pragma found in {contract_path.name}, "
-                    f"defaulting to 0.8.20"
-                )
-                return "0.8.20"
-                
+                version_match = re.search(r'([\d.]+)', pragma_text)
+                if version_match:
+                    version = version_match.group(1)
+                    logger.debug(f"Exact version: {version}")
+                    return version, False
+            
+            # Fallback
+            logger.warning(f"Could not parse pragma: {pragma_text}")
+            return "0.8.20", False
+            
         except Exception as e:
-            logger.error(f"Failed to detect version for {contract_path}: {e}")
+            logger.error(f"Version detection failed for {contract_path}: {e}")
+            return "0.8.20", False
+    
+    def _find_best_version(self, required_version: str, has_caret: bool) -> str:
+        """
+        Find best installed version to use.
+        
+        Args:
+            required_version: Version from pragma (e.g., "0.8.0")
+            has_caret: Whether pragma had caret (^)
+        
+        Returns:
+            Best version to use
+        """
+        try:
+            major, minor, patch = map(int, required_version.split('.'))
+        except ValueError:
+            logger.warning(f"Invalid version format: {required_version}")
             return "0.8.20"
+        
+        if not has_caret:
+            # No caret - use exact version if installed
+            if required_version in self._installed_versions:
+                return required_version
+            
+            # Not installed - find close match in same minor version
+            compatible = [
+                v for v in self._installed_versions
+                if v.startswith(f"{major}.{minor}.")
+            ]
+            
+            if compatible:
+                best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
+                logger.info(f"Version {required_version} not installed, using {best}")
+                return best
+            
+            logger.warning(f"No compatible version for {required_version}")
+            return "0.8.20"
+        
+        else:
+            # HAS CARET - find highest compatible version
+            compatible = [
+                v for v in self._installed_versions
+                if self._is_caret_compatible(v, major, minor, patch)
+            ]
+            
+            if compatible:
+                best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
+                logger.info(f"Caret ^{required_version} → using {best}")
+                return best
+            
+            if required_version in self._installed_versions:
+                logger.warning(f"No higher versions for ^{required_version}")
+                return required_version
+            
+            logger.warning(f"No compatible version for ^{required_version}")
+            return "0.8.20"
+    
+    def _is_caret_compatible(self, version: str, req_major: int, req_minor: int, req_patch: int) -> bool:
+        """
+        Check if version is compatible with caret pragma.
+        
+        Caret rules (see semver.org):
+        - ^1.2.3  means  >=1.2.3 <2.0.0  (next major)
+        - ^0.2.3  means  >=0.2.3 <0.3.0  (next minor when major=0)
+        - ^0.0.3  means  >=0.0.3 <0.0.4  (next patch when major=0 and minor=0)
+        
+        Args:
+            version: Version to check (e.g., "0.8.26")
+            req_major, req_minor, req_patch: Required version components
+        
+        Returns:
+            True if compatible
+        """
+        try:
+            v_major, v_minor, v_patch = map(int, version.split('.'))
+        except ValueError:
+            return False
+        
+        # Must be same major version
+        if v_major != req_major:
+            return False
+        
+        # ================================================================
+        # CASE 1: 0.0.x (major=0, minor=0)
+        # ^0.0.3 means >=0.0.3 <0.0.4 (only same patch allowed)
+        # ================================================================
+        if req_major == 0 and req_minor == 0:
+            return v_minor == 0 and v_patch == req_patch
+        
+        # ================================================================
+        # CASE 2: 0.x.y (major=0, minor>0)
+        # ^0.4.15 means >=0.4.15 <0.5.0 (next minor)
+        # ================================================================
+        if req_major == 0:
+            # Must be same minor version
+            if v_minor != req_minor:
+                return False
+            
+            # Must be >= required patch
+            return v_patch >= req_patch
+        
+        # ================================================================
+        # CASE 3: x.y.z (major>0)
+        # ^1.2.3 means >=1.2.3 <2.0.0 (next major)
+        # ================================================================
+        # Allow any minor >= required minor
+        if v_minor < req_minor:
+            return False
+        
+        # If same minor, check patch
+        if v_minor == req_minor and v_patch < req_patch:
+            return False
+        
+        return True
 
     
     def _set_solc_version(self, version: str) -> bool:
         """
-        Switch to specific Solidity compiler version using solc-select.
+        Switch to specific Solidity compiler version.
         
-        Args:
-            version: Solidity version to use (e.g., "0.5.12")
-        
-        Returns:
-            True if switch successful, False otherwise
+        Uses direct solc-select call for reliability.
         """
         try:
             result = subprocess.run(
                 ["solc-select", "use", version],
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
+                timeout=10
             )
             
-            logger.info(f"✓ Switched to Solidity {version}")
+            logger.debug(f"✓ Switched to Solidity {version}")
             return True
             
-        except subprocess.CalledProcessError as e:
-            logger.error(
-                f"Failed to switch to Solidity {version}. "
-                f"Install it with: solc-select install {version}\n"
-                f"Error: {e.stderr}"
-            )
+        except Exception as e:
+            logger.error(f"Failed to switch to Solidity {version}: {e}")
             return False
     
-    def analyze_contract(
-        self,
-        contract_path: Path,
-        contract_name: str
-    ) -> Dict:
+    def analyze_contract(self, contract_path: Path, contract_name: str) -> Dict:
         """
         Extract ALL features from a single contract.
         
-        HANDLES:
-        - Single-file contracts (contract.sol)
-        - Multi-file contracts (directory with multiple .sol files)
-        - Import resolution errors (graceful degradation)
-        
-        Thread-safe: Can be called from multiple threads simultaneously.
-        
-        Workflow:
-        1. Detect if multi-file (directory) or single-file
-        2. Detect required Solidity version from pragma
-        3. Switch compiler to that version
-        4. Create Slither object (compiles contract, builds AST)
-        5. Register all 93 detectors
-        6. Extract vulnerability features via SlitherAnalyzer
-        7. Extract code structure features via ASTFeatureExtractor
-        8. Combine into single feature dict
+        THREAD-SAFE: Version switching + compilation are atomic.
         
         Args:
             contract_path: Path to .sol file OR directory with .sol files
             contract_name: Name of main contract to analyze
         
         Returns:
-            Dict with 15 features (2 metadata + 7 vulnerability + 6 code structure)
+            Dict with 17 features (2 metadata + 7 vuln + 6 code + 2 error)
         """
-        logger.info(f"Analyzing {contract_name} from {contract_path}")
+        logger.info(f"Analyzing {contract_name}")
         
         combined_features = {
             'contract_name': contract_name,
@@ -173,102 +351,116 @@ class FeaturePipeline:
         
         try:
             # ================================================================
-            # STEP 0: HANDLE MULTI-FILE CONTRACTS (DIRECTORIES)
+            # STEP 0: HANDLE MULTI-FILE CONTRACTS
             # ================================================================
             analysis_target = contract_path
             main_contract_file = None
             
             if contract_path.is_dir():
-                logger.debug(f"{contract_name}: Multi-file contract detected (directory)")
+                logger.debug(f"{contract_name}: Multi-file contract detected")
                 
                 # Find main contract file
-                # Strategy 1: Look for file matching contract name
                 main_candidates = list(contract_path.glob(f"{contract_name}.sol"))
                 
                 if not main_candidates:
-                    # Strategy 2: Look for file with contract name in it
                     main_candidates = [
                         f for f in contract_path.glob("*.sol")
                         if contract_name.lower() in f.stem.lower()
                     ]
                 
                 if not main_candidates:
-                    # Strategy 3: Use first .sol file
                     main_candidates = list(contract_path.glob("*.sol"))
                 
                 if not main_candidates:
-                    raise Exception(f"No .sol files found in directory {contract_path}")
+                    raise FileNotFoundError(f"No .sol files in {contract_path}")
                 
                 main_contract_file = main_candidates[0]
-                analysis_target = main_contract_file  # Analyze main file
+                
+                # CRITICAL: Use absolute path to main file (not directory!)
+                # Slither resolves imports relative to this file
+                analysis_target = main_contract_file.resolve()
                 
                 logger.debug(
-                    f"{contract_name}: Using main file {main_contract_file.name} "
-                    f"from {len(list(contract_path.glob('*.sol')))} files"
+                    f"{contract_name}: Using {main_contract_file.name} "
+                    f"({len(list(contract_path.glob('*.sol')))} files total)"
                 )
             else:
                 main_contract_file = contract_path
+                analysis_target = contract_path.resolve()
             
             # ================================================================
-            # STEP 1: DETECT REQUIRED SOLIDITY VERSION
+            # STEP 1: DETECT VERSION + HANDLE PRAGMAS
             # ================================================================
-            required_version = self._detect_solidity_version(main_contract_file)
+            detected_version, has_caret = self._detect_solidity_version(main_contract_file)
             
             # ================================================================
-            # STEP 2: SWITCH COMPILER TO THAT VERSION
+            # STEP 2: FIND BEST INSTALLED VERSION
             # ================================================================
-            if not self._set_solc_version(required_version):
-                raise Exception(
-                    f"Solidity {required_version} not installed. "
-                    f"Run: solc-select install {required_version}"
-                )
+            required_version = self._find_best_version(detected_version, has_caret)
             
             # ================================================================
-            # STEP 3: CREATE SLITHER OBJECT (COMPILE CONTRACT)
+            # CRITICAL: LOCK AROUND VERSION SWITCH + COMPILATION
             # ================================================================
-            # For multi-file contracts, analyze the main file but imports will resolve
-            # from the same directory
-            try:
-                slither = Slither(
-                    str(analysis_target),
-                    solc="solc",
-                    solc_disable_warnings=True,
-                    solc_args="--optimize"
-                )
+            with self._lock:
                 
-            except Exception as compile_error:
-                error_str = str(compile_error).lower()
-                
-                # ============================================================
-                # GRACEFUL DEGRADATION: Import/dependency errors
-                # ============================================================
-                # These are NOT code quality issues - just missing external libraries
-                if any(keyword in error_str for keyword in [
-                    'not found', 'import', 'file not found', 'file import callback not supported',
-                    '@openzeppelin', '@chainlink', 'node_modules', 'source "', 
-                    'no such file', 'cannot find'
-                ]):
-                    logger.warning(
-                        f"{contract_name}: Skipping due to missing dependencies. "
-                        f"Error: {str(compile_error)[:200]}"
+                if not self._set_solc_version(required_version):
+                    raise EnvironmentError(
+                        f"Solidity {required_version} not installed. "
+                        f"Run: poetry run solc-select install {required_version}"
                     )
-                    raise Exception(f"Missing dependencies: {str(compile_error)[:100]}")
                 
-                # ============================================================
-                # REAL COMPILATION ERRORS: Syntax/version issues
-                # ============================================================
-                else:
-                    logger.error(
-                        f"{contract_name}: Invalid compilation: "
-                        f"{str(compile_error)[:200]}"
+                # Compile with correct version
+                try:
+                    slither = Slither(
+                        str(analysis_target),
+                        solc="solc",
+                        solc_disable_warnings=True,
+                        solc_args="--optimize"
                     )
-                    raise Exception(f"Invalid compilation: {str(compile_error)[:100]}")
+                    
+                except Exception as compile_error:
+                    # Store full error (NO TRUNCATION!)
+                    full_error = str(compile_error)
+                    error_str = full_error.lower()
+                    
+                    # Categorize errors (preserve full message)
+                    if any(kw in error_str for kw in [
+                        '@openzeppelin', '@chainlink', 'node_modules',
+                        'hardhat/console', 'file import callback not supported'
+                    ]):
+                        logger.warning(f"{contract_name}: Missing external libraries")
+                        raise ImportError(f"External library imports: {full_error}")
+                    
+                    elif 'file not found' in error_str or 'source file not found' in error_str:
+                        logger.warning(f"{contract_name}: File not found")
+                        raise ImportError(f"File not found: {full_error}")
+                    
+                    elif any(kw in error_str for kw in [
+                        'requires different compiler',
+                        'source file requires different',
+                        'version mismatch',
+                        'does not satisfy the version pragma'
+                    ]):
+                        logger.warning(f"{contract_name}: Version mismatch")
+                        raise ValueError(f"Version mismatch: {full_error}")
+                    
+                    elif any(kw in error_str for kw in [
+                        'invalid option to --combined-json',
+                        'unrecognised option',
+                        'unknown option'
+                    ]):
+                        logger.warning(f"{contract_name}: Slither incompatible")
+                        raise RuntimeError(f"Slither incompatibility: {full_error}")
+                    
+                    else:
+                        logger.error(f"{contract_name}: Compilation error")
+                        raise SyntaxError(f"Compilation error: {full_error}")
+            
+            # Lock released
             
             # ================================================================
-            # STEP 4: REGISTER DETECTORS
+            # STEP 3: REGISTER DETECTORS
             # ================================================================
-            logger.debug(f"Registering detectors for {contract_name}...")
-            
             detector_classes = [
                 getattr(detector_module, name)
                 for name in dir(detector_module)
@@ -281,7 +473,7 @@ class FeaturePipeline:
             logger.debug(f"✓ Registered {len(slither.detectors)} detectors")
             
             # ================================================================
-            # STEP 5: EXTRACT VULNERABILITY FEATURES
+            # STEP 4: EXTRACT VULNERABILITY FEATURES
             # ================================================================
             vuln_analyzer = SlitherAnalyzer(slither)
             vuln_features = vuln_analyzer.extract_features(contract_name)
@@ -297,21 +489,36 @@ class FeaturePipeline:
             })
             
             # ================================================================
-            # STEP 6: EXTRACT AST FEATURES
+            # STEP 5: EXTRACT AST FEATURES
             # ================================================================
-            ast_extractor = ASTFeatureExtractor(main_contract_file)
+            # CRITICAL: Pass pre-compiled Slither object (no re-compilation!)
+            ast_extractor = ASTFeatureExtractor(main_contract_file, slither_obj=slither)
             ast_features = ast_extractor.extract_features(contract_name)
             
             combined_features.update(ast_features)
             
-            logger.info(
-                f"✓ Extracted {len(combined_features)} features for {contract_name}"
-            )
+            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
             
-        except Exception as e:
-            logger.error(f"Analysis failed for {contract_name}: {e}")
+        except (ImportError, ValueError, RuntimeError, SyntaxError, FileNotFoundError, EnvironmentError) as e:
             
-            # Default zero features on failure
+            # Categorize expected failures
+            if isinstance(e, ImportError):
+                failure_reason = "IMPORT_ERROR"
+            elif isinstance(e, ValueError):
+                failure_reason = "VERSION_MISMATCH"
+            elif isinstance(e, RuntimeError):
+                failure_reason = "SLITHER_INCOMPATIBILITY"
+            elif isinstance(e, SyntaxError):
+                failure_reason = "COMPILATION_ERROR"
+            elif isinstance(e, FileNotFoundError):
+                failure_reason = "NO_SOURCE_FILES"
+            elif isinstance(e, EnvironmentError):
+                failure_reason = "COMPILER_NOT_INSTALLED"
+            else:
+                failure_reason = "UNKNOWN_ERROR"
+            
+            logger.debug(f"{contract_name}: {failure_reason}")
+            
             combined_features.update({
                 'has_reentrancy': False,
                 'has_access_control_issues': False,
@@ -326,46 +533,143 @@ class FeaturePipeline:
                 'num_modifiers': 0,
                 'max_cyclomatic_complexity': 0,
                 'num_low_level_calls': 0,
+                'failure_reason': failure_reason,
+                'error_message': str(e)[:2000],  # Store full error (up to 2000 chars)
+            })
+            
+        except Exception as e:
+            # Unexpected errors
+            logger.error(
+                f"{contract_name}: UNEXPECTED ERROR - {type(e).__name__}: {e}",
+                exc_info=True
+            )
+            
+            combined_features.update({
+                'has_reentrancy': False,
+                'has_access_control_issues': False,
+                'has_timestamp_dependency': False,
+                'has_unchecked_call': False,
+                'high_severity_count': 0,
+                'medium_severity_count': 0,
+                'low_severity_count': 0,
+                'num_functions': 0,
+                'num_external_calls': 0,
+                'num_state_vars': 0,
+                'num_modifiers': 0,
+                'max_cyclomatic_complexity': 0,
+                'num_low_level_calls': 0,
+                'failure_reason': "UNEXPECTED_ERROR",
+                'error_message': str(e)[:2000],
             })
         
-        # ================================================================
-        # THREAD-SAFE: Add to feature list
-        # ================================================================
         with self._lock:
             self.features.append(combined_features)
         
         return combined_features
-
     
     def to_dataframe(self) -> pd.DataFrame:
-        """
-        Convert collected features to pandas DataFrame.
-        
-        Returns:
-            pandas DataFrame with all collected features
-            Columns: 15 features
-            Rows: One per contract
-        """
+        """Convert collected features to pandas DataFrame."""
         if not self.features:
             logger.warning("No features collected yet")
             return pd.DataFrame()
         
         df = pd.DataFrame(self.features)
-        
-        logger.info(
-            f"Created DataFrame with {len(df)} contracts and "
-            f"{len(df.columns)} features"
-        )
-        
+        logger.info(f"DataFrame: {len(df)} contracts × {len(df.columns)} features")
         return df
     
-    def save_dataset(self, output_path: Path):
-        """
-        Save features as CSV for ML training.
+    def print_diagnostic_summary(self):
+        """Print detailed diagnostic summary."""
+        if not self.features:
+            logger.warning("No features collected yet")
+            return
         
-        Args:
-            output_path: Where to save CSV file
-        """
+        print("\n" + "="*70)
+        print("FEATURE EXTRACTION DIAGNOSTIC SUMMARY")
+        print("="*70)
+        
+        total = len(self.features)
+        failures = {}
+        successes = 0
+        zero_feature_clean = 0
+        
+        for feature_dict in self.features:
+            failure_reason = feature_dict.get('failure_reason', None)
+            
+            if failure_reason:
+                failures[failure_reason] = failures.get(failure_reason, 0) + 1
+            else:
+                has_features = any([
+                    feature_dict.get('high_severity_count', 0) > 0,
+                    feature_dict.get('medium_severity_count', 0) > 0,
+                    feature_dict.get('low_severity_count', 0) > 0,
+                    feature_dict.get('num_functions', 0) > 0,
+                    feature_dict.get('num_external_calls', 0) > 0,
+                ])
+                
+                if has_features:
+                    successes += 1
+                else:
+                    zero_feature_clean += 1
+        
+        print(f"\n📊 Overall Results:")
+        print(f"   Total: {total}")
+        print(f"   ✅ Features: {successes} ({successes/total*100:.1f}%)")
+        print(f"   ⚪ Clean: {zero_feature_clean} ({zero_feature_clean/total*100:.1f}%)")
+        print(f"   ❌ Failed: {sum(failures.values())} ({sum(failures.values())/total*100:.1f}%)")
+        
+        if failures:
+            print(f"\n🔍 Failure Breakdown:")
+            
+            status_map = {
+                "IMPORT_ERROR": ("EXPECTED ✓", "External libraries (@openzeppelin, etc.)"),
+                "VERSION_MISMATCH": ("INVESTIGATE ⚠️", "Check pragma handling"),
+                "SLITHER_INCOMPATIBILITY": ("EXPECTED ✓", "Contract too old (< 0.4.11)"),
+                "COMPILATION_ERROR": ("INVESTIGATE ❓", "Real syntax errors"),
+                "NO_SOURCE_FILES": ("CHECK DATA 📁", "Download issue"),
+                "COMPILER_NOT_INSTALLED": ("FIXABLE 🔧", "Install compiler version"),
+            }
+            
+            for reason, count in sorted(failures.items(), key=lambda x: x[1], reverse=True):
+                percentage = count / total * 100
+                status, description = status_map.get(reason, ("INVESTIGATE ❓", "Check logs"))
+                
+                print(f"\n   {reason}: {count} ({percentage:.1f}%)")
+                print(f"   Status: {status}")
+                print(f"   Fix: {description}")
+        
+        print(f"\n" + "="*70)
+        print("🎯 RECOMMENDATIONS")
+        print("="*70)
+        
+        expected = sum([
+            failures.get('IMPORT_ERROR', 0),
+            failures.get('SLITHER_INCOMPATIBILITY', 0)
+        ])
+        
+        if expected > 0:
+            usable = successes + zero_feature_clean
+            total_usable = total - expected
+            rate = (usable / total_usable * 100) if total_usable > 0 else 0
+            
+            print(f"\n✅ EXPECTED FAILURES: {expected} contracts")
+            print(f"   Cannot be analyzed without infrastructure changes")
+            print(f"   Usable contracts: {usable}/{total_usable} ({rate:.0f}%)")
+        
+        if successes > 0:
+            print(f"\n✅ READY FOR ML: {successes} contracts with features")
+        
+        if zero_feature_clean > 0:
+            print(f"\n⚪ CLEAN CONTRACTS: {zero_feature_clean} (keep as negatives)")
+        
+        if failures.get('VERSION_MISMATCH', 0) > 10:
+            print(f"\n⚠️ WARNING: {failures['VERSION_MISMATCH']} VERSION_MISMATCH errors")
+            print(f"   Check error_message column in CSV for details")
+        
+        print("="*70 + "\n")
+    
+    def save_dataset(self, output_path: Path):
+        """Save features as CSV and print diagnostics."""
         df = self.to_dataframe()
         df.to_csv(output_path, index=False)
         logger.info(f"Saved dataset to {output_path}")
+        self.print_diagnostic_summary()
