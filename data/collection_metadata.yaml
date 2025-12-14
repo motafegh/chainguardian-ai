@@ -1,6 +1,6 @@
 actual_size: 282
-config_version: '2.0'
-generated_at: '2025-12-14T22:16:57.060968'
+config_version: '3.0'
+generated_at: '2025-12-14T23:53:38.515292'
 parallel_processing:
   coingecko_workers: 5
   defillama_workers: 10
@@ -9,16 +9,16 @@ parallel_processing:
 strata:
   high_quality:
     population_size: 410
-    sampled: 99
+    sampled: 96
   known_vulnerable:
     population_size: 16
     sampled: 11
   random_verified:
-    population_size: 7
+    population_size: 6
     sampled: 6
   token_lists:
     population_size: 1243
-    sampled: 154
+    sampled: 157
   version_diversity:
     population_size: 20
     sampled: 12

@@ -1,4 +1,7 @@
 contract_name,file_path,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls
-izumiToken,blockchain/contracts/collected/izumiToken_0x9ad37205.sol,False,False,False,False,0,0,8,1,0,0,0,1,0
+GeyserToken,blockchain/contracts/collected/GeyserToken_0xbea98c05.sol,False,False,False,True,1,0,33,2,0,2,0,1,0
+FiatTokenProxy,blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol,False,False,False,True,0,3,14,1,0,0,0,1,0
+BNB,blockchain/contracts/collected/BNB_0xb8c77482.sol,False,False,False,False,0,1,33,9,12,8,0,11,0
 MANAToken,blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol,False,False,False,False,0,0,24,3,0,3,0,1,0
-ENJToken,blockchain/contracts/collected/ENJToken_0xF629cBd9.sol,False,False,True,False,1,0,46,11,0,18,3,3,0
+EtherDelta,blockchain/contracts/collected/EtherDelta_0x8d12A197.sol,True,False,False,True,0,1,56,20,5,9,0,7,1
+RepublicToken,blockchain/contracts/collected/RepublicToken_0x408e4187.sol,False,False,False,False,0,0,31,4,2,4,0,1,0

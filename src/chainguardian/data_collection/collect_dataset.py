@@ -1,6 +1,7 @@
 """
 Production Dataset Collection Orchestrator
 Configuration-driven, reproducible, parallel processing
+FIXED: Multi-file contract support
 """
 
 import yaml
@@ -106,7 +107,7 @@ class DatasetCollectionPipeline:
         files = self._scrape_contracts(final_sample)
         
         # ====================================================================
-        # PHASE 4: EXTRACT FEATURES (Parallel - NEW!)
+        # PHASE 4: EXTRACT FEATURES (Parallel)
         # ====================================================================
         logger.info("")
         logger.info("📊 PHASE 4/4: Extracting ML features")
@@ -139,7 +140,7 @@ class DatasetCollectionPipeline:
         elif stratum_name == 'random_verified':
             collector = CoinGeckoCollector(stratum_config)
             return collector.collect()
-        elif stratum_name == 'token_lists':  # ← ADD THIS BLOCK
+        elif stratum_name == 'token_lists':
             collector = TokenListCollector(stratum_config)
             return collector.collect()
         elif stratum_name == 'known_vulnerable':
@@ -180,20 +181,47 @@ class DatasetCollectionPipeline:
         """
         Extract features from contracts using parallel processing.
         
-        NEW: 5x faster than sequential processing!
+        FIXED: Handles both single-file and multi-file contracts
         
         Args:
-            files: List of .sol file paths
+            files: List of file paths (may be inside directories for multi-file contracts)
         """
         if not files:
             logger.warning("No files to analyze")
             return
         
+        # ================================================================
+        # CONVERT FILE PATHS TO CONTRACT PATHS
+        # ================================================================
+        # For multi-file contracts: Use parent directory
+        # For single-file contracts: Use file itself
+        contract_paths = []
+        seen_paths = set()
+        
+        for file_path in files:
+            # Check if this is a multi-file contract (file is inside a directory with _0x pattern)
+            parent_dir = file_path.parent
+            parent_name = parent_dir.name
+            
+            # Multi-file contract: parent directory name has _0x pattern
+            if '_0x' in parent_name and parent_dir != Path("blockchain/contracts/collected"):
+                contract_path = parent_dir
+            else:
+                # Single-file contract
+                contract_path = file_path
+            
+            # Avoid duplicates
+            if contract_path not in seen_paths:
+                contract_paths.append(contract_path)
+                seen_paths.add(contract_path)
+        
         logger.info("")
-        logger.info(f"Extracting features from {len(files)} contracts...")
+        logger.info(f"Analyzing {len(contract_paths)} unique contracts...")
+        logger.info(f"  Single-file contracts: {sum(1 for p in contract_paths if p.is_file())}")
+        logger.info(f"  Multi-file contracts: {sum(1 for p in contract_paths if p.is_dir())}")
         
         # Performance estimates
-        sequential_time = len(files) * 5
+        sequential_time = len(contract_paths) * 5
         parallel_workers = 5
         parallel_time = sequential_time / parallel_workers
         
@@ -209,26 +237,42 @@ class DatasetCollectionPipeline:
         successful = 0
         failed = 0
         
-        def analyze_one_contract(file_path):
-            """Analyze single contract (runs in thread pool)"""
+        def analyze_one_contract(contract_path):
+            """
+            Analyze single contract (runs in thread pool)
+            
+            Args:
+                contract_path: Path to .sol file OR directory with .sol files
+            """
             try:
-                contract_name = file_path.stem.split('_')[0]
-                pipeline.analyze_contract(file_path, contract_name)
+                # Extract contract name from path
+                if contract_path.is_dir():
+                    # Multi-file: directory name like "FRAXShares_0x3432b6a6"
+                    dir_name = contract_path.name
+                    contract_name = dir_name.rsplit('_', 1)[0]  # Remove _0xABCD suffix
+                else:
+                    # Single-file: filename like "BNB_0xb8c77482.sol"
+                    file_stem = contract_path.stem
+                    contract_name = file_stem.rsplit('_', 1)[0]  # Remove _0xABCD suffix
+                
+                # Analyze contract (pipeline handles both file and directory)
+                pipeline.analyze_contract(contract_path, contract_name)
                 return True, contract_name
+                
             except Exception as e:
-                logger.error(f"Failed to analyze {file_path.name}: {e}")
-                return False, file_path.name
+                logger.error(f"Failed to analyze {contract_path.name}: {e}")
+                return False, contract_path.name
         
         # Thread pool for parallel analysis
         with ThreadPoolExecutor(max_workers=parallel_workers) as executor:
             # Submit all tasks
             futures = {
-                executor.submit(analyze_one_contract, file): file
-                for file in files
+                executor.submit(analyze_one_contract, path): path
+                for path in contract_paths
             }
             
             # Process with progress bar
-            with tqdm(total=len(files), desc="Extracting features", ncols=100) as pbar:
+            with tqdm(total=len(contract_paths), desc="Extracting features", ncols=100) as pbar:
                 for future in as_completed(futures):
                     success, name = future.result()
                     
@@ -242,12 +286,12 @@ class DatasetCollectionPipeline:
                     # Checkpoint every 25 contracts
                     if (successful + failed) % 25 == 0:
                         logger.info(
-                            f"   [{successful + failed}/{len(files)}] "
+                            f"   [{successful + failed}/{len(contract_paths)}] "
                             f"Analyzed | {successful} success, {failed} failed"
                         )
         
         logger.info("")
-        logger.info(f"✓ Feature extraction complete: {successful}/{len(files)} successful")
+        logger.info(f"✓ Feature extraction complete: {successful}/{len(contract_paths)} successful")
         
         if failed > 0:
             logger.warning(f"   {failed} contracts failed analysis (returned default values)")
@@ -266,7 +310,7 @@ class DatasetCollectionPipeline:
         
         report = {
             'generated_at': datetime.now().isoformat(),
-            'config_version': '2.0',
+            'config_version': '3.0',
             'target_size': self.config['dataset']['target_size'],
             'actual_size': len(sample),
             'parallel_processing': {

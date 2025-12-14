@@ -96,46 +96,29 @@ class ASTFeatureExtractor:
     Research: Control flow complexity correlates with vulnerability likelihood
     """
     
-    def __init__(self, contract_path: Path):
+    def __init__(self, contract_path: Path, slither_obj=None):
         """
-        Initialize by compiling contract and building AST.
-        
-        🎓 COMPILATION PROCESS:
-        1. Read .sol file from disk
-        2. Run solc compiler (from PATH, managed by solc-select)
-        3. Parse compiler output (JSON with AST)
-        4. Build internal representation (Slither objects)
-        
-        🎓 SLITHER PYTHON API:
-        Gives us direct access to AST nodes without parsing JSON
-        Can traverse: contracts, functions, state variables, expressions
-        
-        🎓 ALTERNATIVE APPROACHES:
-        - Regex on source code (brittle, misses context)
-        - Parse JSON directly (verbose, error-prone)
-        - Slither API (clean, maintained, accurate) ✓
-        
-        WHY: Slither's Python API gives us direct AST access
+        Initialize AST extractor.
         
         Args:
-            contract_path: Path to .sol file
+            contract_path: Path to contract file
+            slither_obj: Pre-compiled Slither object (RECOMMENDED!)
+                        If None, will compile - but this is slower and error-prone
         """
         self.contract_path = contract_path
         
-        # 🎓 SLITHER COMPILATION:
-        # This is expensive! (~1 second per contract)
-        # That's why we do it once in __init__, reuse in extract_features()
-        #
-        # 🎓 WHAT HAPPENS INSIDE:
-        # 1. Slither runs: solc --combined-json ast,bin,abi contract.sol
-        # 2. Parses JSON output
-        # 3. Builds Python objects: Contract, Function, StateVariable, etc.
-        # 4. Analyzes control flow, data flow, type inference
-        self.slither = Slither(
-            str(contract_path),  # Slither wants string, not Path
-            solc="solc",  # Use solc from PATH (version managed by solc-select)
-            solc_disable_warnings=True  # Suppress noisy compiler warnings
-        )
+        if slither_obj is not None:
+            # Use pre-compiled Slither object (fast, no version issues!)
+            self.slither = slither_obj
+            logger.debug(f"Using pre-compiled Slither for {contract_path.name}")
+        else:
+            # Compile ourselves (slow, may have version mismatch!)
+            logger.warning(f"Compiling {contract_path.name} in AST extractor - consider passing slither_obj")
+            self.slither = Slither(
+                str(contract_path),
+                solc="solc",
+                solc_disable_warnings=True
+            )
         
         # 🎓 LOGGING: Always log successful initialization
         logger.info(f"Analyzed AST for {contract_path}")
