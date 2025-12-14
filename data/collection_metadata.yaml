@@ -1,0 +1,32 @@
+actual_size: 200
+config_version: '1.0'
+generated_at: '2025-12-14T16:45:46.043655'
+strata:
+  arbitrum_contracts:
+    population_size: 0
+    sampled: 0
+  dex_pools:
+    population_size: 0
+    sampled: 0
+  github_contracts:
+    population_size: 0
+    sampled: 0
+  high_quality:
+    population_size: 113
+    sampled: 100
+  known_tokens:
+    population_size: 0
+    sampled: 0
+  known_vulnerable:
+    population_size: 76
+    sampled: 75
+  nft_projects:
+    population_size: 0
+    sampled: 0
+  polygon_contracts:
+    population_size: 0
+    sampled: 0
+  version_diversity:
+    population_size: 25
+    sampled: 25
+target_size: 500

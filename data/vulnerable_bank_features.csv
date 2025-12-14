@@ -1,2 +1,0 @@
-contract_name,file_path,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls
-VulnerableBank,blockchain/contracts/examples/VulnerableBank.sol,True,True,True,True,3,1,3,7,2,2,0,1,1

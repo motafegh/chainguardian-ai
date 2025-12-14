@@ -1,0 +1,1920 @@
+contract_name,file_path,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls,analysis_error
+TetherToken,blockchain/contracts/collected/TetherToken_0xdAC17F95.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:79:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint);
+                                  ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:80:44: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address who) public constant returns (uint);
+                                           ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:90:63: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address owner, address spender) public constant returns (uint);
+                                                              ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:142:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint balance) {
+                                              ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:213:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint remaining) {
+                                                                ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:267:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getBlackListStatus(address _maker) external constant returns (bool) {
+                                                         ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:271:34: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getOwner() external constant returns (address) {
+                                 ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:356:44: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address who) public constant returns (uint) {
+                                           ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:374:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint remaining) {
+                                                                ^------^
+blockchain/contracts/collected/TetherToken_0xdAC17F95.sol:390:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint) {
+                                  ^------^
+"
+CErc20Delegator,blockchain/contracts/collected/CErc20Delegator_0x2Db6c82C.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CErc20Delegator_0x2Db6c82C.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+UniswapV2Router02,blockchain/contracts/collected/UniswapV2Router02_0xd9e1cE17.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Router02_0xd9e1cE17.sol:186:34: Error: Expected ';' but got '{'
+        (bool success,) = to.call{value:value}(new bytes(0));
+                                 ^
+"
+DSToken,blockchain/contracts/collected/DSToken_0x9f8F72aA.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:4:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.15;
+^----------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:37:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSAuth() public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:332:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSTokenBase(uint supply) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:405:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSToken(bytes32 symbol_) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:37:5: Warning: This declaration shadows an existing declaration.
+    function DSAuth() public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:33:1: The shadowed declaration is here:
+contract DSAuth is DSAuthEvents {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:332:5: Warning: This declaration shadows an existing declaration.
+    function DSTokenBase(uint supply) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:327:1: The shadowed declaration is here:
+contract DSTokenBase is ERC20, DSMath {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:405:5: Warning: This declaration shadows an existing declaration.
+    function DSToken(bytes32 symbol_) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:400:1: The shadowed declaration is here:
+contract DSToken is DSTokenBase(0), DSStop {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:39:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetOwner(msg.sender);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:47:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetOwner(owner);
+        ^----------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:55:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetAuthority(authority);
+        ^------------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:55:25: Error: Invalid type for argument in function call. Invalid implicit conversion from contract DSAuthority to address requested.
+        LogSetAuthority(authority);
+                        ^-------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:71:43: Error: Invalid type for argument in function call. Invalid implicit conversion from contract DSAuth to address requested.
+            return authority.canCall(src, this, sig);
+                                          ^--^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:199:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogNote(msg.sig, msg.sender, foo, bar, msg.value, msg.data);
+        ^---------------------------------------------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:362:9: Error: Event invocations have to be prefixed by ""emit"".
+        Transfer(src, dst, wad);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:370:9: Error: Event invocations have to be prefixed by ""emit"".
+        Approval(msg.sender, guy, wad);
+        ^----------------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:400:21: Error: Wrong argument count for constructor call: 1 arguments given but expected 0. Remove parentheses if you do not want to provide arguments here.
+contract DSToken is DSTokenBase(0), DSStop {
+                    ^------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:432:9: Error: Event invocations have to be prefixed by ""emit"".
+        Transfer(src, dst, wad);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:456:9: Error: Event invocations have to be prefixed by ""emit"".
+        Mint(guy, wad);
+        ^------------^
+blockchain/contracts/collected/DSToken_0x9f8F72aA.sol:465:9: Error: Event invocations have to be prefixed by ""emit"".
+        Burn(guy, wad);
+        ^------------^
+"
+UniswapV2Pair,blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:84:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:104:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:200:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:226:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:297:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xA478c297.sol:129:24: Error: Multiple matching identifiers. Resolving overloaded identifiers is not supported.
+            chainId := chainid
+                       ^-----^
+"
+Renzo,blockchain/contracts/collected/Renzo_0x3b508054.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Renzo_0x3b508054.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+ObolToken,blockchain/contracts/collected/ObolToken_0x0b010000.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ObolToken_0x0b010000.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Melon,blockchain/contracts/collected/Melon_0xec67005c.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Melon_0xec67005c.sol:3:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/Melon_0xec67005c.sol:382:18: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    constructor (string name, string symbol, uint8 decimals) public {
+                 ^---------^
+blockchain/contracts/collected/Melon_0xec67005c.sol:382:31: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    constructor (string name, string symbol, uint8 decimals) public {
+                              ^-----------^
+blockchain/contracts/collected/Melon_0xec67005c.sol:391:42: Error: Data location must be ""memory"" for return parameter in function, but none was given.
+    function name() public view returns (string) {
+                                         ^----^
+blockchain/contracts/collected/Melon_0xec67005c.sol:398:44: Error: Data location must be ""memory"" for return parameter in function, but none was given.
+    function symbol() public view returns (string) {
+                                           ^----^
+"
+INV,blockchain/contracts/collected/INV_0x41d5d794.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/INV_0x41d5d794.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+AuraToken,blockchain/contracts/collected/AuraToken_0xc0c293ce.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AuraToken_0xc0c293ce.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+RocketTokenRPL,blockchain/contracts/collected/RocketTokenRPL_0xd3352606.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/RocketTokenRPL_0xd3352606.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+FiatTokenProxy,blockchain/contracts/collected/FiatTokenProxy_0xA0b86991.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/FiatTokenProxy_0xA0b86991.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/FiatTokenProxy_0xA0b86991.sol:319:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/FiatTokenProxy_0xA0b86991.sol:260:56: Error: Data location must be ""calldata"" for parameter in external function, but none was given.
+  function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+                                                       ^--------^
+"
+UniswapV2Router02,blockchain/contracts/collected/UniswapV2Router02_0x7a250d56.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Router02_0x7a250d56.sol:230:20: Error: Expected identifier but got reserved keyword 'immutable'
+    address public immutable override factory;
+                   ^-------^
+"
+ERC1967Proxy,blockchain/contracts/collected/ERC1967Proxy_0x77146784.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ERC1967Proxy_0x77146784.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Vyper,blockchain/contracts/collected/Vyper_contract_0xbEbc4478.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Vyper_contract_0xbEbc4478.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+# @version 0.2.4
+^
+"
+TokenMintERC20Token,blockchain/contracts/collected/TokenMintERC20Token_0x95aD61b0.sol,False,False,False,False,0,0,0,43,21,6,0,0,0,
+CryptoPunksMarket,blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.8;
+^---------------------^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:59:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function CryptoPunksMarket() payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:59:5: Error: No visibility specified. Did you intend to add ""public""?
+    function CryptoPunksMarket() payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:69:5: Error: No visibility specified. Did you intend to add ""public""?
+    function setInitialOwner(address to, uint punkIndex) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:70:34: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.sender != owner) throw;
+                                 ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:71:31: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (allPunksAssigned) throw;
+                              ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:72:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:85:5: Error: No visibility specified. Did you intend to add ""public""?
+    function setInitialOwners(address[] addresses, uint[] indices) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:86:34: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.sender != owner) throw;
+                                 ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:93:5: Error: No visibility specified. Did you intend to add ""public""?
+    function allInitialOwnersAssigned() {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:94:34: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.sender != owner) throw;
+                                 ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:98:5: Error: No visibility specified. Did you intend to add ""public""?
+    function getPunk(uint punkIndex) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:99:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:100:42: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punksRemainingToAssign == 0) throw;
+                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:101:51: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != 0x0) throw;
+                                                  ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:102:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:110:5: Error: No visibility specified. Did you intend to add ""public""?
+    function transferPunk(address to, uint punkIndex) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:111:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:112:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:113:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:132:5: Error: No visibility specified. Did you intend to add ""public""?
+    function punkNoLongerForSale(uint punkIndex) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:133:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:134:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:135:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:140:5: Error: No visibility specified. Did you intend to add ""public""?
+    function offerPunkForSale(uint punkIndex, uint minSalePriceInWei) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:141:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:142:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:143:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:148:5: Error: No visibility specified. Did you intend to add ""public""?
+    function offerPunkForSaleToAddress(uint punkIndex, uint minSalePriceInWei, address toAddress) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:149:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:150:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:151:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:156:5: Error: No visibility specified. Did you intend to add ""public""?
+    function buyPunk(uint punkIndex) payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:157:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:159:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:160:31: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!offer.isForSale) throw;                // punk not actually for sale
+                              ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:161:72: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (offer.onlySellTo != 0x0 && offer.onlySellTo != msg.sender) throw;  // punk not supposed to be sold to this user
+                                                                       ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:162:41: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.value < offer.minValue) throw;      // Didn't send enough ETH
+                                        ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:163:60: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (offer.seller != punkIndexToAddress[punkIndex]) throw; // Seller no longer owner of punk
+                                                           ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:186:5: Error: No visibility specified. Did you intend to add ""public""?
+    function withdraw() {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:187:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:195:5: Error: No visibility specified. Did you intend to add ""public""?
+    function enterBidForPunk(uint punkIndex) payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:196:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:197:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;                
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:198:51: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] == 0x0) throw;
+                                                  ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:199:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] == msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:200:29: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.value == 0) throw;
+                            ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:202:42: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (msg.value <= existing.value) throw;
+                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:211:5: Error: No visibility specified. Did you intend to add ""public""?
+    function acceptBidForPunk(uint punkIndex, uint minPrice) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:212:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:213:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;                
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:214:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] != msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:217:29: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (bid.value == 0) throw;
+                            ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:218:35: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (bid.value < minPrice) throw;
+                                  ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:232:5: Error: No visibility specified. Did you intend to add ""public""?
+    function withdrawBidForPunk(uint punkIndex) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:233:33: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndex >= 10000) throw;
+                                ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:234:32: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (!allPunksAssigned) throw;                
+                               ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:235:51: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] == 0x0) throw;
+                                                  ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:236:58: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (punkIndexToAddress[punkIndex] == msg.sender) throw;
+                                                         ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:238:39: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (bid.bidder != msg.sender) throw;
+                                      ^---^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:59:5: Warning: This declaration shadows an existing declaration.
+    function CryptoPunksMarket() payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:2:1: The shadowed declaration is here:
+contract CryptoPunksMarket {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:85:31: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    function setInitialOwners(address[] addresses, uint[] indices) {
+                              ^-----------------^
+blockchain/contracts/collected/CryptoPunksMarket_0xb47e3cd8.sol:85:52: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    function setInitialOwners(address[] addresses, uint[] indices) {
+                                                   ^------------^
+"
+L1ChugSplashProxy,blockchain/contracts/collected/L1ChugSplashProxy_0x99C9fc46.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/L1ChugSplashProxy_0x99C9fc46.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+EACAggregatorProxy,blockchain/contracts/collected/EACAggregatorProxy_0x5f4eC3Df.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/EACAggregatorProxy_0x5f4eC3Df.sol:147:5: Error: Expected '{' but got reserved keyword 'override'
+    override
+    ^------^
+"
+CoolCats,blockchain/contracts/collected/CoolCats_0x1A92f738.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CoolCats_0x1A92f738.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SDAO,blockchain/contracts/collected/SDAO_0xc20059e0.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SDAO_0xc20059e0.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Uni,blockchain/contracts/collected/Uni_0x1f9840a8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Uni_0x1f9840a8.sol:5:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.16;
+^----------------------^
+blockchain/contracts/collected/Uni_0x1f9840a8.sol:6:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+blockchain/contracts/collected/Uni_0x1f9840a8.sol:579:31: Error: Function not found.
+        assembly { chainId := chainid() }
+                              ^-----^
+blockchain/contracts/collected/Uni_0x1f9840a8.sol:579:20: Error: Variable count does not match number of values (1 vs. 0)
+        assembly { chainId := chainid() }
+                   ^------------------^
+"
+ConvexToken,blockchain/contracts/collected/ConvexToken_0x4e3fbd56.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ConvexToken_0x4e3fbd56.sol:517:42: Error: Expected ';' but got '{'
+        (bool success, ) = recipient.call{ value: amount }("""");
+                                         ^
+"
+Eul,blockchain/contracts/collected/Eul_0xd9fcd98c.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Eul_0xd9fcd98c.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+BMEX,blockchain/contracts/collected/BMEX_0xb113c6cf.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BMEX_0xb113c6cf.sol:18:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+SushiToken,blockchain/contracts/collected/SushiToken_0x6B359506.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SushiToken_0x6B359506.sol:17:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0x68749665.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0x68749665.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+UniswapV2Pair,blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:84:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:104:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:200:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:226:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:297:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xBb2b8038.sol:129:24: Error: Multiple matching identifiers. Resolving overloaded identifiers is not supported.
+            chainId := chainid
+                       ^-----^
+"
+BurnableMintableCappedERC20,blockchain/contracts/collected/BurnableMintableCappedERC20_0x467719ad.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BurnableMintableCappedERC20_0x467719ad.sol:14:18: Error: Expected ';' but got '('
+    error NotSelf();
+                 ^
+"
+Proxy,blockchain/contracts/collected/Proxy_0x7712c342.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Proxy_0x7712c342.sol:33:13: Error: Expected identifier but got '('
+    fallback() external {
+            ^
+"
+Vault,blockchain/contracts/collected/Vault_0xBA122222.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Vault_0xBA122222.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+CFG,blockchain/contracts/collected/CFG_0xcccccccc.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CFG_0xcccccccc.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+MiniMeToken,blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:244:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint256 balance) {
+                                              ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:279:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
+                                                                ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:305:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint) {
+                                  ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:318:68: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOfAt(address _owner, uint _blockNumber) public constant returns (uint) {
+                                                                   ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:342:54: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupplyAt(uint _blockNumber) public constant returns(uint) {
+                                                     ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:456:72: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getValueAt(Checkpoint[] storage checkpoints, uint _block) constant internal returns (uint) {
+                                                                       ^------^
+blockchain/contracts/collected/MiniMeToken_0x5A98FcBE.sol:498:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function isContract(address _addr) constant internal returns(bool) {
+                                       ^------^
+"
+WETH9,blockchain/contracts/collected/WETH9_0xC02aaA39.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WETH9_0xC02aaA39.sol:16:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.18;
+^----------------------^
+blockchain/contracts/collected/WETH9_0xC02aaA39.sol:31:5: Error: Fallback function must be defined as ""external"".
+    function() public payable {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/WETH9_0xC02aaA39.sol:36:9: Error: Event invocations have to be prefixed by ""emit"".
+        Deposit(msg.sender, msg.value);
+        ^----------------------------^
+blockchain/contracts/collected/WETH9_0xC02aaA39.sol:42:9: Error: Event invocations have to be prefixed by ""emit"".
+        Withdrawal(msg.sender, wad);
+        ^-------------------------^
+blockchain/contracts/collected/WETH9_0xC02aaA39.sol:46:16: Error: Member ""balance"" not found or not visible after argument-dependent lookup in contract WETH9. Use ""address(this).balance"" to access this address member.
+        return this.balance;
+               ^----------^
+"
+BAToken,blockchain/contracts/collected/BAToken_0x0D8775F6.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BAToken_0x0D8775F6.sol:34:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) constant returns (uint256 balance);
+                                       ^------^
+blockchain/contracts/collected/BAToken_0x0D8775F6.sol:38:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining);
+                                                         ^------^
+blockchain/contracts/collected/BAToken_0x0D8775F6.sol:70:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+                                       ^------^
+blockchain/contracts/collected/BAToken_0x0D8775F6.sol:80:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+                                                         ^------^
+"
+AnyswapV5ERC20,blockchain/contracts/collected/AnyswapV5ERC20_0x9Fb9a339.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AnyswapV5ERC20_0x9Fb9a339.sol:143:19: Error: Expected identifier but got reserved keyword 'immutable'
+    uint8  public immutable override decimals;
+                  ^-------^
+"
+SiloToken,blockchain/contracts/collected/SiloToken_0xf0b2dd79.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SiloToken_0xf0b2dd79.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TronToken,blockchain/contracts/collected/TronToken_0xf230b790.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TronToken_0xf230b790.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.11;
+^----------------------^
+blockchain/contracts/collected/TronToken_0xf230b790.sol:33:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function TronToken(address _addressFounder) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:33:5: Error: No visibility specified. Did you intend to add ""public""?
+    function TronToken(address _addressFounder) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:40:5: Error: No visibility specified. Did you intend to add ""public""?
+    function transfer(address _to, uint256 _value) isRunning validAddress returns (bool success) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:49:5: Error: No visibility specified. Did you intend to add ""public""?
+    function transferFrom(address _from, address _to, uint256 _value) isRunning validAddress returns (bool success) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:60:5: Error: No visibility specified. Did you intend to add ""public""?
+    function approve(address _spender, uint256 _value) isRunning validAddress returns (bool success) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:67:5: Error: No visibility specified. Did you intend to add ""public""?
+    function stop() isOwner {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:71:5: Error: No visibility specified. Did you intend to add ""public""?
+    function start() isOwner {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:75:5: Error: No visibility specified. Did you intend to add ""public""?
+    function setName(string _name) isOwner {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:79:5: Error: No visibility specified. Did you intend to add ""public""?
+    function burn(uint256 _value) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:33:5: Warning: This declaration shadows an existing declaration.
+    function TronToken(address _addressFounder) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/TronToken_0xf230b790.sol:3:1: The shadowed declaration is here:
+contract TronToken {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/TronToken_0xf230b790.sol:75:22: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    function setName(string _name) isOwner {
+                     ^----------^
+"
+FRAXShares,blockchain/contracts/collected/FRAXShares_0x3432b6a6.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/FRAXShares_0x3432b6a6.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{""AccessControl.sol"":{""content"":""//  ...
+^
+"
+YALA,blockchain/contracts/collected/YALA_0xf9707060.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/YALA_0xf9707060.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+MANAToken,blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:5:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address who) constant returns (uint256);
+                                  ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:87:54: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address owner, address spender) constant returns (uint256);
+                                                     ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:94:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:100:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:107:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:112:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:141:38: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address _owner) constant returns (uint256 balance) {
+                                     ^------^
+blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol:195:56: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+                                                       ^------^
+"
+Vyper,blockchain/contracts/collected/Vyper_contract_0xD533a949.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Vyper_contract_0xD533a949.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+# @version 0.2.4
+^
+"
+L1LiskToken,blockchain/contracts/collected/L1LiskToken_0x6033f7f8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/L1LiskToken_0x6033f7f8.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+GearToken,blockchain/contracts/collected/GearToken_0xba333558.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/GearToken_0xba333558.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+CErc20,blockchain/contracts/collected/CErc20_0x39AA39c0.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CErc20_0x39AA39c0.sol:4:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:82:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:289:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:377:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:598:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:660:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:733:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:768:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:800:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CErc20_0x39AA39c0.sol:2374:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+"
+Ondo,blockchain/contracts/collected/Ondo_0xfaba6f8e.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Ondo_0xfaba6f8e.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0x7159cc27.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0x7159cc27.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0xec53bf91.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0xec53bf91.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+ENA,blockchain/contracts/collected/ENA_0x57e114b6.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ENA_0x57e114b6.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+BNB,blockchain/contracts/collected/BNB_0xb8c77482.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BNB_0xb8c77482.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.8;
+^---------------------^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:33:7: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+      throw;
+      ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:62:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function BNB(
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:62:5: Error: No visibility specified. Did you intend to add ""public""?
+    function BNB(
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:77:5: Error: No visibility specified. Did you intend to add ""public""?
+    function transfer(address _to, uint256 _value) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:78:25: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (_to == 0x0) throw;                               // Prevent transfer to 0x0 address. Use burn() instead
+                        ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:79:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:80:45: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[msg.sender] < _value) throw;           // Check if the sender has enough
+                                            ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:81:55: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[_to] + _value < balanceOf[_to]) throw; // Check for overflows
+                                                      ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:88:5: Error: No visibility specified. Did you intend to add ""public""?
+    function approve(address _spender, uint256 _value)
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:90:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:97:5: Error: No visibility specified. Did you intend to add ""public""?
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:98:25: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (_to == 0x0) throw;                                // Prevent transfer to 0x0 address. Use burn() instead
+                        ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:99:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:100:40: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[_from] < _value) throw;                 // Check if the sender has enough
+                                       ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:101:55: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[_to] + _value < balanceOf[_to]) throw;  // Check for overflows
+                                                      ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:102:52: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (_value > allowance[_from][msg.sender]) throw;     // Check allowance
+                                                   ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:110:5: Error: No visibility specified. Did you intend to add ""public""?
+    function burn(uint256 _value) returns (bool success) {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:111:45: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[msg.sender] < _value) throw;            // Check if the sender has enough
+                                            ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:112:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:119:2: Error: No visibility specified. Did you intend to add ""public""?
+	function freeze(uint256 _value) returns (bool success) {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:120:45: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (balanceOf[msg.sender] < _value) throw;            // Check if the sender has enough
+                                            ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:121:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:128:2: Error: No visibility specified. Did you intend to add ""public""?
+	function unfreeze(uint256 _value) returns (bool success) {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:129:44: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+        if (freezeOf[msg.sender] < _value) throw;            // Check if the sender has enough
+                                           ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:130:20: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if (_value <= 0) throw; 
+		                 ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:138:2: Error: No visibility specified. Did you intend to add ""public""?
+	function withdrawEther(uint256 amount) {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:139:26: Error: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+		if(msg.sender != owner)throw;
+		                       ^---^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:144:2: Error: No visibility specified. Did you intend to add ""external""?
+	function() payable {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:31:3: Warning: This declaration shadows a builtin symbol.
+  function assert(bool assertion) internal {
+  ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:62:5: Warning: This declaration shadows an existing declaration.
+    function BNB(
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/BNB_0xb8c77482.sol:37:1: The shadowed declaration is here:
+contract BNB is SafeMath{
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/BNB_0xb8c77482.sol:64:9: Error: Data location must be ""memory"" for parameter in function, but none was given.
+        string tokenName,
+        ^--------------^
+blockchain/contracts/collected/BNB_0xb8c77482.sol:66:9: Error: Data location must be ""memory"" for parameter in function, but none was given.
+        string tokenSymbol
+        ^----------------^
+"
+UniswapV3Pool,blockchain/contracts/collected/UniswapV3Pool_0x88e6A0c2.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV3Pool_0x88e6A0c2.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Seaport,blockchain/contracts/collected/Seaport_0x00000000.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Seaport_0x00000000.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+GolemNetworkToken,blockchain/contracts/collected/GolemNetworkToken_0xa7447644.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/GolemNetworkToken_0xa7447644.sol:81:37: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() external constant returns (uint256) {
+                                    ^------^
+blockchain/contracts/collected/GolemNetworkToken_0xa7447644.sol:85:49: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) external constant returns (uint256) {
+                                                ^------^
+"
+MiniMeToken,blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:244:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint256 balance) {
+                                              ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:279:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
+                                                                ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:305:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint) {
+                                  ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:318:68: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOfAt(address _owner, uint _blockNumber) public constant returns (uint) {
+                                                                   ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:342:54: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupplyAt(uint _blockNumber) public constant returns(uint) {
+                                                     ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:456:72: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getValueAt(Checkpoint[] storage checkpoints, uint _block) constant internal returns (uint) {
+                                                                       ^------^
+blockchain/contracts/collected/MiniMeToken_0x5a98fcbe.sol:498:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function isContract(address _addr) constant internal returns(bool) {
+                                       ^------^
+"
+FRAXStablecoin,blockchain/contracts/collected/FRAXStablecoin_0x853d955a.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/FRAXStablecoin_0x853d955a.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{""AccessControl.sol"":{""content"":""//  ...
+^
+"
+UniswapV3Pool,blockchain/contracts/collected/UniswapV3Pool_0x4e68Ccd3.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV3Pool_0x4e68Ccd3.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SOLV,blockchain/contracts/collected/SOLV_0x256f2d67.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SOLV_0x256f2d67.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SwapRouter02,blockchain/contracts/collected/SwapRouter02_0x68b34658.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SwapRouter02_0x68b34658.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SoloMargin,blockchain/contracts/collected/SoloMargin_0x1E0447b1.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SoloMargin_0x1E0447b1.sol:19:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.7;
+^--------------------^
+blockchain/contracts/collected/SoloMargin_0x1E0447b1.sol:20:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+"
+AppProxyUpgradeable,blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:7:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:50:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:67:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:85:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:110:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:148:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:176:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:189:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:222:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:243:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:293:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:321:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:361:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AppProxyUpgradeable_0xae7ab965.sol:58:70: Error: Data location must be ""memory"" for parameter in function, but none was given.
+    function hasPermission(address who, address where, bytes32 what, bytes how) public view returns (bool);
+                                                                     ^-------^
+"
+AdminUpgradeabilityProxy,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x48c33997.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AdminUpgradeabilityProxy_0x48c33997.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Sky,blockchain/contracts/collected/Sky_0x56072c95.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Sky_0x56072c95.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+NexoToken,blockchain/contracts/collected/NexoToken_0xb62132e3.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/NexoToken_0xb62132e3.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.23;
+^---------------------^
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:187:2: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+	function Token() public {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:319:2: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+	function NexoToken() public {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:187:2: Warning: This declaration shadows an existing declaration.
+	function Token() public {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:182:1: The shadowed declaration is here:
+contract Token is StandardToken {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:319:2: Warning: This declaration shadows an existing declaration.
+	function NexoToken() public {
+ ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/NexoToken_0xb62132e3.sol:230:1: The shadowed declaration is here:
+contract NexoToken is Token {
+^ (Relevant source part starts here and spans across multiple lines).
+
+"
+GPv2Settlement,blockchain/contracts/collected/GPv2Settlement_0x9008D19f.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/GPv2Settlement_0x9008D19f.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+ENSRegistryWithFallback,blockchain/contracts/collected/ENSRegistryWithFallback_0x00000000.sol,False,False,False,False,0,0,0,59,5,5,2,0,0,
+NonfungiblePositionManager,blockchain/contracts/collected/NonfungiblePositionManager_0xC36442b4.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/NonfungiblePositionManager_0xC36442b4.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+FiatTokenProxy,blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol:319:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol:260:56: Error: Data location must be ""calldata"" for parameter in external function, but none was given.
+  function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+                                                       ^--------^
+"
+Comp,blockchain/contracts/collected/Comp_0xc00e94cb.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Comp_0xc00e94cb.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.16;
+^----------------------^
+blockchain/contracts/collected/Comp_0xc00e94cb.sol:2:1: Warning: Experimental features are turned on. Do not use experimental features on live deployments.
+pragma experimental ABIEncoderV2;
+^-------------------------------^
+blockchain/contracts/collected/Comp_0xc00e94cb.sol:298:31: Error: Function not found.
+        assembly { chainId := chainid() }
+                              ^-----^
+blockchain/contracts/collected/Comp_0xc00e94cb.sol:298:20: Error: Variable count does not match number of values (1 vs. 0)
+        assembly { chainId := chainid() }
+                   ^------------------^
+"
+StarkNetToken,blockchain/contracts/collected/StarkNetToken_0xCa14007E.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/StarkNetToken_0xCa14007E.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+VEN,blockchain/contracts/collected/VEN_0xd850942e.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/VEN_0xd850942e.sol:26:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:32:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:39:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:44:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:50:42: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function toUINT112(uint256 a) internal constant returns(uint112) {
+                                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:55:42: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function toUINT120(uint256 a) internal constant returns(uint120) {
+                                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:60:42: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function toUINT128(uint256 a) internal constant returns(uint128) {
+                                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:82:28: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() constant returns (uint256 supply);
+                           ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:86:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) constant returns (uint256 balance);
+                                       ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:110:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining);
+                                                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:161:28: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() constant returns (uint256 supply){
+                           ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:171:25: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function isSealed() constant returns (bool) {
+                        ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:175:50: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function lastMintedTimestamp(address _owner) constant returns(uint32) {
+                                                 ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:197:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+                                       ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:286:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+                                                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:397:29: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function exchangeRate() constant returns (uint256){
+                            ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:408:26: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function blockTime() constant returns (uint32) {
+                         ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:414:22: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function stage() constant returns (Stage) { 
+                     ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:448:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function isContract(address _addr) constant internal returns(bool) {
+                                       ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:506:29: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function officialSold() constant returns (uint256) {
+                            ^------^
+blockchain/contracts/collected/VEN_0xd850942e.sol:511:29: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function channelsSold() constant returns (uint256) {
+                            ^------^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0x3c3a81e8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0x3c3a81e8.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+YFI,blockchain/contracts/collected/YFI_0x0bc529c0.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/YFI_0x0bc529c0.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.16;
+^----------------------^
+blockchain/contracts/collected/YFI_0x0bc529c0.sol:156:32: Warning: The ""extcodehash"" instruction is not supported by the VM version ""byzantium"" you are currently compiling for. It will be interpreted as an invalid instruction on this VM.
+        assembly { codehash := extcodehash(account) }
+                               ^------------------^
+"
+CardMigration,blockchain/contracts/collected/CardMigration_0x6EbeAf8e.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CardMigration_0x6EbeAf8e.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/CardMigration_0x6EbeAf8e.sol:57:9: Error: Data location must be ""memory"" for parameter in function, but none was given.
+        bytes _data
+        ^---------^
+"
+WyvernExchangeWithBulkCancellations,blockchain/contracts/collected/WyvernExchangeWithBulkCancellations_0x7f268357.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WyvernExchangeWithBulkCancellations_0x7f268357.sol:462:15: Error: Expected identifier but got 'calldata'
+        bytes calldata;
+              ^------^
+"
+LockProxy,blockchain/contracts/collected/LockProxy_0x250e7698.sol,False,False,False,False,0,0,0,33,16,5,3,0,0,
+ZEROBASE,blockchain/contracts/collected/ZEROBASE_0xfab99fcf.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ZEROBASE_0xfab99fcf.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SushiToken,blockchain/contracts/collected/SushiToken_0x6b359506.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SushiToken_0x6b359506.sol:17:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+InitializableImmutableAdminUpgradeabilityProxy,blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x7D2768dE.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x7D2768dE.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+ZeroEx,blockchain/contracts/collected/ZeroEx_0xdef1c0de.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ZeroEx_0xdef1c0de.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Brickken,blockchain/contracts/collected/Brickken_0x0A638F07.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Brickken_0x0A638F07.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+RailToken,blockchain/contracts/collected/RailToken_0xe76c6c83.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/RailToken_0xe76c6c83.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+FiatTokenProxy,blockchain/contracts/collected/FiatTokenProxy_0xBe989514.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/FiatTokenProxy_0xBe989514.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+EtherFiGovernanceToken,blockchain/contracts/collected/EtherFiGovernanceToken_0xfe0c3006.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/EtherFiGovernanceToken_0xfe0c3006.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+AdminUpgradeabilityProxy,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol:3:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol:73:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol:105:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol:176:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x45804880.sol:270:58: Error: Data location must be ""calldata"" for parameter in external function, but none was given.
+    function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+                                                         ^--------^
+"
+BaseRegistrarImplementation,blockchain/contracts/collected/BaseRegistrarImplementation_0x57f1887a.sol,False,False,False,False,0,0,0,138,15,21,5,0,0,
+EtherDelta,blockchain/contracts/collected/EtherDelta_0x8d12A197.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:28:26: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function totalSupply() constant returns (uint256 supply) {}
+                         ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:32:38: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address _owner) constant returns (uint256 balance) {}
+                                     ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:56:56: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {}
+                                                       ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:92:38: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address _owner) constant returns (uint256 balance) {
+                                     ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:102:56: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+                                                       ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:136:39: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function accountLevel(address user) constant returns(uint) {}
+                                      ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:146:39: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function accountLevel(address user) constant returns(uint) {
+                                      ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:242:51: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address token, address user) constant returns (uint) {
+                                                  ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:281:192: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+ ... 32 s, uint amount, address sender) constant returns(bool) {
+                                        ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:289:169: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+ ... er, uint8 v, bytes32 r, bytes32 s) constant returns(uint) {
+                                        ^------^
+blockchain/contracts/collected/EtherDelta_0x8d12A197.sol:301:166: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+ ... er, uint8 v, bytes32 r, bytes32 s) constant returns(uint) {
+                                        ^------^
+"
+BoredApeYachtClub,blockchain/contracts/collected/BoredApeYachtClub_0xBC4CA0Ed.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BoredApeYachtClub_0xBC4CA0Ed.sol:17:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+T,blockchain/contracts/collected/T_0xcdf7028c.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/T_0xcdf7028c.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0xbf3f63d8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0xbf3f63d8.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TokenBridge,blockchain/contracts/collected/TokenBridge_0x3ee18B22.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TokenBridge_0x3ee18B22.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+PENDLE,blockchain/contracts/collected/PENDLE_0x80850712.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/PENDLE_0x80850712.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{""Address.sol"":{""content"":""// SPDX-L ...
+^
+"
+UniswapV3Pool,blockchain/contracts/collected/UniswapV3Pool_0x8ad599c3.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV3Pool_0x8ad599c3.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Azuki,blockchain/contracts/collected/Azuki_0xED5AF388.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Azuki_0xED5AF388.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+BecToken,blockchain/contracts/collected/BecToken_0xC5d105E6.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BecToken_0xC5d105E6.sol:8:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:14:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:21:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:26:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:40:42: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address who) public constant returns (uint256);
+                                         ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:75:45: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address _owner) public constant returns (uint256 balance) {
+                                            ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:85:61: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address owner, address spender) public constant returns (uint256);
+                                                            ^------^
+blockchain/contracts/collected/BecToken_0xC5d105E6.sol:144:63: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
+                                                              ^------^
+"
+UniswapV2Pair,blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:84:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:104:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:200:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:226:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:297:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.16;
+^----------------------^
+blockchain/contracts/collected/UniswapV2Pair_0xB4e16d01.sol:129:24: Error: Multiple matching identifiers. Resolving overloaded identifiers is not supported.
+            chainId := chainid
+                       ^-----^
+"
+ProxyERC20,blockchain/contracts/collected/ProxyERC20_0x5e74C903.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ProxyERC20_0x5e74C903.sol:37:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.25;
+^---------------------^
+blockchain/contracts/collected/ProxyERC20_0x5e74C903.sol:151:20: Error: Data location must be ""calldata"" for parameter in external function, but none was given.
+    function _emit(bytes callData, uint numTopics, bytes32 topic1, bytes32 topic2, bytes32 topic3, bytes32 topic4)
+                   ^------------^
+"
+ERC677MultiBridgeToken,blockchain/contracts/collected/ERC677MultiBridgeToken_0x0Ae05509.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ERC677MultiBridgeToken_0x0Ae05509.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.10;
+^---------------------^
+"
+RocketTokenRETH,blockchain/contracts/collected/RocketTokenRETH_0xae78736C.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/RocketTokenRETH_0xae78736C.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+DepositContract,blockchain/contracts/collected/DepositContract_0x00000000.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/DepositContract_0x00000000.sol:80:33: Error: Expected '{' but got reserved keyword 'override'
+    function get_deposit_root() override external view returns (bytes32) {
+                                ^------^
+"
+SwissBorgToken,blockchain/contracts/collected/SwissBorgToken_0x64d0f55c.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SwissBorgToken_0x64d0f55c.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Dai,blockchain/contracts/collected/Dai_0x6b175474.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Dai_0x6b175474.sol:2:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.12;
+^----------------------^
+blockchain/contracts/collected/Dai_0x6b175474.sol:40:27: Warning: The ""shr"" instruction is only available for Constantinople-compatible VMs. You are currently compiling for ""byzantium"", where it will be interpreted as an invalid instruction.
+                 shl(224, shr(224, calldataload(0))), // msg.sig
+                          ^-----------------------^
+blockchain/contracts/collected/Dai_0x6b175474.sol:40:18: Warning: The ""shl"" instruction is only available for Constantinople-compatible VMs. You are currently compiling for ""byzantium"", where it will be interpreted as an invalid instruction.
+                 shl(224, shr(224, calldataload(0))), // msg.sig
+                 ^---------------------------------^
+"
+InitializableImmutableAdminUpgradeabilityProxy,blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x7d2768dE.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x7d2768dE.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+CEther,blockchain/contracts/collected/CEther_0x4Ddc2D19.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:4:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:82:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:289:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:377:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:598:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:660:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:733:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:768:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:800:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/CEther_0x4Ddc2D19.sol:2374:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+"
+Doodles,blockchain/contracts/collected/Doodles_0x8a90CAb2.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Doodles_0x8a90CAb2.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+YBToken,blockchain/contracts/collected/YBToken_0x01791f72.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/YBToken_0x01791f72.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+DAO,blockchain/contracts/collected/DAO_0xBB9bc244.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/DAO_0xBB9bc244.sol:45:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) constant returns (uint256 balance);
+                                       ^------^
+blockchain/contracts/collected/DAO_0xBB9bc244.sol:75:7: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    ) constant returns (uint256 remaining);
+      ^------^
+blockchain/contracts/collected/DAO_0xBB9bc244.sol:89:52: Error: Expected ';' but got '}'
+    modifier noEther() {if (msg.value > 0) throw; _}
+                                                   ^
+"
+WeightedPool2Tokens,blockchain/contracts/collected/WeightedPool2Tokens_0x5c6Ee304.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WeightedPool2Tokens_0x5c6Ee304.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+BalancerGovernanceToken,blockchain/contracts/collected/BalancerGovernanceToken_0xba100000.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BalancerGovernanceToken_0xba100000.sol:304:42: Error: Expected ';' but got '{'
+        (bool success, ) = recipient.call{ value: amount }("""");
+                                         ^
+"
+WyvernExchange,blockchain/contracts/collected/WyvernExchange_0x7Be8076f.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WyvernExchange_0x7Be8076f.sol:422:15: Error: Expected identifier but got 'calldata'
+        bytes calldata;
+              ^------^
+"
+InitializableImmutableAdminUpgradeabilityProxy,blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x87870Bca.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x87870Bca.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+UNCX,blockchain/contracts/collected/UNCX_0xadb2437e.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UNCX_0xadb2437e.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{""Address.sol"":{""content"":""// SPDX-L ...
+^
+"
+MetaSwap,blockchain/contracts/collected/MetaSwap_0x881D4023.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MetaSwap_0x881D4023.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0x25933865.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0x25933865.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+GovToken,blockchain/contracts/collected/GovToken_0x41990500.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/GovToken_0x41990500.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+PhemexToken,blockchain/contracts/collected/PhemexToken_0xbbb32f99.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/PhemexToken_0xbbb32f99.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+WBTC,blockchain/contracts/collected/WBTC_0x2260FAC5.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WBTC_0x2260FAC5.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/WBTC_0x2260FAC5.sol:270:15: Error: Data location must be ""memory"" for parameter in function, but none was given.
+  constructor(string _name, string _symbol, uint8 _decimals) public {
+              ^----------^
+blockchain/contracts/collected/WBTC_0x2260FAC5.sol:270:29: Error: Data location must be ""memory"" for parameter in function, but none was given.
+  constructor(string _name, string _symbol, uint8 _decimals) public {
+                            ^------------^
+"
+InstaToken,blockchain/contracts/collected/InstaToken_0x6f40d4a6.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InstaToken_0x6f40d4a6.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+AdminUpgradeabilityProxy,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol:3:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol:73:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol:105:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol:176:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol:270:58: Error: Data location must be ""calldata"" for parameter in external function, but none was given.
+    function upgradeToAndCall(address newImplementation, bytes data) payable external ifAdmin {
+                                                         ^--------^
+"
+LinkToken,blockchain/contracts/collected/LinkToken_0x51491077.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/LinkToken_0x51491077.sol:9:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:15:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:22:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:27:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+                                              ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:42:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address who) constant returns (uint256);
+                                  ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:51:54: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address owner, address spender) constant returns (uint256);
+                                                     ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:93:38: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function balanceOf(address _owner) constant returns (uint256 balance) {
+                                     ^------^
+blockchain/contracts/collected/LinkToken_0x51491077.sol:148:56: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+                                                       ^------^
+"
+LQTYToken,blockchain/contracts/collected/LQTYToken_0x6DEA81C8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/LQTYToken_0x6DEA81C8.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+MoneyMarket,blockchain/contracts/collected/MoneyMarket_0x0eEe3E38.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MoneyMarket_0x0eEe3E38.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.24;
+^----------------------^
+blockchain/contracts/collected/MoneyMarket_0x0eEe3E38.sol:560:42: Error: Data location must be ""storage"" or ""memory"" for parameter in function, but none was given.
+    function divScalarByExp(uint scalar, Exp divisor) pure internal returns (Error, Exp memory) {
+                                         ^---------^
+"
+Dai,blockchain/contracts/collected/Dai_0x6B175474.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Dai_0x6B175474.sol:2:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity =0.5.12;
+^----------------------^
+blockchain/contracts/collected/Dai_0x6B175474.sol:40:27: Warning: The ""shr"" instruction is only available for Constantinople-compatible VMs. You are currently compiling for ""byzantium"", where it will be interpreted as an invalid instruction.
+                 shl(224, shr(224, calldataload(0))), // msg.sig
+                          ^-----------------------^
+blockchain/contracts/collected/Dai_0x6B175474.sol:40:18: Warning: The ""shl"" instruction is only available for Constantinople-compatible VMs. You are currently compiling for ""byzantium"", where it will be interpreted as an invalid instruction.
+                 shl(224, shr(224, calldataload(0))), // msg.sig
+                 ^---------------------------------^
+"
+AlphaToken,blockchain/contracts/collected/AlphaToken_0xa1faa113.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AlphaToken_0xa1faa113.sol:16:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+BIFI,blockchain/contracts/collected/BIFI_0xB1F1ee12.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/BIFI_0xB1F1ee12.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+WalletLibrary,blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:53:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function isOwner(address _addr) constant returns (bool);
+                                  ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:55:70: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function hasConfirmed(bytes32 _operation, address _owner) external constant returns (bool);
+                                                                     ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:180:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function getOwner(uint ownerIndex) external constant returns (address) {
+                                              ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:184:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function isOwner(address _addr) constant returns (bool) {
+                                  ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:188:70: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function hasConfirmed(bytes32 _operation, address _owner) external constant returns (bool) {
+                                                                     ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:357:28: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function today() private constant returns (uint) { return now / 1 days; }
+                           ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:436:38: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function getOwner(uint ownerIndex) constant returns (address) {
+                                     ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:442:70: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function hasConfirmed(bytes32 _operation, address _owner) external constant returns (bool) {
+                                                                     ^------^
+blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:446:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+  function isOwner(address _addr) constant returns (bool) {
+                                  ^------^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0x4Dbd4fc5.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0x4Dbd4fc5.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+MutantApeYachtClub,blockchain/contracts/collected/MutantApeYachtClub_0x60E4d786.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MutantApeYachtClub_0x60E4d786.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+TetherToken,blockchain/contracts/collected/TetherToken_0xdac17f95.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TetherToken_0xdac17f95.sol:79:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint);
+                                  ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:80:44: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address who) public constant returns (uint);
+                                           ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:90:63: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address owner, address spender) public constant returns (uint);
+                                                              ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:142:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint balance) {
+                                              ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:213:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint remaining) {
+                                                                ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:267:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getBlackListStatus(address _maker) external constant returns (bool) {
+                                                         ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:271:34: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getOwner() external constant returns (address) {
+                                 ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:356:44: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address who) public constant returns (uint) {
+                                           ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:374:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint remaining) {
+                                                                ^------^
+blockchain/contracts/collected/TetherToken_0xdac17f95.sol:390:35: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() public constant returns (uint) {
+                                  ^------^
+"
+Unitroller,blockchain/contracts/collected/Unitroller_0x3d981921.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Unitroller_0x3d981921.sol:4:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:211:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:289:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:377:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:598:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:660:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:733:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:768:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:800:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:2374:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:2394:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+blockchain/contracts/collected/Unitroller_0x3d981921.sol:2451:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.5.8;
+^---------------------^
+"
+MapleTokenProxy,blockchain/contracts/collected/MapleTokenProxy_0x643c4e15.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MapleTokenProxy_0x643c4e15.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+SMT,blockchain/contracts/collected/SMT_0x55F93985.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SMT_0x55F93985.sol:12:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint256 balance);
+                                              ^------^
+blockchain/contracts/collected/SMT_0x55F93985.sol:36:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);
+                                                                ^------^
+blockchain/contracts/collected/SMT_0x55F93985.sol:154:47: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address _owner) public constant returns (uint256 balance) {
+                                              ^------^
+blockchain/contracts/collected/SMT_0x55F93985.sol:164:65: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
+                                                                ^------^
+blockchain/contracts/collected/SMT_0x55F93985.sol:252:45: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function getNonce(address _addr) public constant returns (uint256){
+                                            ^------^
+"
+VSP,blockchain/contracts/collected/VSP_0x1b40183e.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/VSP_0x1b40183e.sol:17:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+TORN,blockchain/contracts/collected/TORN_0x77777fed.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TORN_0x77777fed.sol:108:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+SwapRouter,blockchain/contracts/collected/SwapRouter_0xE592427A.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/SwapRouter_0xE592427A.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+StargateToken,blockchain/contracts/collected/StargateToken_0xaf5191b0.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/StargateToken_0xaf5191b0.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+RSR,blockchain/contracts/collected/RSR_0x320623b8.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/RSR_0x320623b8.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+AggregationRouterV3,blockchain/contracts/collected/AggregationRouterV3_0x11111112.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/AggregationRouterV3_0x11111112.sol:90:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+MasterChef,blockchain/contracts/collected/MasterChef_0xbD17B1ce.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MasterChef_0xbD17B1ce.sol:302:42: Error: Expected ';' but got '{'
+        (bool success, ) = recipient.call{ value: amount }("""");
+                                         ^
+"
+TransparentUpgradeableProxy,blockchain/contracts/collected/TransparentUpgradeableProxy_0xC4441c2B.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/TransparentUpgradeableProxy_0xC4441c2B.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+AdminUpgradeabilityProxy,blockchain/contracts/collected/AdminUpgradeabilityProxy_0xCC4304A3.sol,False,False,False,False,0,0,0,60,8,6,2,0,4,
+ConnextERC20,blockchain/contracts/collected/ConnextERC20_0xfe67a445.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ConnextERC20_0xfe67a445.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Stader,blockchain/contracts/collected/Stader_0x30d20208.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Stader_0x30d20208.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+PepeToken,blockchain/contracts/collected/PepeToken_0x69825081.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/PepeToken_0x69825081.sol:20:1: Error: Expected pragma, import directive or contract/interface/library definition.
+abstract contract Context {
+^------^
+"
+DSToken,blockchain/contracts/collected/DSToken_0x89d24A6b.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/DSToken_0x89d24A6b.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity ^0.4.13;
+^----------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:120:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSAuth() public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:298:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSTokenBase(uint supply) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:371:5: Error: Functions are not allowed to have the same name as the contract. If you intend this to be a constructor, use ""constructor(...) { ... }"" to define it.
+    function DSToken(bytes32 symbol_) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:120:5: Warning: This declaration shadows an existing declaration.
+    function DSAuth() public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:116:1: The shadowed declaration is here:
+contract DSAuth is DSAuthEvents {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:298:5: Warning: This declaration shadows an existing declaration.
+    function DSTokenBase(uint supply) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:293:1: The shadowed declaration is here:
+contract DSTokenBase is ERC20, DSMath {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:371:5: Warning: This declaration shadows an existing declaration.
+    function DSToken(bytes32 symbol_) public {
+    ^ (Relevant source part starts here and spans across multiple lines).
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:366:1: The shadowed declaration is here:
+contract DSToken is DSTokenBase(0), DSStop {
+^ (Relevant source part starts here and spans across multiple lines).
+
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:122:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetOwner(msg.sender);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:130:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetOwner(owner);
+        ^----------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:138:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogSetAuthority(authority);
+        ^------------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:138:25: Error: Invalid type for argument in function call. Invalid implicit conversion from contract DSAuthority to address requested.
+        LogSetAuthority(authority);
+                        ^-------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:154:43: Error: Invalid type for argument in function call. Invalid implicit conversion from contract DSAuth to address requested.
+            return authority.canCall(src, this, sig);
+                                          ^--^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:196:9: Error: Event invocations have to be prefixed by ""emit"".
+        LogNote(msg.sig, msg.sender, foo, bar, msg.value, msg.data);
+        ^---------------------------------------------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:328:9: Error: Event invocations have to be prefixed by ""emit"".
+        Transfer(src, dst, wad);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:336:9: Error: Event invocations have to be prefixed by ""emit"".
+        Approval(msg.sender, guy, wad);
+        ^----------------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:366:21: Error: Wrong argument count for constructor call: 1 arguments given but expected 0. Remove parentheses if you do not want to provide arguments here.
+contract DSToken is DSTokenBase(0), DSStop {
+                    ^------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:398:9: Error: Event invocations have to be prefixed by ""emit"".
+        Transfer(src, dst, wad);
+        ^---------------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:422:9: Error: Event invocations have to be prefixed by ""emit"".
+        Mint(guy, wad);
+        ^------------^
+blockchain/contracts/collected/DSToken_0x89d24A6b.sol:431:9: Error: Event invocations have to be prefixed by ""emit"".
+        Burn(guy, wad);
+        ^------------^
+"
+VaultProxy,blockchain/contracts/collected/VaultProxy_0x053c80eA.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/VaultProxy_0x053c80eA.sol:3:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.16;
+^---------------------^
+blockchain/contracts/collected/VaultProxy_0x053c80eA.sol:177:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.16;
+^---------------------^
+"
+PowerToken,blockchain/contracts/collected/PowerToken_0x5983B89F.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/PowerToken_0x5983B89F.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+Moonbirds,blockchain/contracts/collected/Moonbirds_0x23581767.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Moonbirds_0x23581767.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+MaticToken,blockchain/contracts/collected/MaticToken_0x7D1AfA7B.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/MaticToken_0x7D1AfA7B.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.2;
+^--------------------^
+"
+InitializableAdminUpgradeabilityProxy,blockchain/contracts/collected/InitializableAdminUpgradeabilityProxy_0x7fc66500.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InitializableAdminUpgradeabilityProxy_0x7fc66500.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+ERC1967Proxy,blockchain/contracts/collected/ERC1967Proxy_0x58D97B57.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/ERC1967Proxy_0x58D97B57.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+DSToken,blockchain/contracts/collected/DSToken_0x86fa0498.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/DSToken_0x86fa0498.sol:29:7: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    ) constant returns (bool);
+      ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:110:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function add(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:114:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function sub(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:118:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function mul(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:122:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function div(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:126:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function min(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:129:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function max(uint256 x, uint256 y) constant internal returns (uint256 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:138:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hadd(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:142:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hsub(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:146:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hmul(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:150:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hdiv(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:154:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hmin(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:157:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function hmax(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:166:39: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function imin(int256 x, int256 y) constant internal returns (int256 z) {
+                                      ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:169:39: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function imax(int256 x, int256 y) constant internal returns (int256 z) {
+                                      ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:179:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wadd(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:183:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wsub(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:187:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wmul(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:191:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wdiv(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:195:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wmin(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:198:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function wmax(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:208:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function radd(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:212:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rsub(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:216:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rmul(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:220:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rdiv(uint128 x, uint128 y) constant internal returns (uint128 z) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:224:40: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rpow(uint128 x, uint64 n) constant internal returns (uint128 z) {
+                                       ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:251:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rmin(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:254:41: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function rmax(uint128 x, uint128 y) constant internal returns (uint128) {
+                                        ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:258:30: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function cast(uint256 x) constant internal returns (uint128 z) {
+                             ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:265:28: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() constant returns (uint supply);
+                           ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:266:39: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf( address who ) constant returns (uint value);
+                                      ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:267:58: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance( address owner, address spender ) constant returns (uint _allowance);
+                                                         ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:287:28: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function totalSupply() constant returns (uint256) {
+                           ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:290:37: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function balanceOf(address src) constant returns (uint256) {
+                                    ^------^
+blockchain/contracts/collected/DSToken_0x86fa0498.sol:293:50: Error: The state mutability modifier ""constant"" was removed in version 0.5.0. Use ""view"" or ""pure"" instead.
+    function allowance(address src, address guy) constant returns (uint256) {
+                                                 ^------^
+"
+InitializableAdminUpgradeabilityProxy,blockchain/contracts/collected/InitializableAdminUpgradeabilityProxy_0x7Fc66500.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/InitializableAdminUpgradeabilityProxy_0x7Fc66500.sol:3:1: Error: Expected pragma, import directive or contract/interface/library definition.
+{{
+^
+"
+UniswapV2Factory,blockchain/contracts/collected/UniswapV2Factory_0xC0AEe478.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/UniswapV2Factory_0xC0AEe478.sol:437:20: Error: Expected identifier but got reserved keyword 'override'
+    address public override feeTo;
+                   ^------^
+"
+NXMToken,blockchain/contracts/collected/NXMToken_0xd7c49cee.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/NXMToken_0xd7c49cee.sol:1:1: Error: Source file requires different compiler version (current compiler is 0.5.0+commit.1d4f565a.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.7;
+^--------------------^
+"
+Vyper,blockchain/contracts/collected/Vyper_contract_0x6c3F90f0.sol,False,False,False,False,0,0,0,0,0,0,0,0,0,"Invalid compilation: 
+Invalid solc compilation blockchain/contracts/collected/Vyper_contract_0x6c3F90f0.sol:1:1: Error: Expected pragma, import directive or contract/interface/library definition.
+# @version 0.2.4
+^
+"
+GateChainToken,blockchain/contracts/collected/GateChainToken_0xe66747a1.sol,False,False,False,False,0,0,0,27,11,9,2,0,0,

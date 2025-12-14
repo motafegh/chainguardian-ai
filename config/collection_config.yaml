@@ -1,0 +1,238 @@
+# Dataset Collection Configuration - IMPROVED FOR 2-PHASE SYSTEM
+# Version: 2.0
+# Purpose: Reproducible, stratified contract sampling with phase separation
+# Author: Ali - ChainGuardian AI
+# Updated: December 2025
+
+# =============================================================================
+# DATASET CONFIGURATION
+# =============================================================================
+dataset:
+  target_size: 100  # Total contracts to collect
+  min_size: 50      # Minimum acceptable (if sources limited)
+
+  # Quality thresholds
+  min_extraction_success_rate: 0.70  # 70% features must extract successfully
+  min_contracts_per_class: 40        # For balanced ML training
+
+
+# =============================================================================
+# STRATIFIED SAMPLING STRATEGY
+# =============================================================================
+# WHY: Ensures diverse, representative dataset for ML training
+# INTERVIEWER TIP: "I used stratified sampling to prevent sampling bias"
+
+sampling_strategy:
+  strata:
+    # STRATUM 1: High-quality DeFi protocols (30%)
+    # ───────────────────────────────────────────────────────────────────────
+    - name: "high_quality"
+      percentage: 30
+      label: 0  # Safe (well-audited, high TVL)
+      criteria:
+        - top_by_tvl: 30           # Top 30 by Total Value Locked
+        - min_transactions: 10000   # Battle-tested
+        - audited: true             # Professional security audit
+      sources:
+        - defi_llama  # Primary source
+        - manual_curated  # Backup for known safe contracts
+
+    # STRATUM 2: Random verified contracts (40%)
+    # ───────────────────────────────────────────────────────────────────────
+    - name: "random_verified"
+      percentage: 40
+      label: 0  # Assumed safe (verified, no known exploits)
+      criteria:
+        - random_sample: true
+        - verified: true  # Source code available on Etherscan
+        - date_range: ["2020-01-01", "2024-12-31"]  # Modern Solidity
+        - min_transactions: 100  # Not toy contracts
+      sources:
+        - coingecko  # Token contracts
+        - etherscan_trending  # Popular contracts
+
+    # STRATUM 3: Known vulnerable contracts (20%)
+    # ───────────────────────────────────────────────────────────────────────
+    - name: "known_vulnerable"
+      percentage: 20
+      label: 1  # Vulnerable (documented exploits)
+      criteria:
+        - from_database: "rekt_news"  # Verified exploit database
+        - severity: ["high", "critical"]  # Significant losses
+        - has_source_code: true  # Must be verified to analyze
+      sources:
+        - manual_curated  # Hand-picked from rekt.news, SWC registry
+        - blockchain_security_db  # Known vulnerability databases
+
+    # STRATUM 4: Version diversity (10%)
+    # ───────────────────────────────────────────────────────────────────────
+    - name: "version_diversity"
+      percentage: 10
+      label: 0  # Assumed safe (old but no known exploits)
+      criteria:
+        - solidity_version: ["0.4.x", "0.5.x"]  # Pre-0.8.0 (no built-in overflow checks)
+        - date_range: ["2016-01-01", "2019-12-31"]
+        - verified: true
+      sources:
+        - manual_curated  # Historic important contracts (USDT, old Uniswap)
+
+
+# =============================================================================
+# QUALITY FILTERS
+# =============================================================================
+# Applied AFTER sampling to ensure quality
+
+filters:
+  exclude:
+    # Exclude unverified (can't analyze without source)
+    - unverified: true
+
+    # Exclude trivial contracts (not representative)
+    - too_simple: 
+        max_functions: 2
+        max_lines: 50
+
+    # Exclude duplicates (waste of dataset space)
+    - duplicates: 
+        method: "function_signature"  # Smart dedup (not full source)
+
+    # Exclude proxies without implementation (can't analyze)
+    - proxy_without_implementation: true
+
+
+# =============================================================================
+# OUTPUT CONFIGURATION - 2-PHASE SYSTEM
+# =============================================================================
+
+output:
+  # ─────────────────────────────────────────────────────────────────────────
+  # PHASE 1: SCRAPING OUTPUTS
+  # ─────────────────────────────────────────────────────────────────────────
+  scraping:
+    # Where to save .sol files
+    contracts_dir: "blockchain/contracts/collected"
+
+    # Checkpoint for resume capability
+    checkpoint_file: "data/scraping_checkpoint.json"
+
+    # Metadata report (reproducibility)
+    report_file: "data/scraping_report.yaml"
+
+    # Naming convention for .sol files
+    file_naming: "{contract_name}_{address_prefix}.sol"  # e.g., WETH_0xC02aaA39.sol
+
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PHASE 2: EXTRACTION OUTPUTS
+  # ─────────────────────────────────────────────────────────────────────────
+  extraction:
+    # Input: Where to read .sol files from
+    input_dir: "blockchain/contracts/collected"
+
+    # Output: Where to save feature datasets
+    features_dir: "data"
+    features_file: "features_v{version}.csv"  # Supports versioning
+
+    # Checkpoint for resume capability
+    checkpoint_file: "data/extraction_checkpoint_v{version}.json"
+
+    # Metadata report
+    report_file: "data/extraction_report_v{version}.yaml"
+
+    # Feature extraction settings
+    settings:
+      extraction_timeout: 300  # 5 min per contract (Slither can be slow)
+      resume_on_failure: true  # Continue from checkpoint if crashes
+      save_checkpoint_every: 10  # Save progress every 10 contracts
+
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # SHARED SETTINGS
+  # ─────────────────────────────────────────────────────────────────────────
+  metadata: true  # Include collection metadata in reports
+  format: "csv"   # Output format (csv for pandas/sklearn)
+
+
+# =============================================================================
+# ADVANCED SETTINGS
+# =============================================================================
+
+advanced:
+  # Checkpoint behavior
+  checkpoints:
+    auto_save: true
+    save_interval: 10  # contracts
+    backup_old_checkpoints: true
+
+  # Retry logic
+  retry:
+    max_retries: 3  # For API calls
+    backoff_factor: 2  # Exponential backoff (2, 4, 8 seconds)
+
+  # Parallel processing (future enhancement)
+  parallel:
+    enabled: false  # Set true when ready for multiprocessing
+    max_workers: 4  # CPU cores to use
+
+  # Logging
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+    file: "logs/collection_{timestamp}.log"
+    console: true
+
+
+# =============================================================================
+# VALIDATION RULES
+# =============================================================================
+# Ensure dataset meets ML training requirements
+
+validation:
+  # Minimum dataset size
+  min_total_contracts: 100
+
+  # Class balance (for classification)
+  min_vulnerable_contracts: 40
+  min_safe_contracts: 40
+  max_class_imbalance_ratio: 0.7  # 70/30 split max
+
+  # Feature extraction quality
+  min_extraction_success_rate: 0.70  # 70% must extract successfully
+  min_features_per_contract: 10  # At least 10 features
+
+  # Diversity
+  min_unique_addresses: 95  # <5% duplicates allowed
+  min_solidity_versions: 3  # Cover multiple compiler versions
+
+
+# =============================================================================
+# USAGE EXAMPLES (in comments)
+# =============================================================================
+
+# PHASE 1: Scraping
+# ─────────────────────────────────────────────────────────────────────────────
+# python scripts/1_scrape_contracts.py --config config/collection_config.yaml
+#
+# Output:
+# - blockchain/contracts/collected/*.sol (100+ files)
+# - data/scraping_checkpoint.json
+# - data/scraping_report.yaml
+
+
+# PHASE 2: Feature Extraction
+# ─────────────────────────────────────────────────────────────────────────────
+# python scripts/2_extract_features.py --config config/collection_config.yaml
+#
+# Output:
+# - data/features_v1.csv
+# - data/extraction_checkpoint_v1.json
+# - data/extraction_report_v1.yaml
+
+
+# PHASE 2 (Version 2 - after changing pipeline.py)
+# ─────────────────────────────────────────────────────────────────────────────
+# python scripts/2_extract_features.py --config config/collection_config.yaml --version 2
+#
+# Output:
+# - data/features_v2.csv (NEW features, SAME contracts)
+# - data/extraction_checkpoint_v2.json
+# - data/extraction_report_v2.yaml

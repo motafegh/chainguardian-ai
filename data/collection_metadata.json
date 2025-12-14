@@ -1,0 +1,75 @@
+{
+  "generated_at": "2025-12-14T16:22:00.846607",
+  "config_version": "unknown",
+  "target_size": 500,
+  "min_size": 300,
+  "actual_size": 353,
+  "scraping_workers": 5,
+  "analysis_workers": 4,
+  "elapsed_time_seconds": 85.49,
+  "elapsed_time_formatted": "1m 25s",
+  "strata": {
+    "known_tokens": {
+      "population_size": 59,
+      "sampled": 59,
+      "percentage": 16.7
+    },
+    "known_vulnerable": {
+      "population_size": 76,
+      "sampled": 75,
+      "percentage": 21.2
+    },
+    "version_diversity": {
+      "population_size": 25,
+      "sampled": 25,
+      "percentage": 7.1
+    },
+    "github_contracts": {
+      "population_size": 9,
+      "sampled": 9,
+      "percentage": 2.5
+    },
+    "arbitrum_contracts": {
+      "population_size": 0,
+      "sampled": 0,
+      "percentage": 0.0
+    },
+    "nft_projects": {
+      "population_size": 59,
+      "sampled": 25,
+      "percentage": 7.1
+    },
+    "polygon_contracts": {
+      "population_size": 10,
+      "sampled": 10,
+      "percentage": 2.8
+    },
+    "dex_pools": {
+      "population_size": 51,
+      "sampled": 50,
+      "percentage": 14.2
+    },
+    "high_quality": {
+      "population_size": 113,
+      "sampled": 100,
+      "percentage": 28.3
+    }
+  },
+  "filters_applied": {
+    "exclude": [
+      {
+        "unverified": false
+      },
+      {
+        "too_simple": {
+          "max_functions": 0
+        }
+      },
+      {
+        "duplicates": true
+      }
+    ]
+  },
+  "output_format": "csv",
+  "output_path": "data/collected_dataset.csv"
+}
