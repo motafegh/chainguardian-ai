@@ -1,32 +1,25 @@
-actual_size: 200
-config_version: '1.0'
-generated_at: '2025-12-14T16:45:46.043655'
+actual_size: 282
+config_version: '2.0'
+generated_at: '2025-12-14T22:16:57.060968'
+parallel_processing:
+  coingecko_workers: 5
+  defillama_workers: 10
+  etherscan_workers: 5
+  feature_extraction_workers: 5
 strata:
-  arbitrum_contracts:
-    population_size: 0
-    sampled: 0
-  dex_pools:
-    population_size: 0
-    sampled: 0
-  github_contracts:
-    population_size: 0
-    sampled: 0
   high_quality:
-    population_size: 113
-    sampled: 100
-  known_tokens:
-    population_size: 0
-    sampled: 0
+    population_size: 410
+    sampled: 99
   known_vulnerable:
-    population_size: 76
-    sampled: 75
-  nft_projects:
-    population_size: 0
-    sampled: 0
-  polygon_contracts:
-    population_size: 0
-    sampled: 0
+    population_size: 16
+    sampled: 11
+  random_verified:
+    population_size: 7
+    sampled: 6
+  token_lists:
+    population_size: 1243
+    sampled: 154
   version_diversity:
-    population_size: 25
-    sampled: 25
-target_size: 500
+    population_size: 20
+    sampled: 12
+target_size: 300

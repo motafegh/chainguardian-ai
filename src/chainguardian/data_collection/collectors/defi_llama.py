@@ -1,152 +1,109 @@
 """
 DeFiLlama API Collector
-Collects top DeFi protocols by TVL with optimized performance and timeout handling
+Collects top DeFi protocols by TVL
 """
 
-from typing import List, Dict, Optional
+from typing import List, Dict
 import requests
 import time
-import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base import BaseCollector
-
-logger = logging.getLogger(__name__)
 
 class DeFiLlamaCollector(BaseCollector):
     """
-    Collect top DeFi protocols from DeFiLlama API with optimized performance
+    Collect top DeFi protocols from DeFiLlama API
     
     API: https://api.llama.fi
+    Features:
+    - Parallel detail fetching (10 threads)
+    - Rate limiting per thread
+    - Progress tracking
     """
     
     BASE_URL = "https://api.llama.fi"
+    MAX_WORKERS = 10  # Parallel threads for detail fetching
     
     def collect(self) -> List[Dict]:
-        """Collect top N protocols by TVL with performance optimizations"""
+        """Collect top N protocols by TVL"""
         
         criteria = self.config.get('criteria', {})
         
         # Handle both formats from config
         if isinstance(criteria, list):
-            # Format: [{'top_by_tvl': 30}, {...}]
-            top_n = next((c.get('top_by_tvl') for c in criteria if 'top_by_tvl' in c), 30)
-            min_transactions = next((c.get('min_transactions') for c in criteria if 'min_transactions' in c), 1000)
+            top_n = next((c.get('top_by_tvl') for c in criteria if 'top_by_tvl' in c), 1000)
         else:
-            # Format: {'top_by_tvl': 30}
-            top_n = criteria.get('top_by_tvl', 30)
-            min_transactions = criteria.get('min_transactions', 1000)
+            top_n = criteria.get('top_by_tvl', 1000)
         
         chain = 'Ethereum'
         
         self.log_collection_start(self.config.get('name', 'DeFiLlama'))
         
         try:
-            logger.info(f"Querying DeFiLlama for all protocols...")
+            # ================================================================
+            # STEP 1: FETCH ALL PROTOCOLS
+            # ================================================================
+            self.logger.info(f"Querying DeFiLlama for all protocols...")
             response = requests.get(f"{self.BASE_URL}/protocols", timeout=30)
             response.raise_for_status()
             all_protocols = response.json()
             
-            logger.info(f"Received {len(all_protocols)} total protocols")
+            self.logger.info(f"✓ Received {len(all_protocols)} total protocols")
             
-            # Filter by chain
+            # ================================================================
+            # STEP 2: FILTER BY CHAIN
+            # ================================================================
             chain_protocols = [
                 p for p in all_protocols
                 if chain in p.get('chains', [])
             ]
             
-            logger.info(f"Filtered to {len(chain_protocols)} on {chain}")
+            self.logger.info(f"✓ Filtered to {len(chain_protocols)} protocols on {chain}")
             
-            # Sort by TVL
+            # ================================================================
+            # STEP 3: SORT AND SELECT TOP N
+            # ================================================================
             chain_protocols.sort(key=lambda x: x.get('tvl', 0), reverse=True)
-            
-            # Get top N
             top_protocols = chain_protocols[:top_n]
             
-            # Extract addresses with optimized approach
+            self.logger.info(f"✓ Selected top {len(top_protocols)} protocols by TVL")
+            
+            # Calculate time estimate
+            # Sequential: top_n × 0.5s
+            # Parallel (10 workers): top_n × 0.5s / 10
+            estimated_time = len(top_protocols) * 0.5 / self.MAX_WORKERS
+            self.logger.info(
+                f"   Querying details in parallel ({self.MAX_WORKERS} threads) - "
+                f"estimated time: ~{estimated_time:.0f}s"
+            )
+            
+            # ================================================================
+            # STEP 4: PARALLEL DETAIL FETCHING
+            # ================================================================
             contracts = []
-            
-            # First pass: use addresses from main API response if available
-            for i, protocol in enumerate(top_protocols):
-                if i % 50 == 0:
-                    logger.info(f"Processing protocol {i+1}/{len(top_protocols)}")
-                
-                # Check if address is already in main response
-                address = protocol.get('address')
-                if address and self.validate_address(address):
-                    contracts.append({
-                        'address': address,
-                        'name': protocol['name'],
-                        'source': 'defillama',
-                        'metadata': {
-                            'tvl': protocol.get('tvl', 0),
-                            'category': protocol.get('category', 'unknown'),
-                            'chain': chain
-                        }
-                    })
-                    logger.debug(f"  ✓ Added {protocol['name']} (from main API)")
-            
-            # Second pass: get details for protocols without addresses
-            protocols_without_address = [
-                p for p in top_protocols 
-                if not p.get('address') or not self.validate_address(p.get('address'))
-            ]
-            
-            logger.info(f"Need to fetch details for {len(protocols_without_address)} protocols")
-            
-            if protocols_without_address:
-                # Use parallel processing with a timeout
-                contracts.extend(self._fetch_protocol_details_parallel(protocols_without_address, chain))
-            
-            self.log_collection_complete(len(contracts))
-            return contracts
-            
-        except Exception as e:
-            logger.error(f"DeFiLlama collection failed: {e}")
-            return []
-    
-    def _fetch_protocol_details_parallel(self, protocols: List[Dict], chain: str) -> List[Dict]:
-        """Fetch protocol details in parallel with timeout handling"""
-        contracts = []
-        
-        # Limit the number of protocols to fetch details for
-        max_details = 100  # Limit to prevent extremely long runtimes
-        if len(protocols) > max_details:
-            protocols = protocols[:max_details]
-            logger.info(f"Limiting details fetch to top {max_details} protocols by TVL")
-        
-        # Use ThreadPoolExecutor for parallel API calls
-        max_workers = 5  # Limit concurrent requests to avoid overwhelming the API
-        batch_size = 20  # Increased batch size
-        
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all tasks
-            future_to_protocol = {
-                executor.submit(self._get_protocol_detail, protocol['slug']): protocol
-                for protocol in protocols
-            }
-            
-            # Process completed tasks with timeout
             completed = 0
-            for future in as_completed(future_to_protocol, timeout=300):  # 5 minute timeout
-                if completed % batch_size == 0:
-                    logger.info(f"Completed {completed}/{len(protocols)} protocol details")
-                
-                protocol = future_to_protocol[future]
+            
+            # Thread-safe counter for progress
+            def fetch_and_process(protocol_data):
+                """Fetch details for one protocol and extract address"""
+                protocol, index = protocol_data
                 
                 try:
-                    detail = future.result(timeout=10)  # 10 second timeout per request
+                    detail = self._get_protocol_detail(protocol['slug'])
                     
                     if detail:
                         # Try different address formats
                         address = None
                         if 'address' in detail:
                             if isinstance(detail['address'], dict):
-                                address = detail['address'].get('ethereum') or detail['address'].get('Ethereum')
+                                address = (
+                                    detail['address'].get('ethereum') or 
+                                    detail['address'].get('Ethereum')
+                                )
                             elif isinstance(detail['address'], str):
                                 address = detail['address']
                         
                         if address and self.validate_address(address):
-                            contracts.append({
+                            return {
                                 'address': address,
                                 'name': protocol['name'],
                                 'source': 'defillama',
@@ -155,38 +112,56 @@ class DeFiLlamaCollector(BaseCollector):
                                     'category': protocol.get('category', 'unknown'),
                                     'chain': chain
                                 }
-                            })
-                            logger.debug(f"  ✓ Added {protocol['name']} (from detail API)")
-                        else:
-                            logger.debug(f"  ✗ No valid address for {protocol['name']}")
+                            }
                     
-                    completed += 1
-                
-                except TimeoutError:
-                    logger.warning(f"Timeout fetching details for {protocol['name']}")
-                    completed += 1
-                
+                    # Rate limiting inside thread
+                    time.sleep(0.5)
+                    
                 except Exception as e:
-                    logger.warning(f"Error fetching details for {protocol['name']}: {e}")
-                    completed += 1
-        
-        return contracts
-    
-    def _get_protocol_detail(self, slug: str) -> Optional[Dict]:
-        """Get protocol details with improved error handling and rate limiting"""
-        try:
-            # Add a small delay to respect rate limits
-            time.sleep(0.1)
+                    self.logger.debug(f"Failed to fetch {protocol.get('name', 'unknown')}: {e}")
+                
+                return None
             
+            # Create thread pool and submit tasks
+            with ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
+                # Submit all tasks
+                futures = {
+                    executor.submit(fetch_and_process, (protocol, i)): i
+                    for i, protocol in enumerate(top_protocols, 1)
+                }
+                
+                # Process results as they complete
+                for future in as_completed(futures):
+                    completed += 1
+                    
+                    # Progress updates
+                    if completed % 50 == 0 or completed == 1:
+                        self.logger.info(
+                            f"   [{completed}/{len(top_protocols)}] "
+                            f"Processed | Found {len(contracts)} valid addresses"
+                        )
+                    
+                    result = future.result()
+                    if result:
+                        contracts.append(result)
+                        
+                        # Log milestone finds
+                        if len(contracts) in [10, 25, 50, 100, 200, 300]:
+                            self.logger.info(f"   🎯 Milestone: {len(contracts)} valid addresses found!")
+            
+            self.logger.info(f"✓ Completed DeFiLlama collection")
+            self.log_collection_complete(len(contracts))
+            return contracts
+            
+        except Exception as e:
+            self.logger.error(f"DeFiLlama collection failed: {e}")
+            return []
+    
+    def _get_protocol_detail(self, slug: str) -> Dict:
+        """Get protocol details"""
+        try:
             response = requests.get(f"{self.BASE_URL}/protocol/{slug}", timeout=10)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.Timeout:
-            logger.warning(f"Timeout fetching details for {slug}")
-            return None
-        except requests.exceptions.RequestException as e:
-            logger.warning(f"Error fetching details for {slug}: {e}")
-            return None
-        except Exception as e:
-            logger.warning(f"Unexpected error fetching details for {slug}: {e}")
+        except:
             return None

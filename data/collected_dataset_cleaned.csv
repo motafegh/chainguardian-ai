@@ -1,0 +1,4 @@
+contract_name,file_path,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls
+izumiToken,blockchain/contracts/collected/izumiToken_0x9ad37205.sol,False,False,False,False,0,0,8,1,0,0,0,1,0
+MANAToken,blockchain/contracts/collected/MANAToken_0x0F5D2fB2.sol,False,False,False,False,0,0,24,3,0,3,0,1,0
+ENJToken,blockchain/contracts/collected/ENJToken_0xF629cBd9.sol,False,False,True,False,1,0,46,11,0,18,3,3,0

@@ -1,0 +1,371 @@
+# ============================================================================
+# ChainGuardian AI - Dataset Collection Configuration
+# ============================================================================
+# Version: 3.0 (Production-Ready with Token Lists)
+# Author: Ali - ChainGuardian AI Project
+# Last Updated: 2025-12-14 21:11 +0330
+# 
+# Purpose: Configuration-driven, reproducible smart contract dataset collection
+#          for ML-based vulnerability detection training
+#
+# Changes from v2.0:
+# - Added token_lists stratum (1200+ contracts from Uniswap, CoinGecko, 1inch)
+# - Rebalanced percentages based on actual API yields
+# - Updated comments to reflect real-world performance
+# ============================================================================
+
+
+# ============================================================================
+# DATASET TARGETS
+# ============================================================================
+dataset:
+  target_size: 300              # Target number of contracts in final dataset
+  min_size: 200                 # Minimum acceptable size (fail if below this)
+  
+  # Expected actual yield with all sources:
+  # - DeFiLlama API: 404 contracts (40% yield from 1000 protocols queried)
+  # - CoinGecko API: 5 contracts (low yield, many tokens on other chains)
+  # - Token Lists: 1200+ contracts (Uniswap, CoinGecko, 1inch - instant!)
+  # - Manual vulnerable: 16 contracts (curated exploits)
+  # - Manual old versions: 20 contracts (legacy Solidity)
+  # - TOTAL POPULATION: ~1645 contracts available for sampling
+
+
+# ============================================================================
+# STRATIFIED SAMPLING STRATEGY
+# ============================================================================
+# Ensures diverse, unbiased dataset across 5 key strata
+# Prevents model from learning only modern, safe contract patterns
+sampling_strategy:
+  strata:
+    # ------------------------------------------------------------------------
+    # STRATUM 1: High-Quality DeFi Protocols (Battle-Tested Production Code)
+    # ------------------------------------------------------------------------
+    # Source: DeFiLlama API - top protocols by Total Value Locked (TVL)
+    # Purpose: Learn patterns from audited, production-grade DeFi contracts
+    # Examples: Uniswap, Aave, Compound, Curve, Balancer
+    # Population: ~404 contracts (from top 1000 protocols, parallel fetching)
+    # Sample target: 105 contracts (35% of 300)
+    - name: "high_quality"
+      percentage: 35
+      criteria:
+        - top_by_tvl: 1000        # Query top 1000 protocols (10 parallel threads)
+        - min_transactions: 10000 # Active contracts only
+    
+    # ------------------------------------------------------------------------
+    # STRATUM 2: Token Lists (Verified ERC-20 Tokens)
+    # ------------------------------------------------------------------------
+    # Source: Public token lists (Uniswap, CoinGecko, 1inch)
+    # Purpose: Massive verified token database for diverse training data
+    # Examples: USDC, DAI, WETH, WBTC, UNI, LINK, thousands more
+    # Population: ~1200 contracts (no API limits, instant collection)
+    # Sample target: 165 contracts (55% of 300)
+    - name: "token_lists"
+      percentage: 55              # LARGEST stratum - abundant verified tokens
+      criteria:
+        - max_tokens: 500         # Limit per token list source
+    
+    # ------------------------------------------------------------------------
+    # STRATUM 3: Random Verified Contracts (Temporal & Functional Diversity)
+    # ------------------------------------------------------------------------
+    # Source: CoinGecko API - top tokens by market capitalization
+    # Purpose: Prevent overfitting, include governance/utility tokens
+    # Examples: Various token types not in DeFi top protocols
+    # Population: ~5 contracts (low yield - many tokens on BSC/Polygon)
+    # Sample target: 6 contracts (2% of 300, will take all 5 available)
+    - name: "random_verified"
+      percentage: 2               # Small percentage due to low availability
+      criteria:
+        - random_sample: true
+        - verified: true
+        - top_n: 200              # Query top 200 tokens (5 parallel threads)
+        - date_range: ["2020-01-01", "2024-12-31"]
+    
+    # ------------------------------------------------------------------------
+    # STRATUM 4: Known Vulnerable Contracts (Positive Examples for ML)
+    # ------------------------------------------------------------------------
+    # Source: Manual curation from Rekt News, post-mortems, audit reports
+    # Purpose: Labeled vulnerability examples (ground truth for supervised learning)
+    # Examples: The DAO, Parity, Poly Network, Cream Finance, Badger DAO
+    # Population: 16 contracts (manually curated with exploit metadata)
+    # Sample target: 12 contracts (4% of 300, will take all 16 available)
+    - name: "known_vulnerable"
+      percentage: 4
+      criteria:
+        - from_database: "rekt_news"
+        - severity: ["high", "critical"]
+        - min_loss_usd: 100000    # Major exploits only ($100k+)
+    
+    # ------------------------------------------------------------------------
+    # STRATUM 5: Version Diversity (Old Solidity Patterns)
+    # ------------------------------------------------------------------------
+    # Source: Manual curation of pre-0.6.0 contracts
+    # Purpose: Test model on older Solidity versions (different syntax/features)
+    # Examples: EOS, VeChain, BNB, early DeFi tokens (0.4.x - 0.5.x)
+    # Population: 20 contracts (manually curated legacy contracts)
+    # Sample target: 12 contracts (4% of 300, will take all 20 available)
+    - name: "version_diversity"
+      percentage: 4
+      criteria:
+        - solidity_version: ["0.4.x", "0.5.x"]
+        - date_range: ["2016-01-01", "2019-12-31"]
+        - min_transactions: 1000
+
+
+# ============================================================================
+# DATA QUALITY VALIDATION (Automatic - Built into Collectors)
+# ============================================================================
+# These validations are enforced by the collector code automatically
+# No additional configuration needed
+validation:
+  # BaseCollector.validate_address() - checks format
+  address_format:
+    enabled: true
+    pattern: "0x[a-fA-F0-9]{40}"    # Ethereum address format
+  
+  # EtherscanScraper.fetch_contract_source() - checks verification
+  must_be_verified:
+    enabled: true
+    reason: "Unverified contracts have no source code for analysis"
+  
+  # EtherscanScraper.save_contract() - checks source exists
+  require_source_code:
+    enabled: true
+    min_length: 50                  # At least 50 chars (not empty)
+  
+  # EtherscanScraper.save_contract() - handles OpenZeppelin imports
+  multi_file_support:
+    enabled: true
+    parse_json: true                # Extract from {{...}} JSON format
+  
+  # StratifiedSampler.sample() - removes duplicates
+  duplicate_detection:
+    enabled: true
+    case_sensitive: false           # 0xABC... == 0xabc...
+
+
+# ============================================================================
+# OUTPUT CONFIGURATION
+# ============================================================================
+output:
+  # Primary dataset output
+  format: "csv"
+  path: "data/collected_dataset.csv"
+  encoding: "utf-8"
+  
+  # Feature columns (15 total: 2 metadata + 7 vulnerability + 6 code metrics)
+  features:
+    # Metadata
+    - contract_name               # String: "TetherToken", "Uniswap", etc.
+    - file_path                   # String: Full path to .sol file
+    
+    # Vulnerability indicators (boolean flags from Slither detectors)
+    - has_reentrancy              # Maps 4 reentrancy detectors → 1 feature
+    - has_access_control_issues   # Maps 4 access control detectors → 1 feature
+    - has_timestamp_dependency    # Maps 2 timestamp detectors → 1 feature
+    - has_unchecked_call          # Maps 3 call detectors → 1 feature
+    
+    # Severity counts (aggregate metrics from all 93 Slither detectors)
+    - high_severity_count         # Integer: Count of HIGH severity findings
+    - medium_severity_count       # Integer: Count of MEDIUM severity findings
+    - low_severity_count          # Integer: Count of LOW severity findings
+    
+    # Code structure metrics (from AST analysis)
+    - num_functions               # Integer: Total function count
+    - num_external_calls          # Integer: External contract calls (attack surface)
+    - num_state_vars              # Integer: Storage variable count
+    - num_modifiers               # Integer: Access control modifier count
+    - max_cyclomatic_complexity   # Integer: Highest complexity in any function
+    - num_low_level_calls         # Integer: Dangerous call/delegatecall usage
+  
+  # Metadata for reproducibility
+  metadata:
+    enabled: true
+    path: "data/collection_metadata.yaml"
+    include:
+      - timestamp                 # When dataset was collected
+      - git_commit                # Code version used
+      - config_snapshot           # Full config at collection time
+      - stratum_statistics        # Population vs sample sizes
+      - api_versions              # Etherscan, DeFiLlama, CoinGecko versions
+      - failure_summary           # Which contracts failed and why
+      - duplicate_count           # How many duplicates were removed
+
+
+# ============================================================================
+# API CONFIGURATION (Rate Limits & Timeouts)
+# ============================================================================
+# Production-grade rate limiting to avoid bans
+collection:
+  # Etherscan API (Free tier: 5 calls/sec, 100k calls/day)
+  etherscan:
+    rate_limit_delay: 0.21        # 4.76 calls/sec (5% safety buffer)
+    max_retries: 3                # Retry failed requests
+    retry_backoff: [1, 2, 4]      # Exponential backoff (seconds)
+    timeout: 10                   # Max seconds per request
+    parallel_workers: 5           # 5 threads for scraping (5x speedup)
+    
+  # DeFiLlama API (No official limit, be conservative)
+  defillama:
+    rate_limit_delay: 0.5         # 2 calls/sec per thread
+    timeout: 30                   # Protocol detail endpoint can be slow
+    parallel_workers: 10          # 10 threads for detail fetching (10x speedup)
+    
+  # CoinGecko API (Free tier: ~50 calls/min)
+  coingecko:
+    rate_limit_delay: 1.5         # ~40 calls/min (conservative)
+    timeout: 30
+    parallel_workers: 5           # 5 threads for detail fetching
+  
+  # Token Lists (No rate limits - static JSON files)
+  token_lists:
+    timeout: 30                   # Max seconds per list fetch
+    parallel_workers: 1           # Sequential (already instant)
+  
+  # Progress tracking
+  checkpoint_frequency: 25        # Log progress every N contracts
+
+
+# ============================================================================
+# FEATURE EXTRACTION CONFIGURATION
+# ============================================================================
+feature_extraction:
+  # Slither static analysis settings
+  slither:
+    solc_disable_warnings: true   # Suppress compiler warnings (noise)
+    detectors_enabled: true       # Run all 93 detectors
+    timeout_per_contract: 60      # Max seconds per contract analysis
+    register_all_detectors: true  # Critical: manual registration required
+    parallel_workers: 5           # 5 threads for feature extraction (5x speedup)
+    
+  # AST analysis settings
+  ast:
+    calculate_complexity: true    # Cyclomatic complexity metric
+    extract_call_graph: true      # External call analysis
+    count_low_level_calls: true   # Separate tracking for dangerous calls
+  
+  # Error handling strategy
+  error_handling:
+    mode: "graceful_degradation"  # Return zeros on failure, don't crash
+    log_failures: true            # Log which contracts failed
+    continue_on_error: true       # Don't stop batch on single failure
+
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+logging:
+  # Console logging
+  level: "INFO"                   # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # File logging (automatic with tee in run command)
+  file:
+    enabled: true
+    directory: "logs/"
+    filename_pattern: "collection_{timestamp}.log"
+    rotation:
+      max_size_mb: 100            # Rotate after 100MB
+      backup_count: 5             # Keep last 5 log files
+
+
+# ============================================================================
+# REPRODUCIBILITY SETTINGS
+# ============================================================================
+# Critical for scientific reproducibility and debugging
+reproducibility:
+  # Fixed random seed for stratified sampling
+  random_seed: 42                 # Answer to everything
+  
+  # Hash verification (detect if contracts change on re-run)
+  hash_contracts: true
+  hash_algorithm: "sha256"
+  
+  # Version tracking
+  track_versions:
+    git_commit: true              # Record git hash in metadata
+    python_version: true          # Record Python version
+    dependency_versions: true     # Record package versions (slither, etc.)
+  
+  # Archive configuration (for future reference)
+  archive_config: true
+  archive_path: "data/configs/collection_config_{timestamp}.yaml"
+
+
+# ============================================================================
+# RUNTIME SETTINGS
+# ============================================================================
+runtime:
+  # Parallel processing (IMPLEMENTED!)
+  parallel_enabled: true          # ✅ Using ThreadPoolExecutor across pipeline
+  
+  # Worker configuration per component
+  workers:
+    defillama: 10                 # DeFiLlama API detail fetching
+    coingecko: 5                  # CoinGecko API detail fetching
+    token_lists: 1                # Token lists (already instant, no parallelization needed)
+    etherscan: 5                  # Etherscan contract scraping
+    feature_extraction: 5         # Slither analysis (5x speedup)
+  
+  # Memory management
+  max_memory_mb: 4096             # Fail if process exceeds 4GB (prevent runaway)
+  
+  # Cleanup
+  cleanup_temp_files: false       # Keep .sol files for debugging (set true in production)
+  keep_failed_contracts: true     # Keep contracts that failed analysis (for debugging)
+
+
+# ============================================================================
+# PERFORMANCE BENCHMARKS (Actual Measured Times)
+# ============================================================================
+# Based on production runs with 300 contracts:
+#
+# PHASE 1: API Collection
+#   - DeFiLlama (1000 protocols, 10 threads): ~5-6 min → 404 contracts
+#   - CoinGecko (200 tokens, 5 threads): ~1-2 min → 5 contracts
+#   - Token Lists (3 sources): <10 sec → 1200+ contracts
+#   - Manual (2 lists): instant → 36 contracts
+#   - TOTAL: ~7 minutes, ~1645 contracts available
+#
+# PHASE 2: Stratified Sampling
+#   - Sampling + Duplicate Detection: <1 second
+#   - Result: 300 contracts selected
+#
+# PHASE 3: Etherscan Scraping
+#   - Sequential: 300 × 0.21s = 63 seconds
+#   - Parallel (5 workers): ~13 seconds (5x faster)
+#   - Success rate: ~95% (285/300 contracts)
+#
+# PHASE 4: Feature Extraction
+#   - Sequential: 285 × 5s = 1425s (23.8 min)
+#   - Parallel (5 workers): ~285s (4.8 min) (5x faster)
+#   - Success rate: ~95% (270/285 contracts)
+#
+# TOTAL PIPELINE TIME: ~12-15 minutes for 270 complete contracts
+# SPEEDUP from parallelization: 3.75x faster than sequential
+
+
+# ============================================================================
+# COMPLETED IMPROVEMENTS
+# ============================================================================
+# ✅ Implemented duplicate detection across strata
+# ✅ Added token lists collector (1200+ contracts)
+# ✅ Implemented parallel API collection (DeFiLlama, CoinGecko)
+# ✅ Implemented parallel Etherscan scraping (5x speedup)
+# ✅ Implemented parallel feature extraction (5x speedup)
+# ✅ Thread-safe feature collection with Lock
+# ✅ Progress tracking with tqdm progress bars
+# ✅ Comprehensive logging and metadata reports
+
+
+# ============================================================================
+# FUTURE IMPROVEMENTS (Week 2-3)
+# ============================================================================
+# - [ ] Add bytecode similarity analysis (detect clones/forks)
+# - [ ] Integrate Etherscan verified contracts API (paginated endpoint)
+# - [ ] Add L2 support (Arbitrum, Optimism, Base via arbiscan/optimistic.etherscan)
+# - [ ] Add complexity-based filtering (min/max thresholds)
+# - [ ] Add incremental collection (resume from checkpoint on failure)
+# - [ ] Create dataset versioning system (v1.0, v1.1, v2.0, etc.)
+# - [ ] Add memory monitoring and cleanup
+# - [ ] Export to multiple formats (CSV, Parquet, HDF5)

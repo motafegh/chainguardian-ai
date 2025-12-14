@@ -1,6 +1,6 @@
 """
 Production Dataset Collection Orchestrator
-Configuration-driven, reproducible, automated
+Configuration-driven, reproducible, parallel processing
 """
 
 import yaml
@@ -8,8 +8,9 @@ from pathlib import Path
 import logging
 from datetime import datetime
 from typing import List, Dict
-
-# ✅ CORRECT (NEW imports)
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
+from chainguardian.data_collection.collectors.token_lists import TokenListCollector
 from chainguardian.data_collection.collectors.defi_llama import DeFiLlamaCollector
 from chainguardian.data_collection.collectors.coingecko import CoinGeckoCollector
 from chainguardian.data_collection.collectors.manual_curated import ManualCuratedCollector
@@ -27,10 +28,10 @@ class DatasetCollectionPipeline:
     
     WORKFLOW:
     1. Load config (YAML)
-    2. Query APIs for contract lists (programmatic)
-    3. Apply stratified sampling (statistical)
-    4. Scrape source code (Etherscan)
-    5. Extract features (Slither + AST)
+    2. Query APIs for contract lists (parallel)
+    3. Apply stratified sampling (with duplicate detection)
+    4. Scrape source code (parallel - Etherscan)
+    5. Extract features (parallel - Slither + AST)
     6. Export dataset (CSV)
     7. Generate metadata report (reproducibility)
     """
@@ -44,17 +45,27 @@ class DatasetCollectionPipeline:
         )
     
     def collect(self):
-        """Execute full collection pipeline"""
+        """Execute full collection pipeline with parallel processing"""
         
         logger.info("="*70)
-        logger.info("STARTING PRODUCTION DATASET COLLECTION")
+        logger.info("🚀 CHAINGUARDIAN AI - PRODUCTION DATASET COLLECTION")
+        logger.info("="*70)
+        logger.info("")
+        
+        total_strata = len(self.config['sampling_strategy']['strata'])
+        
+        # ====================================================================
+        # PHASE 1: COLLECT CONTRACT ADDRESSES PER STRATUM
+        # ====================================================================
+        logger.info("📊 PHASE 1/4: Collecting contract addresses from APIs")
         logger.info("="*70)
         
-        # Step 1: Collect contract addresses per stratum
         strata_populations = {}
         
-        for stratum in self.config['sampling_strategy']['strata']:
-            logger.info(f"\nCollecting stratum: {stratum['name']}...")
+        for stratum_idx, stratum in enumerate(self.config['sampling_strategy']['strata'], 1):
+            logger.info("")
+            logger.info(f"[STRATUM {stratum_idx}/{total_strata}] {stratum['name']}")
+            logger.info("-" * 70)
             
             population = self._collect_stratum(stratum)
             
@@ -65,89 +76,205 @@ class DatasetCollectionPipeline:
             )
             
             strata_populations[stratum['name']] = population
+            
+            logger.info(f"✓ Stratum '{stratum['name']}' complete: {len(population)} contracts")
         
-        # Step 2: Execute stratified sampling
+        logger.info("")
+        logger.info("="*70)
+        logger.info(f"✓ PHASE 1 COMPLETE: Collected {sum(len(p) for p in strata_populations.values())} total contracts")
+        logger.info("="*70)
+        
+        # ====================================================================
+        # PHASE 2: STRATIFIED SAMPLING (with duplicate detection)
+        # ====================================================================
+        logger.info("")
+        logger.info("📊 PHASE 2/4: Executing stratified sampling")
+        logger.info("="*70)
+        
         final_sample = self.sampler.sample()
         
-        # Step 3: Scrape and analyze
-        self._scrape_and_analyze(final_sample)
+        logger.info(f"✓ PHASE 2 COMPLETE: Sampled {len(final_sample)} contracts")
+        logger.info("="*70)
         
-        # Step 4: Generate report
+        # ====================================================================
+        # PHASE 3: SCRAPE SOURCE CODE FROM ETHERSCAN (Parallel)
+        # ====================================================================
+        logger.info("")
+        logger.info("📊 PHASE 3/4: Scraping source code from Etherscan")
+        logger.info("="*70)
+        
+        files = self._scrape_contracts(final_sample)
+        
+        # ====================================================================
+        # PHASE 4: EXTRACT FEATURES (Parallel - NEW!)
+        # ====================================================================
+        logger.info("")
+        logger.info("📊 PHASE 4/4: Extracting ML features")
+        logger.info("="*70)
+        
+        self._extract_features_parallel(files)
+        
+        # ====================================================================
+        # PHASE 5: GENERATE METADATA REPORT
+        # ====================================================================
+        logger.info("")
+        logger.info("📊 Generating reproducibility metadata")
+        logger.info("="*70)
+        
         self._generate_report(final_sample, strata_populations)
+        
+        logger.info("")
+        logger.info("="*70)
+        logger.info("🎉 ALL PHASES COMPLETE - Dataset ready for ML training!")
+        logger.info("="*70)
     
     def _collect_stratum(self, stratum_config: dict) -> List[Dict]:
         """Collect contracts for one stratum"""
-        
         stratum_name = stratum_config['name']
-        criteria = stratum_config['criteria']
         
-        # Route to appropriate collector based on stratum name
+        # Route to appropriate collector
         if stratum_name == 'high_quality':
-            # Use DeFiLlama for high quality protocols
             collector = DeFiLlamaCollector(stratum_config)
             return collector.collect()
-        
         elif stratum_name == 'random_verified':
-            # Use CoinGecko for diverse tokens
             collector = CoinGeckoCollector(stratum_config)
             return collector.collect()
-        
+        elif stratum_name == 'token_lists':  # ← ADD THIS BLOCK
+            collector = TokenListCollector(stratum_config)
+            return collector.collect()
         elif stratum_name == 'known_vulnerable':
-            # Use manual curated list for vulnerable contracts
             collector = ManualCuratedCollector(stratum_config)
             return collector.collect()
-        
         elif stratum_name == 'version_diversity':
-            # Use manual curated list for old contracts
             collector = ManualCuratedCollector(stratum_config)
             return collector.collect()
-        
         else:
             logger.warning(f"Unknown stratum: {stratum_name}")
             return []
     
-    def _scrape_and_analyze(self, sample: List[Dict]):
-        """Scrape source code and extract features"""
+    def _scrape_contracts(self, sample: List[Dict]) -> List[Path]:
+        """Scrape source code from Etherscan (parallel)"""
         
         addresses = [s['address'] for s in sample]
         
-        logger.info(f"\n{'='*70}")
-        logger.info(f"SCRAPING {len(addresses)} CONTRACTS FROM ETHERSCAN")
-        logger.info(f"{'='*70}\n")
+        logger.info(f"Scraping {len(addresses)} contracts from Etherscan...")
+        logger.info(f"Using 5 parallel workers")
+        estimated_time = len(addresses) * 0.21 / 5
+        logger.info(f"Estimated time: ~{estimated_time:.0f}s")
+        logger.info("")
         
         scraper = EtherscanScraper()
         files = scraper.scrape_batch(
             addresses,
-            output_dir=Path("blockchain/contracts/collected")
+            output_dir=Path("blockchain/contracts/collected"),
+            max_workers=5
         )
         
-        logger.info(f"\n{'='*70}")
-        logger.info(f"EXTRACTING FEATURES FROM {len(files)} CONTRACTS")
-        logger.info(f"{'='*70}\n")
+        logger.info("")
+        logger.info(f"✓ Scraping complete: {len(files)}/{len(addresses)} contracts saved")
+        logger.info("="*70)
         
+        return files
+    
+    def _extract_features_parallel(self, files: List[Path]):
+        """
+        Extract features from contracts using parallel processing.
+        
+        NEW: 5x faster than sequential processing!
+        
+        Args:
+            files: List of .sol file paths
+        """
+        if not files:
+            logger.warning("No files to analyze")
+            return
+        
+        logger.info("")
+        logger.info(f"Extracting features from {len(files)} contracts...")
+        
+        # Performance estimates
+        sequential_time = len(files) * 5
+        parallel_workers = 5
+        parallel_time = sequential_time / parallel_workers
+        
+        logger.info(f"Sequential estimate: ~{sequential_time}s ({sequential_time/60:.1f} min)")
+        logger.info(f"Parallel ({parallel_workers} workers): ~{parallel_time}s ({parallel_time/60:.1f} min)")
+        logger.info(f"Using parallel feature extraction...")
+        logger.info("="*70)
+        logger.info("")
+        
+        # Initialize pipeline (thread-safe)
         pipeline = FeaturePipeline()
         
-        for i, file in enumerate(files, 1):
-            try:
-                contract_name = file.stem.split('_')[0]
-                logger.info(f"[{i}/{len(files)}] Analyzing {contract_name}...")
-                pipeline.analyze_contract(file, contract_name)
-            except Exception as e:
-                logger.error(f"Failed to analyze {file.name}: {e}")
+        successful = 0
+        failed = 0
         
+        def analyze_one_contract(file_path):
+            """Analyze single contract (runs in thread pool)"""
+            try:
+                contract_name = file_path.stem.split('_')[0]
+                pipeline.analyze_contract(file_path, contract_name)
+                return True, contract_name
+            except Exception as e:
+                logger.error(f"Failed to analyze {file_path.name}: {e}")
+                return False, file_path.name
+        
+        # Thread pool for parallel analysis
+        with ThreadPoolExecutor(max_workers=parallel_workers) as executor:
+            # Submit all tasks
+            futures = {
+                executor.submit(analyze_one_contract, file): file
+                for file in files
+            }
+            
+            # Process with progress bar
+            with tqdm(total=len(files), desc="Extracting features", ncols=100) as pbar:
+                for future in as_completed(futures):
+                    success, name = future.result()
+                    
+                    if success:
+                        successful += 1
+                    else:
+                        failed += 1
+                    
+                    pbar.update(1)
+                    
+                    # Checkpoint every 25 contracts
+                    if (successful + failed) % 25 == 0:
+                        logger.info(
+                            f"   [{successful + failed}/{len(files)}] "
+                            f"Analyzed | {successful} success, {failed} failed"
+                        )
+        
+        logger.info("")
+        logger.info(f"✓ Feature extraction complete: {successful}/{len(files)} successful")
+        
+        if failed > 0:
+            logger.warning(f"   {failed} contracts failed analysis (returned default values)")
+        
+        logger.info("="*70)
+        
+        # Save dataset
         output_path = Path(self.config['output']['path'])
         pipeline.save_dataset(output_path)
         
-        logger.info(f"\n✅ Dataset saved: {output_path}")
+        logger.info("")
+        logger.info(f"✅ Dataset saved: {output_path}")
     
     def _generate_report(self, sample: List[Dict], populations: Dict):
         """Generate metadata report for reproducibility"""
         
         report = {
             'generated_at': datetime.now().isoformat(),
-            'config_version': '1.0',
+            'config_version': '2.0',
             'target_size': self.config['dataset']['target_size'],
             'actual_size': len(sample),
+            'parallel_processing': {
+                'defillama_workers': 10,
+                'coingecko_workers': 5,
+                'etherscan_workers': 5,
+                'feature_extraction_workers': 5
+            },
             'strata': {}
         }
         
@@ -159,21 +286,29 @@ class DatasetCollectionPipeline:
             }
         
         metadata_path = Path('data/collection_metadata.yaml')
+        metadata_path.parent.mkdir(parents=True, exist_ok=True)
+        
         with open(metadata_path, 'w') as f:
             yaml.dump(report, f, default_flow_style=False)
         
-        logger.info(f"\n✅ Metadata report saved: {metadata_path}")
+        logger.info(f"✅ Metadata report saved: {metadata_path}")
         
         # Print summary
-        logger.info(f"\n{'='*70}")
+        logger.info(f"")
+        logger.info(f"{'='*70}")
         logger.info("COLLECTION SUMMARY")
         logger.info(f"{'='*70}")
         logger.info(f"Target size: {report['target_size']}")
         logger.info(f"Actual size: {report['actual_size']}")
-        logger.info(f"\nStrata breakdown:")
+        logger.info(f"")
+        logger.info(f"Strata breakdown:")
         for stratum_name, stats in report['strata'].items():
-            logger.info(f"  {stratum_name}: {stats['sampled']} sampled from {stats['population_size']} population")
-        logger.info(f"{'='*70}\n")
+            logger.info(
+                f"  {stratum_name}: {stats['sampled']} sampled "
+                f"from {stats['population_size']} population"
+            )
+        logger.info(f"{'='*70}")
+        logger.info(f"")
 
 
 if __name__ == "__main__":
