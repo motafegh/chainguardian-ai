@@ -1,0 +1,50 @@
+# docker-compose.yml
+# This file defines all services (databases, cache, orchestrator)
+
+version: '3.8'
+
+services:
+  # PostgreSQL - Main database for contracts, features, labels
+  postgres:
+    image: postgres:15-alpine
+    container_name: chainguardian-postgres
+    environment:
+      POSTGRES_USER: chainguardian
+      POSTGRES_PASSWORD: dev_password_change_in_prod
+      POSTGRES_DB: chainguardian
+    ports:
+      - "5432:5432"  # Access from host: localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chainguardian"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Cache for API responses, rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: chainguardian-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes  # Enable persistence
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Airflow - Workflow orchestration
+  # Note: Airflow setup is complex, we'll use docker-compose from official docs
+  # For now, just adding postgres and redis is enough for Day 1
+
+volumes:
+  postgres_data:  # Named volume (persists data between restarts)
+  redis_data:
+
+# 🎓 Key Learning: Docker volumes persist data
+# Without volumes, data is lost when container stops
+# Similar to Solidity storage vs memory

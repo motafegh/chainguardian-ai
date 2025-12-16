@@ -47,7 +47,11 @@ class FeaturePipeline:
     
     def __init__(self):
         """Initialize pipeline with version cache and thread safety."""
-        self.features: list[Dict] = []
+        from chainguardian.database.manager import DatabaseManager
+    
+        self.features: list[Dict] = []  # Keep for backwards compatibility
+        self.db = DatabaseManager()  # ← NEW: Database connection
+        logger.info("✅ Database connection ready")
         self._lock = Lock()  # Protects version switching + compilation
         
         # Cache installed versions (call once, use many times)
@@ -564,7 +568,12 @@ class FeaturePipeline:
         
         with self._lock:
             self.features.append(combined_features)
-        
+            try:
+                contract_id = self.db.save_contract_and_features(combined_features)
+                logger.debug(f"Saved to database: contract_id={contract_id}")
+            except Exception as e:
+                logger.error(f"Failed to save to database: {e}")
+    
         return combined_features
     
     def to_dataframe(self) -> pd.DataFrame:
@@ -667,9 +676,27 @@ class FeaturePipeline:
         
         print("="*70 + "\n")
     
+
     def save_dataset(self, output_path: Path):
-        """Save features as CSV and print diagnostics."""
-        df = self.to_dataframe()
+        """
+        Save features as CSV and print diagnostics.
+        
+        🎓 NEW: Now exports from database instead of memory list
+        This means data is preserved even if script crashes
+        """
+        # Get data from database
+        df = self.db.get_all_features()
+        
+        if df.empty:
+            logger.warning("No data in database to export")
+            return
+        
+        # Save to CSV (for backwards compatibility)
         df.to_csv(output_path, index=False)
-        logger.info(f"Saved dataset to {output_path}")
+        logger.info(f"✅ Exported {len(df)} contracts from database to {output_path}")
+        
+        # Print stats from database
+        stats = self.db.get_stats()
+        logger.info(f"📊 Database stats: {stats}")
+        
         self.print_diagnostic_summary()

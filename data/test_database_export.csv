@@ -1,0 +1,2 @@
+contract_id,contract_name,address,file_path,compiler_version,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls,failure_reason,error_message
+2,DSToken,0x9f8F72aA00000000000000000000000000000000,/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DSToken_0x9f8F72aA.sol,,True,False,False,False,0,2,24,14,0,3,0,3,0,,

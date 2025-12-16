@@ -1,0 +1,7 @@
+{
+  "contract_address": "0x00000000000da14c27c155bb7c1ac9bd7519eb3b",
+  "original_url": "https://raw.githubusercontent.com/smartbugs/smartbugs-wild/master/contracts/0x00000000000da14c27c155bb7c1ac9bd7519eb3b.sol",
+  "file_size": 1099,
+  "downloaded_at": "2025-12-16 12:36:38",
+  "first_lines": "pragma solidity ^0.4.23;\r\n\r\n// File: contracts/utilities/DepositAddressRegistrar.sol\r\n\r\ninterface Registry {\r\n    function setAttributeValue(address who, bytes32 what, uint val) external;\r\n    function hasAttribute(address _who, bytes32 _attribute) external view returns(bool);\r\n}\r\n\r\ncontract Deposit"
+}
