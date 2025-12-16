@@ -127,239 +127,209 @@ class ASTFeatureExtractor:
         """
         Extract countable features from AST.
         
-        🎓 FEATURES WE EXTRACT (6 metrics):
+        🎓 EXPANDED VERSION: Now extracts 21 features (was 6)
         
-        1. **num_functions**: How many functions does contract have?
-           - Proxy for contract complexity
-           - More functions = more code to audit
-           - Typical range: 5-20 functions
-        
-        2. **num_external_calls**: How many external contract calls?
-           - Attack surface indicator
-           - Each call = potential reentrancy point
-           - Example: token.transfer(), victim.call()
-        
-        3. **num_state_vars**: How many storage variables?
-           - State complexity indicator
-           - More state = harder to reason about
-           - Typical range: 3-15 variables
-        
-        4. **num_modifiers**: How many access control checks?
-           - Security indicator (more = better)
-           - Example: onlyOwner, whenNotPaused
-        
-        5. **max_cyclomatic_complexity**: Most complex function
-           - Code complexity metric
-           - Measures number of paths through code
-           - >10 = hard to test, >20 = unmaintainable
-        
-        6. **num_low_level_calls**: Dangerous call/delegatecall usage
-           - High-risk indicator
-           - Low-level calls bypass safety checks
-           - Example: address.call(), address.delegatecall()
-        
-        🎓 WHY THESE SPECIFIC FEATURES:
-        Selected based on:
-        - Security research papers
-        - Historical vulnerability analysis
-        - Correlation with known exploits
-        - Measurability (must be countable integers)
-        
-        🎓 ML PERSPECTIVE:
-        These are NUMERICAL features (not boolean)
-        ML models learn patterns like:
-        - "Contracts with >5 external calls have 60% reentrancy rate"
-        - "Complexity >15 correlates with 80% vulnerability likelihood"
+        Feature Categories:
+        1. Original AST features (6): functions, calls, state vars, etc.
+        2. Code quality metrics (10): LOC, comments, complexity, etc.
+        3. Advanced metrics (5): payable functions, libraries, inheritance
         
         Args:
             contract_name: Name of contract to analyze (e.g., "TetherToken")
         
         Returns:
-            Dict with 6 integer features
-            Example: {'num_functions': 13, 'num_external_calls': 7, ...}
+            Dict with 21 integer/float features
         """
+        
         # ================================================================
-        # INITIALIZE FEATURE DICT WITH ZEROS
+        # INITIALIZE FEATURES WITH ZEROS
         # ================================================================
-        # 🎓 DEFAULT VALUES: Start with 0 for all metrics
-        # If contract not found or error, return zeros (safe default)
         features = {
+            # Original features
             'num_functions': 0,
             'num_external_calls': 0,
             'num_state_vars': 0,
             'num_modifiers': 0,
             'max_cyclomatic_complexity': 0,
-            'num_low_level_calls': 0,  # NEW: Track dangerous low-level calls separately
+            'num_low_level_calls': 0,
+            
+            # NEW: Code quality metrics
+            'lines_of_code': 0,
+            'num_contracts_in_file': 1,
+            'num_dependencies': 0,
+            'avg_function_complexity': 0.0,
+            'num_functions_high_complexity': 0,
+            'num_comments': 0,
+            'comment_to_code_ratio': 0.0,
+            'num_payable_functions': 0,
+            'num_library_calls': 0,
+            'inheritance_depth': 0,
+            'num_unused_functions': 0,
         }
         
         # ================================================================
         # FIND TARGET CONTRACT IN FILE
         # ================================================================
-        # 🎓 PROBLEM: .sol files often contain multiple contracts
-        # Example: TetherToken.sol has: SafeMath, Ownable, ERC20, TetherToken
-        # We only want to analyze the MAIN contract
-        #
-        # 🎓 SLITHER DATA STRUCTURE:
-        # self.slither.contracts is a list of Contract objects
-        # Each Contract has: .name, .functions, .state_variables, etc.
-        # ================================================================
-        
-        contract = None  # Will hold our target contract
-        
-        # 🎓 LINEAR SEARCH: Find contract by name
-        # Alternative: Use dict for O(1) lookup
-        # Trade-off: Few contracts (2-10), so O(n) is fine
+        contract = None
         for c in self.slither.contracts:
             if c.name == contract_name:
                 contract = c
-                break  # Found it! Exit early
+                break
         
-        # 🎓 VALIDATION: Check if contract was found
         if not contract:
             logger.warning(f"Contract {contract_name} not found")
-            return features  # Return zeros
+            return features
         
         # ================================================================
-        # EXTRACT BASIC COUNTS
+        # EXTRACT BASIC COUNTS (Original)
         # ================================================================
-        # 🎓 SLITHER API: Contract object provides lists
-        # - .functions_declared: Functions defined in THIS contract (not inherited)
-        # - .state_variables_declared: State variables in THIS contract
-        # - .modifiers_declared: Modifiers in THIS contract
-        #
-        # 🎓 WHY "_declared":
-        # Contracts inherit from base contracts (Ownable, Pausable, etc.)
-        # We only count functions defined in this contract, not inherited
-        # Example: TetherToken.functions includes Ownable.transferOwnership()
-        #          TetherToken.functions_declared excludes inherited
-        # ================================================================
-        
-        # 🎓 FEATURE 1: Function count
-        # len() gets list length → count of functions
         features['num_functions'] = len(contract.functions_declared)
-        
-        # 🎓 FEATURE 3: State variable count
-        # Storage variables: uint balance, address owner, mapping allowed
         features['num_state_vars'] = len(contract.state_variables_declared)
-        
-        # 🎓 FEATURE 4: Modifier count
-        # Access control: modifier onlyOwner() { require(msg.sender == owner); _; }
         features['num_modifiers'] = len(contract.modifiers_declared)
         
         # ================================================================
-        # ANALYZE EACH FUNCTION
+        # ANALYZE EACH FUNCTION (Original + New)
         # ================================================================
-        # 🎓 DEEPER ANALYSIS: Need to look inside functions
-        # For: External calls, low-level calls, complexity
-        # ================================================================
+        complexity_scores = []
+        payable_count = 0
+        high_complexity_count = 0
         
-        # 🎓 ITERATION: Loop through all functions in contract
         for func in contract.functions_declared:
-            # ============================================================
-            # FEATURE 2: EXTERNAL CALLS
-            # ============================================================
-            # 🎓 EXTERNAL CALL: Calling another contract's function
-            # Examples:
-            # - token.transfer(recipient, amount)  ← High-level call
-            # - victim.call("")                     ← Low-level call
-            # - address(this).balance               ← Not a call
-            #
-            # 🎓 SLITHER API: func.external_calls_as_expressions
-            # Returns list of Expression objects representing calls
-            # We just need the count: len()
-            #
-            # 🎓 WHY COUNT EXTERNAL CALLS:
-            # - Each call = potential reentrancy entry point
-            # - More calls = larger attack surface
-            # - ML models learn: "Many calls → Higher risk"
+            # Original: External calls
             features['num_external_calls'] += len(func.external_calls_as_expressions)
             
-            # ============================================================
-            # FEATURE 6: LOW-LEVEL CALLS
-            # ============================================================
-            # 🎓 LOW-LEVEL CALL: Using .call(), .delegatecall(), .staticcall()
-            # These are MORE dangerous than high-level calls!
-            #
-            # 🎓 HIGH-LEVEL vs LOW-LEVEL:
-            # High-level (SAFE):
-            # - transfer(amount)  → Forwards 2300 gas, reverts on failure
-            # - send(amount)      → Forwards 2300 gas, returns bool
-            #
-            # Low-level (DANGEROUS):
-            # - call("")          → Forwards all gas, no revert, returns bool
-            # - delegatecall("")  → Executes in caller context (!!!!)
-            #
-            # 🎓 WHY TRACK SEPARATELY:
-            # Low-level calls are 10x more dangerous:
-            # - No gas limit (reentrancy risk)
-            # - Must check return value (often forgotten)
-            # - delegatecall can hijack storage
-            #
-            # 🎓 SLITHER API: func.low_level_calls
-            # Returns list of low-level call expressions
+            # Original: Low-level calls
             features['num_low_level_calls'] += len(func.low_level_calls)
             
-            # ============================================================
-            # FEATURE 5: CYCLOMATIC COMPLEXITY
-            # ============================================================
-            # 🎓 CYCLOMATIC COMPLEXITY: Measure of code complexity
-            # Definition: Number of linearly independent paths through code
-            #
-            # 🎓 FORMULA: V(G) = E - N + 2P
-            # E = edges in control flow graph
-            # N = nodes in control flow graph
-            # P = connected components (usually 1)
-            #
-            # 🎓 SIMPLIFIED APPROXIMATION:
-            # Count decision points: if, for, while, require, assert
-            # Start at 1, add 1 for each decision point
-            #
-            # 🎓 EXAMPLE:
-            # function simple() {      // Complexity = 1 (straight line)
-            #     x = 1;
-            # }
-            #
-            # function conditional() { // Complexity = 2 (one branch)
-            #     if (x > 0) {
-            #         y = 1;
-            #     }
-            # }
-            #
-            # function nested() {      // Complexity = 4 (three branches)
-            #     if (x > 0) {         // +1
-            #         if (y > 0) {     // +1
-            #             z = 1;
-            #         }
-            #     } else {             // +1
-            #         w = 1;
-            #     }
-            # }
-            #
-            # 🎓 INTERPRETATION:
-            # 1-4:   Simple, easy to test
-            # 5-10:  Moderate complexity
-            # 11-20: High complexity, hard to test
-            # 21+:   Very high, unmaintainable
-            #
-            # 🎓 SECURITY CORRELATION:
-            # Higher complexity → More bugs → More vulnerabilities
-            # Study: Functions with V(G) > 10 have 3x more bugs
+            # Original + New: Cyclomatic complexity
             complexity = self._calculate_complexity(func)
-            
-            # 🎓 MAX: We want the WORST case (most complex function)
-            # ML models learn: "Max complexity >20 → 80% vulnerability rate"
+            complexity_scores.append(complexity)
             features['max_cyclomatic_complexity'] = max(
-                features['max_cyclomatic_complexity'], 
+                features['max_cyclomatic_complexity'],
                 complexity
             )
+            
+            # NEW: High complexity count
+            if complexity > 10:
+                high_complexity_count += 1
+            
+            # NEW: Payable functions
+            if func.payable:
+                payable_count += 1
+        
+        # NEW: Average complexity
+        if complexity_scores:
+            features['avg_function_complexity'] = sum(complexity_scores) / len(complexity_scores)
+        
+        features['num_functions_high_complexity'] = high_complexity_count
+        features['num_payable_functions'] = payable_count
         
         # ================================================================
-        # LOG EXTRACTED FEATURES
+        # NEW: LINES OF CODE & COMMENTS
         # ================================================================
-        # 🎓 ALWAYS LOG RESULTS: Helps validate extraction worked
-        logger.info(f"Extracted AST features for {contract_name}: {features}")
+        logger.debug(f"Extracting code quality metrics for {contract_name}...")
+        
+        try:
+            source_code = self.contract_path.read_text(encoding='utf-8')
+            lines = source_code.split('\n')
+            
+            # Count non-empty lines
+            non_empty_lines = [line for line in lines if line.strip()]
+            features['lines_of_code'] = len(non_empty_lines)
+            
+            # Count comment lines
+            comment_lines = 0
+            in_block_comment = False
+            
+            for line in lines:
+                stripped = line.strip()
+                
+                # Block comment start
+                if '/*' in stripped:
+                    in_block_comment = True
+                    comment_lines += 1
+                    if '*/' in stripped:
+                        in_block_comment = False
+                    continue
+                
+                # Inside block comment
+                if in_block_comment:
+                    comment_lines += 1
+                    if '*/' in stripped:
+                        in_block_comment = False
+                    continue
+                
+                # Line comment
+                if stripped.startswith('//'):
+                    comment_lines += 1
+            
+            features['num_comments'] = comment_lines
+            
+            # Calculate ratio
+            if features['lines_of_code'] > 0:
+                features['comment_to_code_ratio'] = comment_lines / features['lines_of_code']
+            
+        except Exception as e:
+            logger.warning(f"Failed to count LOC for {contract_name}: {e}")
+        
+        # ================================================================
+        # NEW: CONTRACT COUNT & DEPENDENCIES
+        # ================================================================
+        features['num_contracts_in_file'] = len(self.slither.contracts)
+        
+        # Count import statements
+        try:
+            features['num_dependencies'] = len(self.slither.crytic_compile.compilation_units)
+        except:
+            features['num_dependencies'] = 0
+        
+        # ================================================================
+        # NEW: LIBRARY CALLS
+        # ================================================================
+        library_calls = 0
+        for func in contract.functions_declared:
+            try:
+                library_calls += len(func.library_calls)
+            except:
+                pass
+        features['num_library_calls'] = library_calls
+        
+        # ================================================================
+        # NEW: INHERITANCE DEPTH
+        # ================================================================
+        depth = 0
+        current = contract
+        visited = set()
+        
+        while current and current not in visited:
+            visited.add(current)
+            if current.inheritance:
+                depth += 1
+                current = current.inheritance[0]
+            else:
+                break
+        
+        features['inheritance_depth'] = depth
+        
+        # ================================================================
+        # UNUSED FUNCTIONS (Placeholder)
+        # ================================================================
+        # Will be populated if Slither detector fires
+        features['num_unused_functions'] = 0
+        
+        # ================================================================
+        # FINAL LOGGING
+        # ================================================================
+        logger.info(
+            f"AST features for {contract_name}: "
+            f"{features['lines_of_code']} LOC, "
+            f"{features['num_functions']} functions, "
+            f"{features['num_comments']} comments "
+            f"({features['comment_to_code_ratio']:.2%} ratio)"
+        )
+        
         return features
-    
+
     def _calculate_complexity(self, function) -> int:
         """
         Simplified cyclomatic complexity: count decision points.

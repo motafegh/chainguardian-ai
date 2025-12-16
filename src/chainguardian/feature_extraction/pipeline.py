@@ -337,6 +337,8 @@ class FeaturePipeline:
         """
         Extract ALL features from a single contract.
         
+        🎓 EXPANDED VERSION: Now extracts 58+ features (was 15)
+        
         THREAD-SAFE: Version switching + compilation are atomic.
         
         Args:
@@ -344,7 +346,8 @@ class FeaturePipeline:
             contract_name: Name of main contract to analyze
         
         Returns:
-            Dict with 17 features (2 metadata + 7 vuln + 6 code + 2 error)
+            Dict with 60+ features (2 metadata + 23 vuln flags + 3 severity +
+                                    21 AST + 9 detector stats + 4 risk scores + 2 error)
         """
         logger.info(f"Analyzing {contract_name}")
         
@@ -477,23 +480,89 @@ class FeaturePipeline:
             logger.debug(f"✓ Registered {len(slither.detectors)} detectors")
             
             # ================================================================
-            # STEP 4: EXTRACT VULNERABILITY FEATURES
+            # STEP 4: EXTRACT VULNERABILITY FEATURES (EXPANDED: 58 features)
             # ================================================================
             vuln_analyzer = SlitherAnalyzer(slither)
             vuln_features = vuln_analyzer.extract_features(contract_name)
-            
+
             combined_features.update({
+                # ============================================================
+                # ORIGINAL VULNERABILITY FLAGS (4)
+                # ============================================================
                 'has_reentrancy': vuln_features.has_reentrancy,
                 'has_access_control_issues': vuln_features.has_access_control_issues,
                 'has_timestamp_dependency': vuln_features.has_timestamp_dependency,
                 'has_unchecked_call': vuln_features.has_unchecked_call,
+                
+                # ============================================================
+                # NEW: ADDITIONAL VULNERABILITY FLAGS (19)
+                # ============================================================
+                # Reentrancy variants
+                'has_reentrancy_unlimited': vuln_features.has_reentrancy_unlimited,
+                'has_reentrancy_benign': vuln_features.has_reentrancy_benign,
+                'has_reentrancy_events': vuln_features.has_reentrancy_events,
+                
+                # Unchecked operations
+                'has_unchecked_transfer': vuln_features.has_unchecked_transfer,
+                
+                # Delegatecall issues
+                'has_controlled_delegatecall': vuln_features.has_controlled_delegatecall,
+                'has_delegatecall_loop': vuln_features.has_delegatecall_loop,
+                
+                # Uninitialized variables
+                'has_uninitialized_state': vuln_features.has_uninitialized_state,
+                'has_uninitialized_storage': vuln_features.has_uninitialized_storage,
+                'has_uninitialized_local': vuln_features.has_uninitialized_local,
+                
+                # Dangerous patterns
+                'has_tx_origin': vuln_features.has_tx_origin,
+                'has_inline_assembly': vuln_features.has_inline_assembly,
+                'has_locked_ether': vuln_features.has_locked_ether,
+                'has_msg_value_loop': vuln_features.has_msg_value_loop,
+                
+                # Code quality issues
+                'has_shadowing_state': vuln_features.has_shadowing_state,
+                'has_shadowing_builtin': vuln_features.has_shadowing_builtin,
+                'has_shadowing_abstract': vuln_features.has_shadowing_abstract,
+                'has_unused_state_vars': vuln_features.has_unused_state_vars,
+                'has_unused_return_values': vuln_features.has_unused_return_values,
+                
+                # Compiler issues
+                'has_incorrect_solc_version': vuln_features.has_incorrect_solc_version,
+                'has_floating_pragma': vuln_features.has_floating_pragma,
+                'has_outdated_compiler': vuln_features.has_outdated_compiler,
+                
+                # ============================================================
+                # ORIGINAL SEVERITY COUNTS (3)
+                # ============================================================
                 'high_severity_count': vuln_features.high_severity_count,
                 'medium_severity_count': vuln_features.medium_severity_count,
                 'low_severity_count': vuln_features.low_severity_count,
+                
+                # ============================================================
+                # NEW: DETECTOR STATISTICS (9)
+                # ============================================================
+                'high_confidence_detectors': vuln_features.high_confidence_detectors,
+                'medium_confidence_detectors': vuln_features.medium_confidence_detectors,
+                'low_confidence_detectors': vuln_features.low_confidence_detectors,
+                'security_detectors_triggered': vuln_features.security_detectors_triggered,
+                'optimization_detectors_triggered': vuln_features.optimization_detectors_triggered,
+                'total_detector_hits': vuln_features.total_detector_hits,
+                'unique_vulnerability_types': vuln_features.unique_vulnerability_types,
+                'detectors_per_function': vuln_features.detectors_per_function,
+                'detectors_per_loc': vuln_features.detectors_per_loc,
+                
+                # ============================================================
+                # NEW: COMPOSITE RISK SCORES (4)
+                # ============================================================
+                'risk_score_simple': vuln_features.risk_score_simple,
+                'risk_score_weighted': vuln_features.risk_score_weighted,
+                'is_high_risk': vuln_features.is_high_risk,
+                'contract_complexity_category': vuln_features.contract_complexity_category,
             })
             
             # ================================================================
-            # STEP 5: EXTRACT AST FEATURES
+            # STEP 5: EXTRACT AST FEATURES (21 features)
             # ================================================================
             # CRITICAL: Pass pre-compiled Slither object (no re-compilation!)
             ast_extractor = ASTFeatureExtractor(main_contract_file, slither_obj=slither)
@@ -503,6 +572,9 @@ class FeaturePipeline:
             
             logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
             
+        # ================================================================
+        # ERROR HANDLING: EXPECTED FAILURES
+        # ================================================================
         except (ImportError, ValueError, RuntimeError, SyntaxError, FileNotFoundError, EnvironmentError) as e:
             
             # Categorize expected failures
@@ -523,24 +595,86 @@ class FeaturePipeline:
             
             logger.debug(f"{contract_name}: {failure_reason}")
             
+            # ============================================================
+            # POPULATE ALL 58 FEATURES WITH DEFAULTS
+            # ============================================================
             combined_features.update({
+                # VULNERABILITY FLAGS (23) - All False
                 'has_reentrancy': False,
                 'has_access_control_issues': False,
                 'has_timestamp_dependency': False,
                 'has_unchecked_call': False,
+                'has_reentrancy_unlimited': False,
+                'has_reentrancy_benign': False,
+                'has_reentrancy_events': False,
+                'has_unchecked_transfer': False,
+                'has_controlled_delegatecall': False,
+                'has_delegatecall_loop': False,
+                'has_uninitialized_state': False,
+                'has_uninitialized_storage': False,
+                'has_uninitialized_local': False,
+                'has_tx_origin': False,
+                'has_inline_assembly': False,
+                'has_locked_ether': False,
+                'has_msg_value_loop': False,
+                'has_shadowing_state': False,
+                'has_shadowing_builtin': False,
+                'has_shadowing_abstract': False,
+                'has_unused_state_vars': False,
+                'has_unused_return_values': False,
+                'has_incorrect_solc_version': False,
+                'has_floating_pragma': False,
+                'has_outdated_compiler': False,
+                
+                # SEVERITY COUNTS (3) - All 0
                 'high_severity_count': 0,
                 'medium_severity_count': 0,
                 'low_severity_count': 0,
+                
+                # AST FEATURES (17) - All 0
                 'num_functions': 0,
                 'num_external_calls': 0,
                 'num_state_vars': 0,
                 'num_modifiers': 0,
                 'max_cyclomatic_complexity': 0,
                 'num_low_level_calls': 0,
+                'lines_of_code': 0,
+                'num_contracts_in_file': 1,
+                'num_dependencies': 0,
+                'avg_function_complexity': 0.0,
+                'num_functions_high_complexity': 0,
+                'num_comments': 0,
+                'comment_to_code_ratio': 0.0,
+                'num_payable_functions': 0,
+                'num_library_calls': 0,
+                'inheritance_depth': 0,
+                'num_unused_functions': 0,
+                
+                # DETECTOR STATISTICS (9) - All 0
+                'high_confidence_detectors': 0,
+                'medium_confidence_detectors': 0,
+                'low_confidence_detectors': 0,
+                'security_detectors_triggered': 0,
+                'optimization_detectors_triggered': 0,
+                'total_detector_hits': 0,
+                'unique_vulnerability_types': 0,
+                'detectors_per_function': 0.0,
+                'detectors_per_loc': 0.0,
+                
+                # RISK SCORES (4) - Defaults
+                'risk_score_simple': 0.0,
+                'risk_score_weighted': 0.0,
+                'is_high_risk': False,
+                'contract_complexity_category': 'simple',
+                
+                # ERROR TRACKING (2)
                 'failure_reason': failure_reason,
                 'error_message': str(e)[:2000],  # Store full error (up to 2000 chars)
             })
             
+        # ================================================================
+        # ERROR HANDLING: UNEXPECTED FAILURES
+        # ================================================================
         except Exception as e:
             # Unexpected errors
             logger.error(
@@ -548,24 +682,86 @@ class FeaturePipeline:
                 exc_info=True
             )
             
+            # ============================================================
+            # POPULATE ALL 58 FEATURES WITH DEFAULTS
+            # ============================================================
             combined_features.update({
+                # VULNERABILITY FLAGS (23)
                 'has_reentrancy': False,
                 'has_access_control_issues': False,
                 'has_timestamp_dependency': False,
                 'has_unchecked_call': False,
+                'has_reentrancy_unlimited': False,
+                'has_reentrancy_benign': False,
+                'has_reentrancy_events': False,
+                'has_unchecked_transfer': False,
+                'has_controlled_delegatecall': False,
+                'has_delegatecall_loop': False,
+                'has_uninitialized_state': False,
+                'has_uninitialized_storage': False,
+                'has_uninitialized_local': False,
+                'has_tx_origin': False,
+                'has_inline_assembly': False,
+                'has_locked_ether': False,
+                'has_msg_value_loop': False,
+                'has_shadowing_state': False,
+                'has_shadowing_builtin': False,
+                'has_shadowing_abstract': False,
+                'has_unused_state_vars': False,
+                'has_unused_return_values': False,
+                'has_incorrect_solc_version': False,
+                'has_floating_pragma': False,
+                'has_outdated_compiler': False,
+                
+                # SEVERITY COUNTS (3)
                 'high_severity_count': 0,
                 'medium_severity_count': 0,
                 'low_severity_count': 0,
+                
+                # AST FEATURES (17)
                 'num_functions': 0,
                 'num_external_calls': 0,
                 'num_state_vars': 0,
                 'num_modifiers': 0,
                 'max_cyclomatic_complexity': 0,
                 'num_low_level_calls': 0,
+                'lines_of_code': 0,
+                'num_contracts_in_file': 1,
+                'num_dependencies': 0,
+                'avg_function_complexity': 0.0,
+                'num_functions_high_complexity': 0,
+                'num_comments': 0,
+                'comment_to_code_ratio': 0.0,
+                'num_payable_functions': 0,
+                'num_library_calls': 0,
+                'inheritance_depth': 0,
+                'num_unused_functions': 0,
+                
+                # DETECTOR STATISTICS (9)
+                'high_confidence_detectors': 0,
+                'medium_confidence_detectors': 0,
+                'low_confidence_detectors': 0,
+                'security_detectors_triggered': 0,
+                'optimization_detectors_triggered': 0,
+                'total_detector_hits': 0,
+                'unique_vulnerability_types': 0,
+                'detectors_per_function': 0.0,
+                'detectors_per_loc': 0.0,
+                
+                # RISK SCORES (4)
+                'risk_score_simple': 0.0,
+                'risk_score_weighted': 0.0,
+                'is_high_risk': False,
+                'contract_complexity_category': 'simple',
+                
+                # ERROR TRACKING (2)
                 'failure_reason': "UNEXPECTED_ERROR",
                 'error_message': str(e)[:2000],
             })
         
+        # ================================================================
+        # SAVE TO DATABASE (Thread-safe)
+        # ================================================================
         with self._lock:
             self.features.append(combined_features)
             try:
@@ -573,8 +769,9 @@ class FeaturePipeline:
                 logger.debug(f"Saved to database: contract_id={contract_id}")
             except Exception as e:
                 logger.error(f"Failed to save to database: {e}")
-    
+
         return combined_features
+
     
     def to_dataframe(self) -> pd.DataFrame:
         """Convert collected features to pandas DataFrame."""
