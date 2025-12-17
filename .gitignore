@@ -48,7 +48,9 @@ Thumbs.db
 data/raw/
 data/external/
 data/temp/
-
+# Large data (use Git LFS)
+*.sol
+collected/
 # Keep processed/sample data for demonstration
 # data/processed/*.csv  # Uncomment if files get too large
 # data/*.csv  # NEVER ignore blindly
