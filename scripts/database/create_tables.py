@@ -1,14 +1,12 @@
 """
-Create database tables for ChainGuardian AI
+Create database tables for ChainGuardian AI - PRODUCTION VERSION
 
-🎓 This is like deploying smart contracts
-We're defining the data structure that will store our contracts and features
+🎓 This defines the complete schema for 85 features + ground truth labels
 """
 
 import psycopg2
 from psycopg2 import sql
 
-# Database connection details
 DB_CONFIG = {
     'host': 'localhost',
     'port': 5432,
@@ -19,139 +17,189 @@ DB_CONFIG = {
 
 def create_tables():
     """
-    Create three tables:
-    1. contracts - Store smart contract metadata
-    2. features - Store extracted features (linked to contracts)
-    3. labels - Store vulnerability labels (linked to contracts)
-    
-    🎓 Relationships:
-    contracts (1) ─→ (many) features
-    contracts (1) ─→ (many) labels
-    
-    Similar to Solidity:
-    mapping(uint256 contractId => Contract) contracts;
-    mapping(uint256 contractId => Feature[]) features;
+    Create three tables with complete schema:
+    1. contracts - Smart contract metadata
+    2. features - 85 extracted features
+    3. labels - Ground truth vulnerability labels
     """
     
-    # Connect to database
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
     print("📊 Creating tables...")
     
     # ================================================================
-    # TABLE 1: CONTRACTS
+    # TABLE 1: CONTRACTS (Fixed - no 'source' column)
     # ================================================================
-    # Stores basic contract information
-    # 🎓 This is your main "Contract" struct
-    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS contracts (
             id SERIAL PRIMARY KEY,
-            address VARCHAR(42) UNIQUE NOT NULL,
+            address VARCHAR(42),  -- Nullable for undeployed contracts
             name TEXT NOT NULL,
             source_code TEXT,
             compiler_version VARCHAR(50),
-            source VARCHAR(50),
+            data_source VARCHAR(50),  -- 'smartbugs_curated', 'openzeppelin'
             file_path TEXT,
             collected_at TIMESTAMP DEFAULT NOW()
         );
     """)
     print("✅ Created table: contracts")
     
-    # ================================================================
-    # TABLE 2: FEATURES
-    # ================================================================
-    # Stores extracted features for each contract
-    # 🎓 One contract can have many features
-    # This is your feature vector for ML
+    cursor.execute("""
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_contracts_address_not_null 
+        ON contracts(address) WHERE address IS NOT NULL;
+    """)
     
+    # ================================================================
+    # TABLE 2: FEATURES (Complete 85 features!)
+    # ================================================================
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS features (
             id SERIAL PRIMARY KEY,
             contract_id INTEGER REFERENCES contracts(id) ON DELETE CASCADE,
             
-            -- Vulnerability indicators (from Slither)
+            -- Vulnerability flags (23)
             has_reentrancy BOOLEAN DEFAULT FALSE,
             has_access_control_issues BOOLEAN DEFAULT FALSE,
             has_timestamp_dependency BOOLEAN DEFAULT FALSE,
             has_unchecked_call BOOLEAN DEFAULT FALSE,
+            has_reentrancy_unlimited BOOLEAN DEFAULT FALSE,
+            has_reentrancy_benign BOOLEAN DEFAULT FALSE,
+            has_reentrancy_events BOOLEAN DEFAULT FALSE,
+            has_unchecked_transfer BOOLEAN DEFAULT FALSE,
+            has_controlled_delegatecall BOOLEAN DEFAULT FALSE,
+            has_delegatecall_loop BOOLEAN DEFAULT FALSE,
+            has_uninitialized_state BOOLEAN DEFAULT FALSE,
+            has_uninitialized_storage BOOLEAN DEFAULT FALSE,
+            has_uninitialized_local BOOLEAN DEFAULT FALSE,
+            has_tx_origin BOOLEAN DEFAULT FALSE,
+            has_inline_assembly BOOLEAN DEFAULT FALSE,
+            has_locked_ether BOOLEAN DEFAULT FALSE,
+            has_msg_value_loop BOOLEAN DEFAULT FALSE,
+            has_shadowing_state BOOLEAN DEFAULT FALSE,
+            has_shadowing_builtin BOOLEAN DEFAULT FALSE,
+            has_shadowing_abstract BOOLEAN DEFAULT FALSE,
+            has_unused_state_vars BOOLEAN DEFAULT FALSE,
+            has_unused_return_values BOOLEAN DEFAULT FALSE,
+            has_incorrect_solc_version BOOLEAN DEFAULT FALSE,
+            has_floating_pragma BOOLEAN DEFAULT FALSE,
+            has_outdated_compiler BOOLEAN DEFAULT FALSE,
+            
+            -- Severity counts (3)
             high_severity_count INTEGER DEFAULT 0,
             medium_severity_count INTEGER DEFAULT 0,
             low_severity_count INTEGER DEFAULT 0,
             
-            -- Code structure metrics (from AST)
+            -- AST features (17)
             num_functions INTEGER DEFAULT 0,
             num_external_calls INTEGER DEFAULT 0,
             num_state_vars INTEGER DEFAULT 0,
             num_modifiers INTEGER DEFAULT 0,
             max_cyclomatic_complexity INTEGER DEFAULT 0,
             num_low_level_calls INTEGER DEFAULT 0,
+            lines_of_code INTEGER DEFAULT 0,
+            num_contracts_in_file INTEGER DEFAULT 1,
+            num_dependencies INTEGER DEFAULT 0,
+            avg_function_complexity FLOAT DEFAULT 0.0,
+            num_functions_high_complexity INTEGER DEFAULT 0,
+            num_comments INTEGER DEFAULT 0,
+            comment_to_code_ratio FLOAT DEFAULT 0.0,
+            num_payable_functions INTEGER DEFAULT 0,
+            num_library_calls INTEGER DEFAULT 0,
+            inheritance_depth INTEGER DEFAULT 0,
+            num_unused_functions INTEGER DEFAULT 0,
             
-            -- Extraction metadata
-            extracted_at TIMESTAMP DEFAULT NOW(),
+            -- Detector statistics (9)
+            high_confidence_detectors INTEGER DEFAULT 0,
+            medium_confidence_detectors INTEGER DEFAULT 0,
+            low_confidence_detectors INTEGER DEFAULT 0,
+            security_detectors_triggered INTEGER DEFAULT 0,
+            optimization_detectors_triggered INTEGER DEFAULT 0,
+            total_detector_hits INTEGER DEFAULT 0,
+            unique_vulnerability_types INTEGER DEFAULT 0,
+            detectors_per_function FLOAT DEFAULT 0.0,
+            detectors_per_loc FLOAT DEFAULT 0.0,
+            
+            -- Risk scores (4)
+            risk_score_simple FLOAT DEFAULT 0.0,
+            risk_score_weighted FLOAT DEFAULT 0.0,
+            is_high_risk BOOLEAN DEFAULT FALSE,
+            contract_complexity_category VARCHAR(20) DEFAULT 'simple',
+            
+            -- Graph features: CFG (8)
+            cfg_num_nodes INTEGER DEFAULT 0,
+            cfg_num_edges INTEGER DEFAULT 0,
+            cfg_num_cycles INTEGER DEFAULT 0,
+            cfg_max_depth INTEGER DEFAULT 0,
+            cfg_avg_branching FLOAT DEFAULT 0.0,
+            cfg_has_complex_loops BOOLEAN DEFAULT FALSE,
+            cfg_num_exit_points INTEGER DEFAULT 0,
+            cfg_cyclomatic_total INTEGER DEFAULT 0,
+            
+            -- Graph features: Call Graph (10)
+            cg_num_nodes INTEGER DEFAULT 0,
+            cg_num_edges INTEGER DEFAULT 0,
+            cg_max_call_depth INTEGER DEFAULT 0,
+            cg_num_external_calls INTEGER DEFAULT 0,
+            cg_external_call_ratio FLOAT DEFAULT 0.0,
+            cg_has_cyclic_calls BOOLEAN DEFAULT FALSE,
+            cg_num_public_entry_points INTEGER DEFAULT 0,
+            cg_num_internal_functions INTEGER DEFAULT 0,
+            cg_avg_calls_per_function FLOAT DEFAULT 0.0,
+            cg_num_leaf_functions INTEGER DEFAULT 0,
+            
+            -- Graph features: Data Flow (7)
+            dfg_num_state_vars INTEGER DEFAULT 0,
+            dfg_num_tainted_flows INTEGER DEFAULT 0,
+            dfg_has_cross_function_flow BOOLEAN DEFAULT FALSE,
+            dfg_num_sensitive_sinks INTEGER DEFAULT 0,
+            dfg_num_external_sources INTEGER DEFAULT 0,
+            dfg_taint_to_sink_ratio FLOAT DEFAULT 0.0,
+            dfg_num_unvalidated_inputs INTEGER DEFAULT 0,
+            
+            -- Error tracking (2)
             failure_reason TEXT,
-            error_message TEXT
+            error_message TEXT,
+            
+            extracted_at TIMESTAMP DEFAULT NOW()
         );
     """)
-    print("✅ Created table: features")
+    print("✅ Created table: features (85 columns)")
     
     # ================================================================
-    # TABLE 3: LABELS (for training)
+    # TABLE 3: LABELS
     # ================================================================
-    # Stores ground truth vulnerability labels
-    # 🎓 Multi-label: one contract can have multiple vulnerability types
-    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS labels (
             id SERIAL PRIMARY KEY,
             contract_id INTEGER REFERENCES contracts(id) ON DELETE CASCADE,
-            vulnerability_type VARCHAR(50) NOT NULL,
+            vulnerability_type VARCHAR(100) NOT NULL,
             has_vulnerability BOOLEAN NOT NULL,
-            severity VARCHAR(20),
-            source VARCHAR(50),
-            labeled_at TIMESTAMP DEFAULT NOW(),
-            
-            UNIQUE(contract_id, vulnerability_type, source)
+            confidence FLOAT DEFAULT 1.0,
+            source VARCHAR(50),  -- 'smartbugs_curated', 'openzeppelin'
+            labeled_at TIMESTAMP DEFAULT NOW()
         );
     """)
     print("✅ Created table: labels")
     
     # ================================================================
-    # CREATE INDEXES (for fast queries)
+    # INDEXES
     # ================================================================
-    # 🎓 Indexes are like book indexes - speed up searches
-    # Similar to how Solidity mappings give O(1) lookup
-    
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_contracts_address 
-        ON contracts(address);
-    """)
-    
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_features_contract 
-        ON features(contract_id);
-    """)
-    
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_labels_contract 
-        ON labels(contract_id);
-    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_contracts_address ON contracts(address);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_features_contract ON features(contract_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_labels_contract ON labels(contract_id);")
     
     print("✅ Created indexes for fast queries")
     
-    # Commit changes (🎓 like transaction.wait() - makes changes permanent)
     conn.commit()
-    
-    # Close connections
     cursor.close()
     conn.close()
     
     print("\n🎉 All tables created successfully!")
     print("\n📊 Table Structure:")
-    print("   contracts (id, address, name, source_code, ...)")
-    print("   features (id, contract_id, has_reentrancy, num_functions, ...)")
-    print("   labels (id, contract_id, vulnerability_type, has_vulnerability, ...)")
+    print("   contracts: 8 columns")
+    print("   features: 87 columns (85 features + id + contract_id)")
+    print("   labels: 7 columns")
     print("\n✅ Database is ready to use!")
 
 if __name__ == "__main__":

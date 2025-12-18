@@ -101,6 +101,8 @@ class DatabaseManager:
             cursor.close()
             conn.close()
     
+
+
     def save_contract_and_features(self, features_dict: Dict) -> int:
         """
         Save contract and its features to database.
@@ -113,19 +115,11 @@ class DatabaseManager:
                 Must contain: contract_name, file_path
                 Optional: address, compiler_version, source
                 Features: has_reentrancy, num_functions, etc.
+                Ground truth: ground_truth_label, ground_truth_vuln_type, data_source
         
         Returns:
             contract_id: Database ID of saved contract
         
-        Example:
-            features = {
-                'contract_name': 'Token',
-                'file_path': '/path/to/Token.sol',
-                'address': '0x123...',
-                'has_reentrancy': False,
-                'num_functions': 5
-            }
-            contract_id = db.save_contract_and_features(features)
         """
         with self._get_cursor() as cursor:
             # ============================================================
@@ -146,23 +140,24 @@ class DatabaseManager:
                     # Pad to full address (42 chars) if needed
                     if len(address) < 42:
                         address = address + '0' * (42 - len(address))
-                else :
+                else:
                     # No address pattern found
-                    # 🎓 For SmartBugs contracts, this is expected
+                    # 🎓 For SmartBugs/OpenZeppelin contracts, this is expected
                     # Address will be NULL in database (which is fine!)
                     address = None
+            
             contract_data = {
                 'name': features_dict.get('contract_name', 'Unknown'),
                 'address': address,
                 'source_code': None,  # We don't store full source in DB (too large)
                 'compiler_version': features_dict.get('compiler_version'),
-                'source': features_dict.get('source', 'manual'),
+                'data_source': features_dict.get('data_source', 'manual'),  # ✅ NEW: Ground truth source
                 'file_path': features_dict.get('file_path')
             }
             
             cursor.execute("""
-                INSERT INTO contracts (name, address, source_code, compiler_version, source, file_path)
-                VALUES (%(name)s, %(address)s, %(source_code)s, %(compiler_version)s, %(source)s, %(file_path)s)
+                INSERT INTO contracts (name, address, source_code, compiler_version,  data_source, file_path)
+                VALUES (%(name)s, %(address)s, %(source_code)s, %(compiler_version)s, %(data_source)s, %(file_path)s)
                 RETURNING id;
             """, contract_data)
             
@@ -173,7 +168,7 @@ class DatabaseManager:
             logger.debug(f"Saved contract: {contract_data['name']} (id={contract_id})")
             
             # ============================================================
-            # STEP 2: INSERT FEATURES (EXPANDED: 15 → 58 fields)
+            # STEP 2: INSERT FEATURES (85 fields)
             # ============================================================
             feature_data = {
                 'contract_id': contract_id,
@@ -281,9 +276,42 @@ class DatabaseManager:
                 # ORIGINAL ERROR TRACKING (2)
                 # ========================================================
                 'failure_reason': features_dict.get('failure_reason'),
-                'error_message': features_dict.get('error_message')
-            }
+                'error_message': features_dict.get('error_message'),
 
+                # ========================================================
+                # NEW: GRAPH FEATURES (25)
+                # ========================================================
+                # CFG features (8)
+                'cfg_num_nodes': features_dict.get('cfg_num_nodes', 0),
+                'cfg_num_edges': features_dict.get('cfg_num_edges', 0),
+                'cfg_num_cycles': features_dict.get('cfg_num_cycles', 0),
+                'cfg_max_depth': features_dict.get('cfg_max_depth', 0),
+                'cfg_avg_branching': features_dict.get('cfg_avg_branching', 0.0),
+                'cfg_has_complex_loops': features_dict.get('cfg_has_complex_loops', False),
+                'cfg_num_exit_points': features_dict.get('cfg_num_exit_points', 0),
+                'cfg_cyclomatic_total': features_dict.get('cfg_cyclomatic_total', 0),
+
+                # Call Graph features (10)
+                'cg_num_nodes': features_dict.get('cg_num_nodes', 0),
+                'cg_num_edges': features_dict.get('cg_num_edges', 0),
+                'cg_max_call_depth': features_dict.get('cg_max_call_depth', 0),
+                'cg_num_external_calls': features_dict.get('cg_num_external_calls', 0),
+                'cg_external_call_ratio': features_dict.get('cg_external_call_ratio', 0.0),
+                'cg_has_cyclic_calls': features_dict.get('cg_has_cyclic_calls', False),
+                'cg_num_public_entry_points': features_dict.get('cg_num_public_entry_points', 0),
+                'cg_num_internal_functions': features_dict.get('cg_num_internal_functions', 0),
+                'cg_avg_calls_per_function': features_dict.get('cg_avg_calls_per_function', 0.0),
+                'cg_num_leaf_functions': features_dict.get('cg_num_leaf_functions', 0),
+
+                # Data Flow features (7)
+                'dfg_num_state_vars': features_dict.get('dfg_num_state_vars', 0),
+                'dfg_num_tainted_flows': features_dict.get('dfg_num_tainted_flows', 0),
+                'dfg_has_cross_function_flow': features_dict.get('dfg_has_cross_function_flow', False),
+                'dfg_num_sensitive_sinks': features_dict.get('dfg_num_sensitive_sinks', 0),
+                'dfg_num_external_sources': features_dict.get('dfg_num_external_sources', 0),
+                'dfg_taint_to_sink_ratio': features_dict.get('dfg_taint_to_sink_ratio', 0.0),
+                'dfg_num_unvalidated_inputs': features_dict.get('dfg_num_unvalidated_inputs', 0),
+            }
             
             cursor.execute("""
                 INSERT INTO features (
@@ -317,7 +345,16 @@ class DatabaseManager:
                     -- Risk scores
                     risk_score_simple, risk_score_weighted, is_high_risk, contract_complexity_category,
                     -- Error tracking
-                    failure_reason, error_message
+                    failure_reason, error_message,
+                    -- Graph features
+                    cfg_num_nodes, cfg_num_edges, cfg_num_cycles, cfg_max_depth,
+                    cfg_avg_branching, cfg_has_complex_loops, cfg_num_exit_points, cfg_cyclomatic_total,
+                    cg_num_nodes, cg_num_edges, cg_max_call_depth, cg_num_external_calls,
+                    cg_external_call_ratio, cg_has_cyclic_calls, cg_num_public_entry_points,
+                    cg_num_internal_functions, cg_avg_calls_per_function, cg_num_leaf_functions,
+                    dfg_num_state_vars, dfg_num_tainted_flows, dfg_has_cross_function_flow,
+                    dfg_num_sensitive_sinks, dfg_num_external_sources, dfg_taint_to_sink_ratio,
+                    dfg_num_unvalidated_inputs
                 )
                 VALUES (
                     %(contract_id)s,
@@ -350,15 +387,47 @@ class DatabaseManager:
                     -- Risk scores
                     %(risk_score_simple)s, %(risk_score_weighted)s, %(is_high_risk)s, %(contract_complexity_category)s,
                     -- Error tracking
-                    %(failure_reason)s, %(error_message)s
+                    %(failure_reason)s, %(error_message)s,
+                    -- Graph features
+                    %(cfg_num_nodes)s, %(cfg_num_edges)s, %(cfg_num_cycles)s, %(cfg_max_depth)s,
+                    %(cfg_avg_branching)s, %(cfg_has_complex_loops)s, %(cfg_num_exit_points)s, %(cfg_cyclomatic_total)s,
+                    %(cg_num_nodes)s, %(cg_num_edges)s, %(cg_max_call_depth)s, %(cg_num_external_calls)s,
+                    %(cg_external_call_ratio)s, %(cg_has_cyclic_calls)s, %(cg_num_public_entry_points)s,
+                    %(cg_num_internal_functions)s, %(cg_avg_calls_per_function)s, %(cg_num_leaf_functions)s,
+                    %(dfg_num_state_vars)s, %(dfg_num_tainted_flows)s, %(dfg_has_cross_function_flow)s,
+                    %(dfg_num_sensitive_sinks)s, %(dfg_num_external_sources)s, %(dfg_taint_to_sink_ratio)s,
+                    %(dfg_num_unvalidated_inputs)s
                 );
             """, feature_data)
-
             
             logger.debug(f"Saved features for contract {contract_id}")
             
+            # ============================================================
+            # STEP 3: INSERT GROUND TRUTH LABELS (NEW! ✨)
+            # ============================================================
+            # 🎓 Only insert if ground truth label exists
+            # This separates curated/labeled data from discovered data
+            
+            ground_truth_label = features_dict.get('ground_truth_label')
+            
+            if ground_truth_label:
+                label_data = {
+                    'contract_id': contract_id,
+                    'vulnerability_type': features_dict.get('ground_truth_vuln_type', 'unknown'),
+                    'has_vulnerability': ground_truth_label == 'vulnerable',
+                    'confidence': 1.0,  # Ground truth = 100% confidence
+                    'source': features_dict.get('data_source', 'manual')
+                }
+                
+                cursor.execute("""
+                    INSERT INTO labels (contract_id, vulnerability_type, has_vulnerability, confidence, source)
+                    VALUES (%(contract_id)s, %(vulnerability_type)s, %(has_vulnerability)s, %(confidence)s, %(source)s);
+                """, label_data)
+                
+                logger.debug(f"Saved ground truth label for contract {contract_id}: {ground_truth_label} ({label_data['vulnerability_type']})")
+            
             return contract_id
-    
+
     def get_all_features(self) -> pd.DataFrame:
         """
         Get all contracts with their features as DataFrame.
@@ -448,7 +517,33 @@ class DatabaseManager:
                     f.contract_complexity_category,
                     -- Error tracking
                     f.failure_reason,
-                    f.error_message
+                    f.error_message,
+                    -- Graph features (NEW)
+                    f.cfg_num_nodes,
+                    f.cfg_num_edges,
+                    f.cfg_num_cycles,
+                    f.cfg_max_depth,
+                    f.cfg_avg_branching,
+                    f.cfg_has_complex_loops,
+                    f.cfg_num_exit_points,
+                    f.cfg_cyclomatic_total,
+                    f.cg_num_nodes,
+                    f.cg_num_edges,
+                    f.cg_max_call_depth,
+                    f.cg_num_external_calls,
+                    f.cg_external_call_ratio,
+                    f.cg_has_cyclic_calls,
+                    f.cg_num_public_entry_points,
+                    f.cg_num_internal_functions,
+                    f.cg_avg_calls_per_function,
+                    f.cg_num_leaf_functions,
+                    f.dfg_num_state_vars,
+                    f.dfg_num_tainted_flows,
+                    f.dfg_has_cross_function_flow,
+                    f.dfg_num_sensitive_sinks,
+                    f.dfg_num_external_sources,
+                    f.dfg_taint_to_sink_ratio,
+                    f.dfg_num_unvalidated_inputs
                 FROM contracts c
                 LEFT JOIN features f ON c.id = f.contract_id
                 ORDER BY c.id;

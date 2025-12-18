@@ -333,7 +333,7 @@ class FeaturePipeline:
             logger.error(f"Failed to switch to Solidity {version}: {e}")
             return False
     
-    def analyze_contract(self, contract_path: Path, contract_name: str) -> Dict:
+    def analyze_contract(self, contract_path: Path, contract_name: str, metadata: Dict = None) -> Dict:
         """
         Extract ALL features from a single contract.
         
@@ -355,7 +355,9 @@ class FeaturePipeline:
             'contract_name': contract_name,
             'file_path': str(contract_path),
         }
-        
+        # ✅ ADD METADATA EARLY (before saving)
+        if metadata:
+            combined_features.update(metadata)
         try:
             # ================================================================
             # STEP 0: HANDLE MULTI-FILE CONTRACTS
@@ -571,7 +573,44 @@ class FeaturePipeline:
             combined_features.update(ast_features)
             
             logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
-            
+            # ================================================================
+            # STEP 6: EXTRACT GRAPH FEATURES (25 features) - NEW!
+            # ================================================================
+            try:
+                from chainguardian.feature_extraction.graph_extractor import GraphFeatureExtractor
+                
+                graph_extractor = GraphFeatureExtractor(slither)
+                graph_features = graph_extractor.extract_features(contract_name)
+                combined_features.update(graph_features)
+                
+                logger.debug(
+                    f"{contract_name}: Graph features - "
+                    f"{graph_features['cfg_num_cycles']} cycles, "
+                    f"{graph_features['cg_num_external_calls']} ext calls"
+                )
+            except Exception as e:
+                logger.warning(f"{contract_name}: Graph extraction failed - {e}")
+                # Add default graph features
+                combined_features.update({
+                    # CFG features (8)
+                    'cfg_num_nodes': 0, 'cfg_num_edges': 0, 'cfg_num_cycles': 0,
+                    'cfg_max_depth': 0, 'cfg_avg_branching': 0.0, 'cfg_has_complex_loops': False,
+                    'cfg_num_exit_points': 0, 'cfg_cyclomatic_total': 0,
+                    # Call Graph features (10)
+                    'cg_num_nodes': 0, 'cg_num_edges': 0, 'cg_max_call_depth': 0,
+                    'cg_num_external_calls': 0, 'cg_external_call_ratio': 0.0,
+                    'cg_has_cyclic_calls': False, 'cg_num_public_entry_points': 0,
+                    'cg_num_internal_functions': 0, 'cg_avg_calls_per_function': 0.0,
+                    'cg_num_leaf_functions': 0,
+                    # Data Flow features (7)
+                    'dfg_num_state_vars': 0, 'dfg_num_tainted_flows': 0,
+                    'dfg_has_cross_function_flow': False, 'dfg_num_sensitive_sinks': 0,
+                    'dfg_num_external_sources': 0, 'dfg_taint_to_sink_ratio': 0.0,
+                    'dfg_num_unvalidated_inputs': 0
+                })
+
+            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
+
         # ================================================================
         # ERROR HANDLING: EXPECTED FAILURES
         # ================================================================
