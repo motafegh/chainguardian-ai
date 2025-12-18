@@ -1,0 +1,15 @@
+{
+  "category": "vulnerable_complex",
+  "vulnerability_type": "governance",
+  "exploit_date": "2020",
+  "source": "verified_exploit",
+  "verification_status": "etherscan_verified",
+  "contract_address": "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+  "contract_name": "InitializableAdminUpgradeabilityProxy",
+  "compiler_version": "v0.6.10+commit.00c0fcaf",
+  "optimization": "1",
+  "optimization_runs": "200",
+  "file_path": "../data/real_world_collection/vulnerable_complex/InitializableAdminUpgradeabilityProxy_0x7fc665.sol",
+  "collection_timestamp": "2025-12-18T22:40:18.103264",
+  "etherscan_url": "https://etherscan.io/address/0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9#code"
+}

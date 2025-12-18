@@ -1,0 +1,1474 @@
+contract_id,contract_name,address,file_path,compiler_version,has_reentrancy,has_access_control_issues,has_timestamp_dependency,has_unchecked_call,has_reentrancy_unlimited,has_reentrancy_benign,has_reentrancy_events,has_unchecked_transfer,has_controlled_delegatecall,has_delegatecall_loop,has_uninitialized_state,has_uninitialized_storage,has_uninitialized_local,has_tx_origin,has_inline_assembly,has_locked_ether,has_msg_value_loop,has_shadowing_state,has_shadowing_builtin,has_shadowing_abstract,has_unused_state_vars,has_unused_return_values,has_incorrect_solc_version,has_floating_pragma,has_outdated_compiler,high_severity_count,medium_severity_count,low_severity_count,num_functions,num_external_calls,num_state_vars,num_modifiers,max_cyclomatic_complexity,num_low_level_calls,lines_of_code,num_contracts_in_file,num_dependencies,avg_function_complexity,num_functions_high_complexity,num_comments,comment_to_code_ratio,num_payable_functions,num_library_calls,inheritance_depth,num_unused_functions,high_confidence_detectors,medium_confidence_detectors,low_confidence_detectors,security_detectors_triggered,optimization_detectors_triggered,total_detector_hits,unique_vulnerability_types,detectors_per_function,detectors_per_loc,risk_score_simple,risk_score_weighted,is_high_risk,contract_complexity_category,failure_reason,error_message
+2,DSToken,0x9f8F72aA00000000000000000000000000000000,/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DSToken_0x9f8F72aA.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,2,24,14,0,3,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+3,OrderToken,0xabd4c63d00000000000000000000000000000000,blockchain/contracts/collected/OrderToken_0xabd4c63d,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/OrderToken_0xabd4c63d/OrderToken.sol:3:1:
+  |
+3 | import { ERC20 } from ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+4,SynapseERC20,0x0f2d719400000000000000000000000000000000,blockchain/contracts/collected/SynapseERC20_0x0f2d7194,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SynapseERC20_0x0f2d7194/SynapseERC20.sol:4:1:
+  |
+4 | import '@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts-upgradeable/token/ERC20/ERC20BurnableUpgradeable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SynapseERC20_0x0f2d7194/SynapseERC20.sol:5:1:
+  |
+5 | import '@openzeppelin/contracts-upgradeable/token/ERC20/ERC20BurnableUpgradeable.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts-upgradeable/drafts/ERC20PermitUpgradeable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SynapseERC20_0x0f2d7194/SynapseERC20.sol:6:1:
+  |
+6 | import '@openzeppelin/contracts-upgradeable/drafts/ERC20PermitUpgradeable.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SynapseERC20_0x0f2d7194/SynapseERC20.sol:7:1:
+  |
+7 | import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts-upgradeable/proxy/Initializable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SynapseERC20_0x0f2d7194/SynapseERC20.sol:8:1:
+  |
+8 | import '@openzeppelin/contracts-upgrad"
+5,Uni,0x1f9840a800000000000000000000000000000000,blockchain/contracts/collected/Uni_0x1f9840a8.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,15,24,10,17,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+6,DCHFToken,0x045da4bF00000000000000000000000000000000,blockchain/contracts/collected/DCHFToken_0x045da4bF,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/utils/math/SafeMath.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/DCHFToken_0x045da4bF/DCHFToken.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/utils/math/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/DCHFToken_0x045da4bF/DCHFToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/DCHFToken_0x045da4bF/Dependencies/CheckContract.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/DCHFToken_0x045da4bF/DCHFToken.sol:7:1:
+  |
+7 | import ""./Dependencies/CheckContract.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/DCHFToken_0x045da4bF/Interfaces/IDCHFToken.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/DCHFToken_0x045da4bF/DCHFToken.sol:8:1:
+  |
+8 | import ""./Interfaces/IDCHFToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+7,SDAO,0xc20059e000000000000000000000000000000000,blockchain/contracts/collected/SDAO_0xc20059e0,,False,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,7,15,8,12,1,7,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+8,GearToken,0xba33355800000000000000000000000000000000,blockchain/contracts/collected/GearToken_0xba333558,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/math/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/GearToken_0xba333558/GearToken.sol:4:1:
+  |
+4 | import {SafeMath} from ""@openzeppelin/contracts/math/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+9,SmartToken,0x1f573d6f00000000000000000000000000000000,blockchain/contracts/collected/SmartToken_0x1f573d6f.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,47,7,0,2,1,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+10,MarsToken,0x66C0DDEd00000000000000000000000000000000,blockchain/contracts/collected/MarsToken_0x66C0DDEd.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,16,12,11,6,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+11,ObolToken,0x0b01000000000000000000000000000000000000,blockchain/contracts/collected/ObolToken_0x0b010000,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ObolToken_0x0b010000/ObolToken.sol:34:1:
+   |
+34 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/AccessControl.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ObolToken_0x0b010000/ObolToken.sol:35:1:
+   |
+35 | import ""@openzeppelin/contracts/access/AccessControl.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ObolToken_0x0b010000/ObolToken.sol:36:1:
+   |
+36 | import ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ObolToken_0x0b010000/ObolToken.sol:37:1:
+   |
+37 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/ObolToken_0x0b010000/lib/IENSReverseRegistrar.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ObolToken_0x0b010000/ObolToken.sol:38:1:
+   |
+38 | import ""./lib/IENSReverseRegistrar.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+12,PENDLE,0x8085071200000000000000000000000000000000,blockchain/contracts/collected/PENDLE_0x80850712,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,2,48,28,19,31,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+13,SolidlyProxy,0x777172D800000000000000000000000000000000,blockchain/contracts/collected/SolidlyProxy_0x777172D8,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,16,15,0,4,2,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+14,MiniMeToken,0x6C16119B00000000000000000000000000000000,blockchain/contracts/collected/MiniMeToken_0x6C16119B.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,2,55,22,12,12,0,12,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+15,ERC677MultiBridgeToken,0x0Ae0550900000000000000000000000000000000,blockchain/contracts/collected/ERC677MultiBridgeToken_0x0Ae05509.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,63,6,4,4,0,4,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+16,Proxy,0x7712c34200000000000000000000000000000000,blockchain/contracts/collected/Proxy_0x7712c342.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,7,4,0,2,1,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+17,GeyserToken,0xbEa98c0500000000000000000000000000000000,blockchain/contracts/collected/GeyserToken_0xbEa98c05.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,0,33,2,0,2,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+18,ERC1967Proxy,0x6E2a43be00000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0x6E2a43be,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x6E2a43be/ERC1967Proxy.sol:5:1:
+  |
+5 | import ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x6E2a43be/ERC1967Upgrade.sol:5:1:
+  |
+5 | import ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x6E2a43be/ERC1967Upgrade.sol:6:1:
+  |
+6 | import ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x6E2a43be/ERC1967Upgrade.sol:7:1:
+  |
+7 | import ""../../utils/StorageSlot.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+19,Toke,0x2e9d637800000000000000000000000000000000,blockchain/contracts/collected/Toke_0x2e9d6378,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Toke_0x2e9d6378/Toke.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Toke_0x2e9d6378/Toke.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Toke_0x2e9d6378/Toke.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+20,CroToken,0xa0b73e1f00000000000000000000000000000000,blockchain/contracts/collected/CroToken_0xa0b73e1f.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,44,5,6,8,0,5,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+21,Up,0x1d926bbe00000000000000000000000000000000,blockchain/contracts/collected/Up_0x1d926bbe.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.31+commit.fd3a2265.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+ --> blockchain/contracts/collected/Up_0x1d926bbe.sol:2:1:
+  |
+2 | pragma solidity =0.8.30 ^0.8.20;
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+22,PROB,0xfb559ce600000000000000000000000000000000,blockchain/contracts/collected/PROB_0xfb559ce6.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,2,24,13,0,3,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+23,BicoTokenProxy,0xf17e658200000000000000000000000000000000,blockchain/contracts/collected/BicoTokenProxy_0xf17e6582.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,6,4,43,4,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+24,ENA,0x57e114b600000000000000000000000000000000,blockchain/contracts/collected/ENA_0x57e114b6,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ENA_0x57e114b6/ENA.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ENA_0x57e114b6/ENA.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ENA_0x57e114b6/ENA.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable2Step.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ENA_0x57e114b6/ENA.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/access/Ownable2Step.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/ENA_0x57e114b6/interfaces/IENADefinitions.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ENA_0x57e114b6/ENA.sol:8:1:
+  |
+8 | import ""./interfaces/IENADefinitions.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+25,SOLV,0x256f2d6700000000000000000000000000000000,blockchain/contracts/collected/SOLV_0x256f2d67,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SOLV_0x256f2d67/Solv.sol:5:1:
+  |
+5 | import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+26,CFG,0xcccccccc00000000000000000000000000000000,blockchain/contracts/collected/CFG_0xcccccccc,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""src/DelegationToken.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CFG_0xcccccccc/CFG.sol:4:1:
+  |
+4 | import {DelegationToken} from ""src/DelegationToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""src/interfaces/ICFG.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CFG_0xcccccccc/CFG.sol:5:1:
+  |
+5 | import {ICFG} from ""src/interfaces/ICFG.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+27,Comp,0x2ba592F700000000000000000000000000000000,blockchain/contracts/collected/Comp_0x2ba592F7.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,5,20,3,12,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+28,UNCX,0xadb2437e00000000000000000000000000000000,blockchain/contracts/collected/UNCX_0xadb2437e,,False,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,33,14,5,6,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+29,ApuffTokenMain,0x2be056e500000000000000000000000000000000,blockchain/contracts/collected/ApuffTokenMain_0x2be056e5,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ApuffTokenMain_0x2be056e5/ApuffTokenMain.sol:4:1:
+  |
+4 | import { Ownable } from ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ApuffTokenMain_0x2be056e5/ApuffTokenMain.sol:5:1:
+  |
+5 | import { OFT } from ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ApuffTokenMain_0x2be056e5/ApuffTokenMain.sol:6:1:
+  |
+6 | import { IOFT, SendParam, OFTReceipt } from ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFTCore.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ApuffTokenMain_0x2be056e5/ApuffTokenMain.sol:7:1:
+  |
+7 | import { MessagingFee, MessagingReceipt } from ""@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFTCore.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+30,PerpToken,0xbc39668900000000000000000000000000000000,blockchain/contracts/collected/PerpToken_0xbc396689.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,27,4,0,1,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+31,UniPower,0xF2f9A7e900000000000000000000000000000000,blockchain/contracts/collected/UniPower_0xF2f9A7e9.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,7,14,10,7,0,4,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+32,ArcadeToken,0xe020b01b00000000000000000000000000000000,blockchain/contracts/collected/ArcadeToken_0xe020b01b,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ArcadeToken_0xe020b01b/ArcadeToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ArcadeToken_0xe020b01b/ArcadeToken.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ArcadeToken_0xe020b01b/ArcadeToken.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/interfaces/IArcadeToken.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ArcadeToken_0xe020b01b/ArcadeToken.sol:9:1:
+  |
+9 | import ""../interfaces/IArcadeToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/errors/Token.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ArcadeToken_0xe020b01b/ArcadeToken.sol:11:1:
+   |
+11 | import {
+   | ^ (Relevant source part starts here and spans across multiple lines).
+
+"
+33,VirtueToken,0x9416ba7600000000000000000000000000000000,blockchain/contracts/collected/VirtueToken_0x9416ba76,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""hardhat/console.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/VirtueToken_0x9416ba76/VirtueToken.sol:4:1:
+  |
+4 | import ""hardhat/console.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/VirtueToken_0x9416ba76/VirtueToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/VirtueToken_0x9416ba76/VirtueToken.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+34,AdminUpgradeabilityProxy,0x48c3399700000000000000000000000000000000,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x48c33997,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/utils/Address.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/AdminUpgradeabilityProxy_0x48c33997/UpgradeabilityProxy.sol:6:1:
+  |
+6 | import '@openzeppelin/contracts/utils/Address.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+35,WasabiToken,0x896e145500000000000000000000000000000000,blockchain/contracts/collected/WasabiToken_0x896e1455.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.7.6+commit.7338295f.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+    --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WasabiToken_0x896e1455.sol:1410:1:
+     |
+1410 | pragma solidity ^0.6.12;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+36,Renzo,0x3b50805400000000000000000000000000000000,blockchain/contracts/collected/Renzo_0x3b508054,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,2,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+37,ANKRToken,0x8290333c00000000000000000000000000000000,blockchain/contracts/collected/ANKRToken_0x8290333c.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,21,2,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+38,LQTYToken,0x6DEA81C800000000000000000000000000000000,blockchain/contracts/collected/LQTYToken_0x6DEA81C8,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Dependencies/CheckContract.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LQTYToken_0x6DEA81C8/LQTYToken.sol:5:1:
+  |
+5 | import ""../Dependencies/CheckContract.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Dependencies/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LQTYToken_0x6DEA81C8/LQTYToken.sol:6:1:
+  |
+6 | import ""../Dependencies/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Interfaces/ILQTYToken.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LQTYToken_0x6DEA81C8/LQTYToken.sol:7:1:
+  |
+7 | import ""../Interfaces/ILQTYToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Interfaces/ILockupContractFactory.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LQTYToken_0x6DEA81C8/LQTYToken.sol:8:1:
+  |
+8 | import ""../Interfaces/ILockupContractFactory.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Dependencies/console.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LQTYToken_0x6DEA81C8/LQTYToken.sol:9:1:
+  |
+9 | import ""../Dependencies/console.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+39,Ondo,0xfaba6f8e00000000000000000000000000000000,blockchain/contracts/collected/Ondo_0xfaba6f8e,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,2,16,23,3,15,1,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+40,izumiToken,0x9ad3720500000000000000000000000000000000,blockchain/contracts/collected/izumiToken_0x9ad37205.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,8,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+41,SMARTCREDIT,0x72e9D90300000000000000000000000000000000,blockchain/contracts/collected/SMARTCREDIT_0x72e9D903.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Multiple SPDX license identifiers found in source file. Use ""AND"" or ""OR"" to combine multiple licenses. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SMARTCREDIT_0x72e9D903.sol
+
+"
+42,RevestToken,0x120a387900000000000000000000000000000000,blockchain/contracts/collected/RevestToken_0x120a3879,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/access/AccessControlEnumerable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/RevestToken_0x120a3879/RevestToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/access/AccessControlEnumerable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/security/ReentrancyGuard.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/RevestToken_0x120a3879/RevestToken.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/security/ReentrancyGuard.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/RevestToken_0x120a3879/interfaces/IRevest.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/RevestToken_0x120a3879/RevestToken.sol:7:1:
+  |
+7 | import ""./interfaces/IRevest.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/RevestToken_0x120a3879/interfaces/IAddressRegistry.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/RevestToken_0x120a3879/RevestToken.sol:8:1:
+  |
+8 | import ""./interfaces/IAddressRegistry.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/RevestToken_0x120a3879/interfaces/ILockManager.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/RevestToken_0x120a3879/RevestToken.sol:9:1:
+  |
+9 | import ""./interfaces/ILockManager.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/RevestToken_0x120a3879/interfaces/ITokenVault.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected"
+43,FLIP,0x8261805400000000000000000000000000000000,blockchain/contracts/collected/FLIP_0x82618054,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FLIP_0x82618054/FLIP.sol:5:1:
+  |
+5 | import ""ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""IFLIP.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FLIP_0x82618054/FLIP.sol:6:1:
+  |
+6 | import ""IFLIP.sol"";
+  | ^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""Shared.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FLIP_0x82618054/FLIP.sol:7:1:
+  |
+7 | import ""Shared.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^
+
+"
+44,MainToken,0xF063fE1a00000000000000000000000000000000,blockchain/contracts/collected/MainToken_0xF063fE1a.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,49,7,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+45,NumeraireBackend,0x1776e1f200000000000000000000000000000000,blockchain/contracts/collected/NumeraireBackend_0x1776e1f2.sol,,False,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,11,1,111,22,13,7,0,3,9,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+47,QuartzToken,0xbA8A621b00000000000000000000000000000000,blockchain/contracts/collected/QuartzToken_0xbA8A621b,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/QuartzToken_0xbA8A621b/QuartzToken.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+48,UwU,0x55C08ca500000000000000000000000000000000,blockchain/contracts/collected/UwU_0x55C08ca5.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,4,29,11,11,7,2,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+49,T,0xcdf7028c00000000000000000000000000000000,blockchain/contracts/collected/T_0xcdf7028c,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/governance/Checkpoints.sol"" not found: File not found.
+  --> blockchain/contracts/collected/T_0xcdf7028c/T.sol:18:1:
+   |
+18 | import ""../governance/Checkpoints.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/utils/math/SafeCast.sol"" not found: File not found.
+  --> blockchain/contracts/collected/T_0xcdf7028c/T.sol:19:1:
+   |
+19 | import ""@openzeppelin/contracts/utils/math/SafeCast.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@thesis/solidity-contracts/contracts/token/ERC20WithPermit.sol"" not found: File not found.
+  --> blockchain/contracts/collected/T_0xcdf7028c/T.sol:20:1:
+   |
+20 | import ""@thesis/solidity-contracts/contracts/token/ERC20WithPermit.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@thesis/solidity-contracts/contracts/token/MisfundRecovery.sol"" not found: File not found.
+  --> blockchain/contracts/collected/T_0xcdf7028c/T.sol:21:1:
+   |
+21 | import ""@thesis/solidity-contracts/contracts/token/MisfundRecovery.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+50,FungTokenProxy,0x0e4e7f2a00000000000000000000000000000000,blockchain/contracts/collected/FungTokenProxy_0x0e4e7f2a.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,5,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+51,Pool,0x0cec1a9100000000000000000000000000000000,blockchain/contracts/collected/Pool_0x0cec1a91,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,16,24,10,17,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+52,AdminUpgradeabilityProxy,0x24a6a37500000000000000000000000000000000,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x24a6a375,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/utils/Address.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/AdminUpgradeabilityProxy_0x24a6a375/UpgradeabilityProxy.sol:6:1:
+  |
+6 | import '@openzeppelin/contracts/utils/Address.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+53,TransparentUpgradeableProxy,0x3c3a81e800000000000000000000000000000000,blockchain/contracts/collected/TransparentUpgradeableProxy_0x3c3a81e8,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/ERC1967/ERC1967Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TransparentUpgradeableProxy_0x3c3a81e8/TransparentUpgradeableProxy.sol:6:1:
+  |
+6 | import ""../ERC1967/ERC1967Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+54,FDT,0xEd1480d100000000000000000000000000000000,blockchain/contracts/collected/FDT_0xEd1480d1,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FDT_0xEd1480d1/FDT.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FDT_0xEd1480d1/FDT.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/FDT_0xEd1480d1/FDT.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+55,RibbonToken,0x6123b00400000000000000000000000000000000,blockchain/contracts/collected/RibbonToken_0x6123b004.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,15,6,0,4,3,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+57,COVER,0x5d8d9f5b00000000000000000000000000000000,blockchain/contracts/collected/COVER_0x5d8d9f5b,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/utils/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/COVER.sol:5:1:
+  |
+5 | import ""./utils/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/utils/Ownable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/COVER.sol:6:1:
+  |
+6 | import ""./utils/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/ERC20/ERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/COVER_0x5d8d9f5b/COVER.sol:7:1:
+  |
+7 | import ""./ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+58,FRAXShares,0x3432b6a600000000000000000000000000000000,blockchain/contracts/collected/FRAXShares_0x3432b6a6,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,6,73,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+59,SudoToken,0x3446Dd7000000000000000000000000000000000,blockchain/contracts/collected/SudoToken_0x3446Dd70.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,9,108,7,0,4,0,5,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+60,HotCrossToken,0x4297394c00000000000000000000000000000000,blockchain/contracts/collected/HotCrossToken_0x4297394c.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.31+commit.fd3a2265.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+   --> blockchain/contracts/collected/HotCrossToken_0x4297394c.sol:486:1:
+    |
+486 | pragma solidity 0.8.3;
+    | ^^^^^^^^^^^^^^^^^^^^^^
+
+"
+61,CORE,0x62359ed700000000000000000000000000000000,blockchain/contracts/collected/CORE_0x62359ed7,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/CORE.sol
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/CORE.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/GSN/Context.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/NBUNIERC20.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/GSN/Context.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/math/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/NBUNIERC20.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/math/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/utils/Address.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/NBUNIERC20.sol:8:1:
+  |
+8 | import ""@openzeppelin/contracts/utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@nomiclabs/buidler/console.sol"" not found: File not found.
+  --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/CORE_0x62359ed7/NBUNIERC20.sol:11:1:
+   |
+11 | import ""@nomiclabs/buidler/console.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+62,EverRise,0xC17c30e900000000000000000000000000000000,blockchain/contracts/collected/EverRise_0xC17c30e9.sol,,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,5,10,64,44,31,6,1,41,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+63,AdminUpgradeabilityProxy,0xdefa4e8a00000000000000000000000000000000,blockchain/contracts/collected/AdminUpgradeabilityProxy_0xdefa4e8a,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/utils/Address.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/AdminUpgradeabilityProxy_0xdefa4e8a/UpgradeabilityProxy.sol:6:1:
+  |
+6 | import '@openzeppelin/contracts/utils/Address.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+65,TokenProxy,0xace8e71900000000000000000000000000000000,blockchain/contracts/collected/TokenProxy_0xace8e719,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""contracts/external/openzeppelin/contracts/proxy/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TokenProxy_0xace8e719/ERC1967Proxy.sol:6:1:
+  |
+6 | import ""contracts/external/openzeppelin/contracts/proxy/Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""contracts/external/openzeppelin/contracts/proxy/ERC1967Upgrade.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TokenProxy_0xace8e719/ERC1967Proxy.sol:7:1:
+  |
+7 | import ""contracts/external/openzeppelin/contracts/proxy/ERC1967Upgrade.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+66,pStake,0xfb5c681500000000000000000000000000000000,blockchain/contracts/collected/pStake_0xfb5c6815,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/IERC20.sol"" not found: File not found.
+  --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/pStake_0xfb5c6815/pStake.sol:11:1:
+   |
+11 | import { IERC20 } from ""@openzeppelin/contracts/token/ERC20/IERC20.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+67,TransparentUpgradeableProxy,0xec53bf9100000000000000000000000000000000,blockchain/contracts/collected/TransparentUpgradeableProxy_0xec53bf91,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/ERC1967/ERC1967Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TransparentUpgradeableProxy_0xec53bf91/TransparentUpgradeableProxy.sol:6:1:
+  |
+6 | import ""../ERC1967/ERC1967Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+68,BlurToken,0x5283d29100000000000000000000000000000000,blockchain/contracts/collected/BlurToken_0x5283d291,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BlurToken_0x5283d291/BlurToken.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BlurToken_0x5283d291/BlurToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BlurToken_0x5283d291/BlurToken.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BlurToken_0x5283d291/BlurToken.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/BlurToken_0x5283d291/interfaces/ITokenLockup.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BlurToken_0x5283d291/BlurToken.sol:9:1:
+  |
+9 | import ""./interfaces/ITokenLockup.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+69,DELTAToken,0x9ea3b5b400000000000000000000000000000000,blockchain/contracts/collected/DELTAToken_0x9ea3b5b4,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DELTAToken_0x9ea3b5b4/DELTAToken.sol
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/libs/Context.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DELTAToken_0x9ea3b5b4/DELTAToken.sol:5:1:
+  |
+5 | import ""../libs/Context.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/interfaces/IOVLBalanceHandler.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DELTAToken_0x9ea3b5b4/DELTAToken.sol:7:1:
+  |
+7 | import ""../../interfaces/IOVLBalanceHandler.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/interfaces/IOVLTransferHandler.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DELTAToken_0x9ea3b5b4/DELTAToken.sol:8:1:
+  |
+8 | import ""../../interfaces/IOVLTransferHandler.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/interfaces/IOVLVestingCalculator.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/DELTAToken_0x9ea3b5b4/DELTAToken.sol:9:1:
+  |
+9 | import ""../../interfaces/IOVLVestingCalculator.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/interfac"
+70,Token,0x00869e8e00000000000000000000000000000000,blockchain/contracts/collected/Token_0x00869e8e.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,16,42,4,0,6,0,7,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+71,TUPProxy,0x8c1bed5b00000000000000000000000000000000,blockchain/contracts/collected/TUPProxy_0x8c1bed5b,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"" not found: File not found.
+ --> blockchain/contracts/collected/TUPProxy_0x8c1bed5b/TUPProxy.sol:4:1:
+  |
+4 | import ""openzeppelin-contracts/contracts/proxy/transparent/TransparentUpgradeableProxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+72,POINTS,0xd7c1eb0f00000000000000000000000000000000,blockchain/contracts/collected/POINTS_0xd7c1eb0f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/POINTS_0xd7c1eb0f/points.sol:4:1:
+  |
+4 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/POINTS_0xd7c1eb0f/points.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+73,Sharev3,0x024b6e7d00000000000000000000000000000000,blockchain/contracts/collected/Sharev3_0x024b6e7d.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,33,5,1,1,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+74,ERC1967Proxy,0x41545f8b00000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0x41545f8b.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,6,4,34,3,1,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+75,ERC1967Proxy,0x09fd37d900000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Proxy.sol:6:1:
+  |
+6 | import ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Upgrade.sol:6:1:
+  |
+6 | import ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/interfaces/IERC1967.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Upgrade.sol:7:1:
+  |
+7 | import ""../../interfaces/IERC1967.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/interfaces/draft-IERC1822.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Upgrade.sol:8:1:
+  |
+8 | import ""../../interfaces/draft-IERC1822.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Upgrade.sol:9:1:
+  |
+9 | import ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/ERC1967Proxy_0x09fd37d9/ERC1967Upgrade.sol:10:1:
+   |
+10 | import ""../../utils/StorageSlot.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+77,SkaleToken,0x00c83aec00000000000000000000000000000000,blockchain/contracts/collected/SkaleToken_0x00c83aec,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SkaleToken_0x00c83aec/ERC777.sol
+
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SkaleToken_0x00c83aec/OEPAccessControl.sol
+
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SkaleToken_0x00c83aec/OEPAddress.sol
+
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SkaleToken_0x00c83aec/OEPOwnable.sol
+
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing ""SPDX-License-Identifier: <SPDX-License>"" to each source file. Use ""SPDX-License-Identifier: UNLICENSED"" for non-open-source code. Please see https://spdx.org for more i"
+78,TidalToken,0x29cbd05100000000000000000000000000000000,blockchain/contracts/collected/TidalToken_0x29cbd051.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,30,2,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+79,Vyper_contract,0x873fb54400000000000000000000000000000000,blockchain/contracts/collected/Vyper_contract_0x873fb544.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Expected pragma, import directive or contract/interface/library/struct/enum/constant/function/error definition.
+ --> blockchain/contracts/collected/Vyper_contract_0x873fb544.sol:1:1:
+  |
+1 | # @version 0.2.12
+  | ^
+
+"
+80,AEON,0x871b7c4e00000000000000000000000000000000,blockchain/contracts/collected/AEON_0x871b7c4e.sol,,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,3,6,20,20,27,27,1,23,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+81,Vyper_contract,0xf29ae50800000000000000000000000000000000,blockchain/contracts/collected/Vyper_contract_0xf29ae508.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Expected pragma, import directive or contract/interface/library/struct/enum/constant/function/error definition.
+ --> blockchain/contracts/collected/Vyper_contract_0xf29ae508.sol:1:1:
+  |
+1 | # @version 0.2.11
+  | ^
+
+"
+82,ERC1967Proxy,0x2255718800000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0x22557188,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x22557188/ERC1967Proxy.sol:6:1:
+  |
+6 | import {Proxy} from ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x22557188/ERC1967Utils.sol:6:1:
+  |
+6 | import {IBeacon} from ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x22557188/ERC1967Utils.sol:7:1:
+  |
+7 | import {Address} from ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x22557188/ERC1967Utils.sol:8:1:
+  |
+8 | import {StorageSlot} from ""../../utils/StorageSlot.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+83,FunctionXToken,0x8c15ef5b00000000000000000000000000000000,blockchain/contracts/collected/FunctionXToken_0x8c15ef5b.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,47,13,4,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+84,ProxyERC20,0x57ab1ec200000000000000000000000000000000,blockchain/contracts/collected/ProxyERC20_0x57ab1ec2.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,3,2,14,10,12,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+85,CErc20Delegator,0xface851a00000000000000000000000000000000,blockchain/contracts/collected/CErc20Delegator_0xface851a,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,2,3,42,39,71,0,0,3,3,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+86,CyberToken,0x1477886000000000000000000000000000000000,blockchain/contracts/collected/CyberToken_0x14778860,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""openzeppelin-contracts/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CyberToken_0x14778860/CyberToken.sol:5:1:
+  |
+5 | import { Ownable } from ""openzeppelin-contracts/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CyberToken_0x14778860/CyberToken.sol:6:1:
+  |
+6 | import { ERC20Burnable } from ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Votes.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CyberToken_0x14778860/CyberToken.sol:7:1:
+  |
+7 | import { ERC20Votes } from ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Votes.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""openzeppelin-contracts/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CyberToken_0x14778860/CyberToken.sol:8:1:
+  |
+8 | import { ERC20 } from ""openzeppelin-contracts/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""openzeppelin-contracts/contracts/token/ERC20/extensions/draft-ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CyberToken_0x14778860/CyberToken.sol:9:1:
+  |
+9 | import { ERC20Perm"
+87,InitializableImmutableAdminUpgradeabilityProxy,0x5394794b00000000000000000000000000000000,blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x5394794b,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/dependencies/openzeppelin/upgradeability/InitializableUpgradeabilityProxy.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x5394794b/InitializableImmutableAdminUpgradeabilityProxy.sol:5:1:
+  |
+5 | import '../../../dependencies/openzeppelin/upgradeability/InitializableUpgradeabilityProxy.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/dependencies/openzeppelin/upgradeability/BaseUpgradeabilityProxy.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x5394794b/BaseImmutableAdminUpgradeabilityProxy.sol:4:1:
+  |
+4 | import '../../../dependencies/openzeppelin/upgradeability/BaseUpgradeabilityProxy.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+88,ERC1967Proxy,0x58d97b5700000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0x58d97b57,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x58d97b57/ERC1967Proxy.sol:6:1:
+  |
+6 | import {Proxy} from ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x58d97b57/ERC1967Utils.sol:6:1:
+  |
+6 | import {IBeacon} from ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/interfaces/IERC1967.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x58d97b57/ERC1967Utils.sol:7:1:
+  |
+7 | import {IERC1967} from ""../../interfaces/IERC1967.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x58d97b57/ERC1967Utils.sol:8:1:
+  |
+8 | import {Address} from ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0x58d97b57/ERC1967Utils.sol:9:1:
+  |
+9 | import {StorageSlot} from ""../../utils/StorageSlot.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+89,ArcBlockToken,0xb98d4c9700000000000000000000000000000000,blockchain/contracts/collected/ArcBlockToken_0xb98d4c97.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,31,2,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+90,FOX,0xc770eefa00000000000000000000000000000000,blockchain/contracts/collected/FOX_0xc770eefa.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,10,2,0,3,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+91,UPIToken,0x70d2b7c100000000000000000000000000000000,blockchain/contracts/collected/UPIToken_0x70d2b7c1.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,13,2,0,1,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+92,TransparentUpgradeableProxy,0xc83e27f200000000000000000000000000000000,blockchain/contracts/collected/TransparentUpgradeableProxy_0xc83e27f2,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/ERC1967/ERC1967Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TransparentUpgradeableProxy_0xc83e27f2/TransparentUpgradeableProxy.sol:6:1:
+  |
+6 | import ""../ERC1967/ERC1967Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+93,Token,0x9ed8e7c900000000000000000000000000000000,blockchain/contracts/collected/Token_0x9ed8e7c9.sol,,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,9,12,60,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+94,TokenMintERC20MintableToken,0x697ef32b00000000000000000000000000000000,blockchain/contracts/collected/TokenMintERC20MintableToken_0x697ef32b.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,16,6,1,3,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+95,TIME,0xef89c37f00000000000000000000000000000000,blockchain/contracts/collected/TIME_0xef89c37f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin-contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TIME_0xef89c37f/TIME.sol:4:1:
+  |
+4 | import {ERC20} from ""@openzeppelin-contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+96,Contract,0xdbcd57cc00000000000000000000000000000000,blockchain/contracts/collected/Contract_0xdbcd57cc.sol,,True,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,2,9,44,24,16,33,0,33,2,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+97,OCC,0x2f10902100000000000000000000000000000000,blockchain/contracts/collected/OCC_0x2f109021.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,24,2,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+98,LUSDToken,0x5f98805a00000000000000000000000000000000,blockchain/contracts/collected/LUSDToken_0x5f98805a,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/Interfaces/ILUSDToken.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/LUSDToken.sol:5:1:
+  |
+5 | import ""./Interfaces/ILUSDToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/Dependencies/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/LUSDToken.sol:6:1:
+  |
+6 | import ""./Dependencies/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/Dependencies/CheckContract.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/LUSDToken.sol:7:1:
+  |
+7 | import ""./Dependencies/CheckContract.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/Dependencies/console.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/LUSDToken_0x5f98805a/LUSDToken.sol:8:1:
+  |
+8 | import ""./Dependencies/console.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+99,BeaconProxy,0xb39185e300000000000000000000000000000000,blockchain/contracts/collected/BeaconProxy_0xb39185e3.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,22,5,5,1,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+100,OrionToken,0x0258f47400000000000000000000000000000000,blockchain/contracts/collected/OrionToken_0x0258f474,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,26,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+101,InitializedProxy,0xdffa3a7f00000000000000000000000000000000,blockchain/contracts/collected/InitializedProxy_0xdffa3a7f,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,5,3,1,1,0,3,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+102,BRC20,0xda31d0d100000000000000000000000000000000,blockchain/contracts/collected/BRC20_0xda31d0d1,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/BRC20_0xda31d0d1/interfaces/IBRC20Factory.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/BRC20_0xda31d0d1/BRC20.sol:5:1:
+  |
+5 | import ""./interfaces/IBRC20Factory.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+103,GDT,0xc67b120400000000000000000000000000000000,blockchain/contracts/collected/GDT_0xc67b1204.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,3,9,0,7,1,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+104,ERC20Token,0x723cbfc000000000000000000000000000000000,blockchain/contracts/collected/ERC20Token_0x723cbfc0.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,0,29,3,0,1,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+105,DeployyyyerToken,0xb5c5fc6d00000000000000000000000000000000,blockchain/contracts/collected/DeployyyyerToken_0xb5c5fc6d,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/interfaces/IStaking.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/DeployyyyerToken_0xb5c5fc6d/DeployyyyerToken.sol:10:1:
+   |
+10 | import {IStaking} from ""../interfaces/IStaking.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/interfaces/IStaking.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/DeployyyyerToken_0xb5c5fc6d/StakingPool.sol:11:1:
+   |
+11 | import ""../interfaces/IStaking.sol"";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/interfaces/IERC20.sol"" not found: File not found. Searched the following locations: """".
+  --> blockchain/contracts/collected/DeployyyyerToken_0xb5c5fc6d/StakingPool.sol:12:1:
+   |
+12 | import { IERC20 } from ""../interfaces/IERC20.sol""; 
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+106,GROGGO,0x420110d700000000000000000000000000000000,blockchain/contracts/collected/GROGGO_0x420110d7.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,2,1,18,17,31,14,0,15,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+107,FreelaToken,0x29ceddcf00000000000000000000000000000000,blockchain/contracts/collected/FreelaToken_0x29ceddcf,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/FreelaToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/utils/math/SafeMath.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/FreelaToken.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/utils/math/SafeMath.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/FreelaToken.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/FreelaToken.sol:8:1:
+  |
+8 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/IERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/FreelaToken.sol:9:1:
+  |
+9 | import ""@openzeppelin/contracts/token/ERC20/IERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/FreelaToken_0x29ceddcf/ERC20Permit.sol:5:1:
+  |
+5 | import ""@o"
+108,CovalentXToken,0x7abc8a5700000000000000000000000000000000,blockchain/contracts/collected/CovalentXToken_0x7abc8a57,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CovalentXToken_0x7abc8a57/CovalentXToken.sol:4:1:
+  |
+4 | import {ERC20, ERC20Permit, IERC20} from ""openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""openzeppelin-contracts/contracts/access/AccessControlEnumerable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CovalentXToken_0x7abc8a57/CovalentXToken.sol:5:1:
+  |
+5 | import {AccessControlEnumerable} from ""openzeppelin-contracts/contracts/access/AccessControlEnumerable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/CovalentXToken_0x7abc8a57/interfaces/ICovalentXToken.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CovalentXToken_0x7abc8a57/CovalentXToken.sol:6:1:
+  |
+6 | import {ICovalentXToken} from ""./interfaces/ICovalentXToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+109,WBTC,0x2260fac500000000000000000000000000000000,blockchain/contracts/collected/WBTC_0x2260fac5.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,0,57,4,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+110,BridgeToken,0x3294395e00000000000000000000000000000000,blockchain/contracts/collected/BridgeToken_0x3294395e.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,4,41,2,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+111,TralaToken,0xd5e0eda000000000000000000000000000000000,blockchain/contracts/collected/TralaToken_0xd5e0eda0,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TralaToken_0xd5e0eda0/TralaToken.sol:3:1:
+  |
+3 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+112,Knuxx_Bully_Of_ETH,0xa795dadc00000000000000000000000000000000,blockchain/contracts/collected/Knuxx_Bully_Of_ETH_0xa795dadc,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,7,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+113,District0xNetworkToken,0x0abdace700000000000000000000000000000000,blockchain/contracts/collected/District0xNetworkToken_0x0abdace7.sol,,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,6,8,164,2,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+114,TransparentUpgradeableProxy,0x14d60e7f00000000000000000000000000000000,blockchain/contracts/collected/TransparentUpgradeableProxy_0x14d60e7f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/ERC1967/ERC1967Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TransparentUpgradeableProxy_0x14d60e7f/TransparentUpgradeableProxy.sol:6:1:
+  |
+6 | import ""../ERC1967/ERC1967Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+115,GTC,0xde30da3900000000000000000000000000000000,blockchain/contracts/collected/GTC_0xde30da39.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,18,26,10,18,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+116,SlashToken,0x03042ae600000000000000000000000000000000,blockchain/contracts/collected/SlashToken_0x03042ae6.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,4,7,0,6,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+117,HFT,0xb3999f6500000000000000000000000000000000,blockchain/contracts/collected/HFT_0xb3999f65.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,17,28,10,17,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+118,SukuToken,0x0763fdcc00000000000000000000000000000000,blockchain/contracts/collected/SukuToken_0x0763fdcc.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/SukuToken_0x0763fdcc.sol:405:1: Error: Source file requires different compiler version (current compiler is 0.5.17+commit.d19bba13.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.5.0;
+^--------------------^
+"
+119,MaticToken,0x7d1afa7b00000000000000000000000000000000,blockchain/contracts/collected/MaticToken_0x7d1afa7b.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,14,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+120,Boring,0xbc19712f00000000000000000000000000000000,blockchain/contracts/collected/Boring_0xbc19712f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Boring_0xbc19712f/Boring.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/IERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Boring_0xbc19712f/Boring.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/IERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Boring_0xbc19712f/Boring.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Boring_0xbc19712f/Boring.sol:8:1:
+  |
+8 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+121,LifeToken,0x6c936d4a00000000000000000000000000000000,blockchain/contracts/collected/LifeToken_0x6c936d4a.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,8,18,12,7,1,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+122,FRESCO,0xb9eb6f3500000000000000000000000000000000,blockchain/contracts/collected/FRESCO_0xb9eb6f35.sol,,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,3,2,26,26,29,29,1,25,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+123,PolyToken,0x9992ec3c00000000000000000000000000000000,blockchain/contracts/collected/PolyToken_0x9992ec3c.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,19,10,7,7,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+124,InitializableImmutableAdminUpgradeabilityProxy,0x98c23e9d00000000000000000000000000000000,blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x98c23e9d,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/dependencies/openzeppelin/upgradeability/InitializableUpgradeabilityProxy.sol"" not found: File not found.
+ --> blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x98c23e9d/InitializableImmutableAdminUpgradeabilityProxy.sol:4:1:
+  |
+4 | import {InitializableUpgradeabilityProxy} from '../../../dependencies/openzeppelin/upgradeability/InitializableUpgradeabilityProxy.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/dependencies/openzeppelin/upgradeability/Proxy.sol"" not found: File not found.
+ --> blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x98c23e9d/InitializableImmutableAdminUpgradeabilityProxy.sol:5:1:
+  |
+5 | import {Proxy} from '../../../dependencies/openzeppelin/upgradeability/Proxy.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/dependencies/openzeppelin/upgradeability/BaseUpgradeabilityProxy.sol"" not found: File not found.
+ --> blockchain/contracts/collected/InitializableImmutableAdminUpgradeabilityProxy_0x98c23e9d/BaseImmutableAdminUpgradeabilityProxy.sol:4:1:
+  |
+4 | import {BaseUpgradeabilityProxy} from '../../../dependencies/openzeppelin/upgradeability/BaseUpgradeabilityProxy.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+125,Token,0xe5e0b73300000000000000000000000000000000,blockchain/contracts/collected/Token_0xe5e0b733,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Token_0xe5e0b733/Token.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Token_0xe5e0b733/Token.sol:6:1:
+  |
+6 | import ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/access/Ownable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Token_0xe5e0b733/Token.sol:7:1:
+  |
+7 | import ""@openzeppelin/contracts/access/Ownable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+126,HokkaiduInu,0xc40af1e400000000000000000000000000000000,blockchain/contracts/collected/HokkaiduInu_0xc40af1e4.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,64,33,33,12,0,9,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+127,PayperEx,0xc1d204d700000000000000000000000000000000,blockchain/contracts/collected/PayperEx_0xc1d204d7.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,5,10,2,6,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+128,SimpleToken,0x4d22445200000000000000000000000000000000,blockchain/contracts/collected/SimpleToken_0x4d224452,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/SimpleToken_0x4d224452/SimpleToken.sol:5:1:
+  |
+5 | import ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+129,TransparentUpgradeableProxy,0x9fb442d600000000000000000000000000000000,blockchain/contracts/collected/TransparentUpgradeableProxy_0x9fb442d6,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/ERC1967/ERC1967Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/TransparentUpgradeableProxy_0x9fb442d6/TransparentUpgradeableProxy.sol:6:1:
+  |
+6 | import ""../ERC1967/ERC1967Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+131,Sand,0x3845bada00000000000000000000000000000000,blockchain/contracts/collected/Sand_0x3845bada,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand.sol:3:1: Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand/erc20/ERC20ExecuteExtension.sol"" not found: File not found.
+import ""./Sand/erc20/ERC20ExecuteExtension.sol"";
+^----------------------------------------------^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand.sol:4:1: Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand/erc20/ERC20BaseToken.sol"" not found: File not found.
+import ""./Sand/erc20/ERC20BaseToken.sol"";
+^---------------------------------------^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand.sol:5:1: Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Sand_0x3845bada/Sand/erc20/ERC20BasicApproveExtension.sol"" not found: File not found.
+import ""./Sand/erc20/ERC20BasicApproveExtension.sol"";
+^---------------------------------------------------^
+"
+132,ConvergenceToken,0xc834fa9900000000000000000000000000000000,blockchain/contracts/collected/ConvergenceToken_0xc834fa99.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,23,2,0,1,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+133,AergoErc20,0x91af0fbb00000000000000000000000000000000,blockchain/contracts/collected/AergoErc20_0x91af0fbb.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,28,11,0,2,1,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+134,Ppay,0x054d64b700000000000000000000000000000000,blockchain/contracts/collected/Ppay_0x054d64b7,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,16,21,6,13,0,14,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+135,CelerToken,0x4f9254c800000000000000000000000000000000,blockchain/contracts/collected/CelerToken_0x4f9254c8.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,40,6,0,5,2,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+136,RariToken,0xfca59cd800000000000000000000000000000000,blockchain/contracts/collected/RariToken_0xfca59cd8.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,12,5,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+137,CowProtocolToken,0xdef1ca1f00000000000000000000000000000000,blockchain/contracts/collected/CowProtocolToken_0xdef1ca1f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/CowProtocolToken_0xdef1ca1f/mixins/InflationaryToken.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CowProtocolToken_0xdef1ca1f/CowProtocolToken.sol:4:1:
+  |
+4 | import ""./mixins/InflationaryToken.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/CowProtocolToken_0xdef1ca1f/vendored/mixins/StorageAccessible.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/CowProtocolToken_0xdef1ca1f/CowProtocolToken.sol:5:1:
+  |
+5 | import ""./vendored/mixins/StorageAccessible.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+138,MainToken,0x3a810ff700000000000000000000000000000000,blockchain/contracts/collected/MainToken_0x3a810ff7,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,64,3,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+139,AlphaGenesis,0x209a78d200000000000000000000000000000000,blockchain/contracts/collected/AlphaGenesis_0x209a78d2.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,27,11,0,4,1,15,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+140,TimeToken,0x485d17a600000000000000000000000000000000,blockchain/contracts/collected/TimeToken_0x485d17a6.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Multiple SPDX license identifiers found in source file. Use ""AND"" or ""OR"" to combine multiple licenses. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/TimeToken_0x485d17a6.sol
+
+"
+141,StandardToken,0x5c29752600000000000000000000000000000000,blockchain/contracts/collected/StandardToken_0x5c297526.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.31+commit.fd3a2265.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+   --> blockchain/contracts/collected/StandardToken_0x5c297526.sol:442:1:
+    |
+442 | pragma solidity =0.8.4;
+    | ^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+142,IlluviumERC20,0x767fe9ed00000000000000000000000000000000,blockchain/contracts/collected/IlluviumERC20_0x767fe9ed,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/utils/AddressUtils.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/IlluviumERC20_0x767fe9ed/IlluviumERC20.sol:4:1:
+  |
+4 | import ""../utils/AddressUtils.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/utils/AccessControl.sol"" not found: File not found.
+ --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/IlluviumERC20_0x767fe9ed/IlluviumERC20.sol:5:1:
+  |
+5 | import ""../utils/AccessControl.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+143,PowerLedger,0x595832f800000000000000000000000000000000,blockchain/contracts/collected/PowerLedger_0x595832f8.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,23,12,0,10,1,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+144,ERC1967Proxy,0xe2ad0bf700000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0xe2ad0bf7,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xe2ad0bf7/ERC1967Proxy.sol:6:1:
+  |
+6 | import {Proxy} from ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xe2ad0bf7/ERC1967Utils.sol:6:1:
+  |
+6 | import {IBeacon} from ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xe2ad0bf7/ERC1967Utils.sol:7:1:
+  |
+7 | import {Address} from ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xe2ad0bf7/ERC1967Utils.sol:8:1:
+  |
+8 | import {StorageSlot} from ""../../utils/StorageSlot.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+145,NKNToken,0x5cf0471600000000000000000000000000000000,blockchain/contracts/collected/NKNToken_0x5cf04716.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,18,2,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+146,MintToken,0x0cdf9acd00000000000000000000000000000000,blockchain/contracts/collected/MintToken_0x0cdf9acd.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,VERSION_MISMATCH,"Version mismatch: Invalid compilation: 
+Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.7.6+commit.7338295f.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+   --> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/MintToken_0x0cdf9acd.sol:637:1:
+    |
+637 | pragma solidity 0.6.0;
+    | ^^^^^^^^^^^^^^^^^^^^^^
+
+"
+147,AdminUpgradeabilityProxy,0x6de037ef00000000000000000000000000000000,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x6de037ef.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,3,13,10,1,1,1,1,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+148,Token,0x33d0568900000000000000000000000000000000,blockchain/contracts/collected/Token_0x33d05689.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Multiple SPDX license identifiers found in source file. Use ""AND"" or ""OR"" to combine multiple licenses. Please see https://spdx.org for more information.
+--> /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/Token_0x33d05689.sol
+
+"
+149,Dorol,0x6085ef8f00000000000000000000000000000000,blockchain/contracts/collected/Dorol_0x6085ef8f,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"External library imports: Invalid compilation: 
+Invalid solc compilation Error: Source ""@openzeppelin/contracts/access/AccessControl.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Dorol_0x6085ef8f/dorol.sol:5:1:
+  |
+5 | import {AccessControl} from ""@openzeppelin/contracts/access/AccessControl.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/ERC20.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Dorol_0x6085ef8f/dorol.sol:6:1:
+  |
+6 | import {ERC20} from ""@openzeppelin/contracts/token/ERC20/ERC20.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""https://github.com/OpenZeppelin/openzeppelin-community-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Blocklist.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Dorol_0x6085ef8f/dorol.sol:7:1:
+  |
+7 | import {ERC20Blocklist} from ""https ... C20/extensions/ERC20Blocklist.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Dorol_0x6085ef8f/dorol.sol:8:1:
+  |
+8 | import {ERC20Burnable} from ""@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""https://github.com/OpenZeppelin/openzeppelin-community-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Custodian.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/Dorol_0x6085ef8f/dorol.sol:9:1:
+  |
+9 | import {ERC20Custodian} from ""https ... C20/extensions/ERC20Cu"
+150,ERC1967Proxy,0xb0ffa80000000000000000000000000000000000,blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/Proxy.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800/ERC1967Proxy.sol:6:1:
+  |
+6 | import ""../Proxy.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/beacon/IBeacon.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800/ERC1967Upgrade.sol:6:1:
+  |
+6 | import ""../beacon/IBeacon.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/interfaces/draft-IERC1822.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800/ERC1967Upgrade.sol:7:1:
+  |
+7 | import ""../../interfaces/draft-IERC1822.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/Address.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800/ERC1967Upgrade.sol:8:1:
+  |
+8 | import ""../../utils/Address.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/utils/StorageSlot.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/ERC1967Proxy_0xb0ffa800/ERC1967Upgrade.sol:9:1:
+  |
+9 | import ""../../utils/StorageSlot.sol"";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"
+151,FiatTokenProxy,0xa0b8699100000000000000000000000000000000,blockchain/contracts/collected/FiatTokenProxy_0xa0b86991.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,3,14,1,0,0,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+152,DrepToken,0xec583f2500000000000000000000000000000000,blockchain/contracts/collected/DrepToken_0xec583f25.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,12,9,0,9,3,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+153,TetherToken,0xdac17f9500000000000000000000000000000000,blockchain/contracts/collected/TetherToken_0xdac17f95.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,15,30,13,7,5,0,2,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+154,DAO,0xBB9bc24400000000000000000000000000000000,blockchain/contracts/collected/DAO_0xBB9bc244.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Expected '{' but got 'constant'
+  --> blockchain/contracts/collected/DAO_0xBB9bc244.sol:45:40:
+   |
+45 |     function balanceOf(address _owner) constant returns (uint256 balance);
+   |                                        ^^^^^^^^
+
+"
+155,WalletLibrary,0x863DF6BF00000000000000000000000000000000,blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation /home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:125:5: Warning: Use of the ""var"" keyword is deprecated.
+    var pending = m_pending[_operation];
+    ^---------^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:189:5: Warning: Use of the ""var"" keyword is deprecated.
+    var pending = m_pending[_operation];
+    ^---------^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:215:54: Warning: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+  modifier only_uninitialized { if (m_numOwners > 0) throw; _; }
+                                                     ^---^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:242:11: Warning: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+          throw;
+          ^---^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:276:11: Warning: ""throw"" is deprecated in favour of ""revert()"", ""require()"" and ""assert()"".
+          throw;
+          ^---^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:293:5: Warning: Use of the ""var"" keyword is deprecated.
+    var pending = m_pending[_operation];
+    ^---------^
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:402:3: Warning: Defining constructors as functions with the same name as the contract is deprecated. Use ""constructor(...) { ... }"" instead.
+  function Wallet(address[] _owners, uint _required, uint _daylimit) {
+  ^ (Relevant source part starts here and spans across multiple lines).
+/home/motafeq/projects/chainguardian-ai/blockchain/contracts/collected/WalletLibrary_0x863DF6BF.sol:260:3: Warning: Variable is shadowed i"
+156,BecToken,0xC5d105E600000000000000000000000000000000,blockchain/contracts/collected/BecToken_0xC5d105E6.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,24,3,0,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+158,VaultProxy,0x053c80eA00000000000000000000000000000000,blockchain/contracts/collected/VaultProxy_0x053c80eA.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,13,4,3,0,0,1,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+159,UniversalRouter,0x3fC91A3a00000000000000000000000000000000,blockchain/contracts/collected/UniversalRouter_0x3fC91A3a,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,IMPORT_ERROR,"File not found: Invalid compilation: 
+Invalid solc compilation Error: Source ""blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/base/Dispatcher.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/UniversalRouter.sol:5:1:
+  |
+5 | import {Dispatcher} from './base/Dispatcher.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/base/RewardsCollector.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/UniversalRouter.sol:6:1:
+  |
+6 | import {RewardsCollector} from './base/RewardsCollector.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/base/RouterImmutables.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/UniversalRouter.sol:7:1:
+  |
+7 | import {RouterParameters, RouterImmutables} from './base/RouterImmutables.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/libraries/Commands.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/UniversalRouter.sol:8:1:
+  |
+8 | import {Commands} from './libraries/Commands.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error: Source ""blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/interfaces/IUniversalRouter.sol"" not found: File not found. Searched the following locations: """".
+ --> blockchain/contracts/collected/UniversalRouter_0x3fC91A3a/UniversalRouter.sol:9:1:
+  |
+9 | import {IUniversalRouter} from './interfaces/IUniversalRouter.sol';
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+160,CErc20Delegator,0x2Db6c82C00000000000000000000000000000000,blockchain/contracts/collected/CErc20Delegator_0x2Db6c82C,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,2,1,76,40,10,0,0,3,4,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+161,MoneyMarket,0x0eEe3E3800000000000000000000000000000000,blockchain/contracts/collected/MoneyMarket_0x0eEe3E38.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,1,33,68,40,13,15,0,47,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+162,RepublicToken,0x408e418700000000000000000000000000000000,blockchain/contracts/collected/RepublicToken_0x408e4187.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,31,4,2,4,0,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+163,LinkToken,0x5149107700000000000000000000000000000000,blockchain/contracts/collected/LinkToken_0x51491077.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,36,6,0,4,1,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+164,DSToken,0x86fa049800000000000000000000000000000000,blockchain/contracts/collected/DSToken_0x86fa0498.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,"Compilation error: Invalid compilation: 
+Invalid solc compilation Error: Expected '{' but got 'constant'
+  --> blockchain/contracts/collected/DSToken_0x86fa0498.sol:29:7:
+   |
+29 |     ) constant returns (bool);
+   |       ^^^^^^^^
+
+"
+165,OwnedUpgradeabilityProxy,0x0000000000000000000000000000000000000000,blockchain/contracts/collected/OwnedUpgradeabilityProxy_0x00000000.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,4,13,9,0,2,2,1,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+166,AdminUpgradeabilityProxy,0x4Fabb14500000000000000000000000000000000,blockchain/contracts/collected/AdminUpgradeabilityProxy_0x4Fabb145.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,3,15,10,2,1,1,1,1,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+167,Delegator,0x1985365e00000000000000000000000000000000,blockchain/contracts/collected/Delegator_0x1985365e.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,4,43,2,1,0,0,3,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+331,TestToken,,/tmp/tmpagt8dsdm.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,1,3,6,1,3,1,4,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,,
+332,TestContract,0x1234567890123456789012345678901234567890,/tmp/test.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,2,3,5,10,0,0,0,0,0,200,1,0,0.0,0,50,0.25,0,0,0,0,0,0,0,0,0,8,3,0.0,0.0,25.0,0.0,True,complex,,
+333,TestPipeline,,/tmp/tmpz9uj7c5i.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,3,1,2,0,1,1,19,1,1,1.0,0,2,0.10526316,1,0,0,0,4,1,0,1,1,4,3,0.0,0.0,13.0,15.275,True,moderate,,
+982,OpenAddressLottery,,data/smartbugs_curated/dataset/other/open_address_lottery.sol,,False,False,True,False,True,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,6,8,1,5,0,9,0,85,1,1,2.25,0,25,0.29411766,2,0,0,0,7,2,0,2,1,8,4,0.0,0.0,26.0,27.3,True,complex,,
+983,NameRegistrar,,data/smartbugs_curated/dataset/other/name_registrar.sol,,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,4,2,0,3,0,1,0,25,1,1,1.0,0,7,0.28,0,0,0,0,6,0,0,1,0,4,2,0.0,0.0,14.0,21.0,False,moderate,,
+984,CryptoRoulette,,data/smartbugs_curated/dataset/other/crypto_roulette.sol,,False,False,True,False,True,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,True,False,False,3,1,7,6,2,5,0,3,0,50,1,1,1.6666666,0,13,0.26,2,0,0,0,7,5,0,4,1,9,4,0.0,0.0,42.0,49.0,True,complex,,
+985,phishable,,data/smartbugs_curated/dataset/access_control/phishable.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,True,False,False,1,1,5,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,3,4,0,2,0,5,3,0.0,0.0,20.0,23.2,True,complex,,
+986,Wallet,,data/smartbugs_curated/dataset/access_control/parity_wallet_bug_1.sol,,True,True,True,True,False,False,True,False,False,False,True,False,True,False,True,False,False,False,False,False,True,False,True,False,False,3,3,66,6,3,7,0,5,3,395,4,1,1.6666666,0,108,0.2734177,1,0,1,0,74,7,0,6,0,17,8,0.0,0.0,111.0,515.1706,True,critical,,
+987,Wallet,,data/smartbugs_curated/dataset/access_control/arbitrary_location_write_simple.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,6,6,2,2,0,1,0,32,1,1,1.0,0,6,0.1875,1,0,0,0,7,1,0,2,0,4,1,0.0,0.0,21.0,40.425,True,moderate,,
+988,Wallet,,data/smartbugs_curated/dataset/access_control/wallet_03_wrong_constructor.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,4,2,2,0,1,0,31,1,1,1.0,0,10,0.32258064,1,0,0,0,2,2,0,0,1,3,2,0.0,0.0,4.0,4.5333333,False,moderate,,
+989,rubixi,,data/smartbugs_curated/dataset/access_control/rubixi.sol,,False,False,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,5,25,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,15,16,0,6,4,11,4,0.0,0.0,60.0,142.90909,True,critical,,
+990,mycontract,,data/smartbugs_curated/dataset/access_control/mycontract.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,True,False,False,1,1,3,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,2,3,0,2,0,4,3,0.0,0.0,18.0,18.45,True,moderate,,
+991,Wallet,,data/smartbugs_curated/dataset/access_control/wallet_02_refund_nosub.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,5,3,2,0,1,0,35,1,1,1.0,0,11,0.31428573,1,0,0,0,2,2,0,0,1,3,2,0.0,0.0,4.0,4.5333333,False,moderate,,
+992,Missing,,data/smartbugs_curated/dataset/access_control/incorrect_constructor_name1.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,3,1,1,1,1,0,28,1,1,1.0,0,8,0.2857143,1,0,0,0,3,0,0,0,0,2,1,0.0,0.0,3.0,4.5,False,simple,,
+993,Wallet,,data/smartbugs_curated/dataset/access_control/wallet_04_confused_sign.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,4,2,2,0,1,0,32,1,1,1.0,0,11,0.34375,1,0,0,0,2,2,0,0,1,3,2,0.0,0.0,4.0,4.5333333,False,moderate,,
+994,TestContract,,data/smartbugs_curated/dataset/access_control/multiowned_vulnerable.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,2,1,0,0,1,0,53,2,1,1.0,0,23,0.43396226,1,0,1,0,4,0,0,0,0,2,1,0.0,0.0,4.0,8.0,False,moderate,,
+995,Map,,data/smartbugs_curated/dataset/access_control/mapping_write.sol,,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,2,3,1,2,0,3,0,25,1,1,1.6666666,0,7,0.28,0,0,0,0,4,1,0,2,0,4,2,0.0,0.0,22.0,25.85,True,moderate,,
+996,SimpleSuicide,,data/smartbugs_curated/dataset/access_control/simple_suicide.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,2,1,0,0,0,1,0,13,1,1,1.0,0,7,0.53846157,0,0,0,0,3,0,0,1,0,2,2,0.0,0.0,12.0,18.0,False,moderate,,
+997,Missing,,data/smartbugs_curated/dataset/access_control/incorrect_constructor_name3.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,3,1,1,1,1,0,26,1,1,1.0,0,6,0.23076923,1,0,0,0,3,0,0,0,0,2,1,0.0,0.0,3.0,4.5,False,simple,,
+998,Missing,,data/smartbugs_curated/dataset/access_control/incorrect_constructor_name2.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,3,1,1,1,1,0,26,1,1,1.0,0,6,0.23076923,1,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+999,unprotected0,,data/smartbugs_curated/dataset/access_control/unprotected0.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,3,1,0,0,0,3,1,0.0,0.0,4.0,4.9333334,False,moderate,,
+1000,proxy,,data/smartbugs_curated/dataset/access_control/proxy.sol,,False,False,False,True,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,4,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,5,1,0,1,0,5,3,0.0,0.0,14.0,15.96,True,moderate,,
+1001,FibonacciBalance,,data/smartbugs_curated/dataset/access_control/FibonacciBalance.sol,,False,True,False,True,False,False,False,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,4,0,9,5,3,5,0,1,2,52,2,1,1.0,0,18,0.34615386,1,0,0,0,11,4,0,4,0,9,5,0.0,0.0,49.0,75.13333,True,critical,,
+1002,WalletLibrary,,data/smartbugs_curated/dataset/access_control/parity_wallet_bug_2.sol,,True,True,True,True,False,False,True,False,False,False,False,False,True,False,False,False,False,False,False,False,True,False,True,False,False,2,2,59,24,4,12,3,12,2,345,3,1,3.9583333,2,95,0.2753623,1,0,1,0,58,6,0,4,0,13,7,0.0,0.0,89.0,425.83078,True,critical,,
+1003,Attacker,,data/smartbugs_curated/dataset/time_manipulation/governmental_survey.sol,,False,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,3,9,1,3,0,0,3,0,44,2,1,3.0,0,7,0.1590909,0,0,0,0,9,5,0,4,1,9,5,0.0,0.0,34.0,47.22222,True,complex,,
+1004,roulette,,data/smartbugs_curated/dataset/time_manipulation/roulette.sol,,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,1,3,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,3,3,0,3,0,5,3,0.0,0.0,28.0,28.56,True,complex,,
+1005,EtherLotto,,data/smartbugs_curated/dataset/time_manipulation/ether_lotto.sol,,False,True,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,1,5,3,2,4,0,3,0,42,1,1,1.6666666,0,22,0.52380955,1,0,0,0,4,4,0,3,1,7,4,0.0,0.0,30.0,29.142857,True,complex,,
+1006,TimedCrowdsale,,data/smartbugs_curated/dataset/time_manipulation/timed_crowdsale.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,1,0,0,0,1,0,13,1,1,1.0,0,7,0.53846157,0,0,0,0,2,1,0,0,0,2,2,0.0,0.0,3.0,4.05,False,moderate,,
+1007,lottopollo,,data/smartbugs_curated/dataset/time_manipulation/lottopollo.sol,,False,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,2,4,3,2,2,0,7,0,31,1,1,3.0,0,7,0.22580644,0,0,0,0,3,4,0,3,0,5,4,0.0,0.0,24.0,27.84,True,complex,,
+1008,DosNumber,,data/smartbugs_curated/dataset/denial_of_service/dos_number.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,6,1,2,0,6,0,37,1,1,1.8333334,0,9,0.24324325,0,0,0,0,2,1,0,0,1,2,1,0.0,0.0,3.0,4.05,False,simple,,
+1009,Refunder,,data/smartbugs_curated/dataset/denial_of_service/send_loop.sol,,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,2,3,2,0,4,0,22,1,1,2.5,0,8,0.36363637,0,0,0,0,4,1,0,1,1,4,2,0.0,0.0,13.0,15.275,False,moderate,,
+1010,Government,,data/smartbugs_curated/dataset/denial_of_service/list_dos.sol,,False,False,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,7,8,10,11,9,0,9,0,112,1,1,2.6,0,28,0.25,0,0,0,0,3,15,0,9,5,7,4,0.0,0.0,63.0,121.5,True,critical,,
+1011,DosOneFunc,,data/smartbugs_curated/dataset/denial_of_service/dos_simple.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,1,2,1,0,5,0,21,1,1,5.0,0,6,0.2857143,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1012,auction,,data/smartbugs_curated/dataset/denial_of_service/auction.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,2,1,0,0,1,2,2,0.0,0.0,3.0,4.05,False,moderate,,
+1013,DosGas,,data/smartbugs_curated/dataset/denial_of_service/dos_address.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,2,5,2,2,0,4,0,29,1,1,2.0,0,6,0.20689656,0,0,0,0,2,1,0,1,0,2,1,0.0,0.0,12.0,16.2,False,moderate,,
+1014,lottery,,data/smartbugs_curated/dataset/bad_randomness/lottery.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,7,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,9,1,0,2,1,5,1,0.0,0.0,22.0,42.68,True,moderate,,
+1015,RandomNumberGenerator,,data/smartbugs_curated/dataset/bad_randomness/random_number_generator.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,2,0,1,0,1,0,23,1,1,1.0,0,12,0.5217391,0,0,0,0,2,2,0,1,0,3,2,0.0,0.0,13.0,14.733334,False,moderate,,
+1016,etheraffle,,data/smartbugs_curated/dataset/bad_randomness/etheraffle.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,6,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,3,3,0,0,2,5,2,0.0,0.0,6.0,6.12,False,moderate,,
+1017,LuckyDoubler,,data/smartbugs_curated/dataset/bad_randomness/lucky_doubler.sol,,False,False,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,3,4,12,15,6,8,1,13,0,146,1,1,2.4666667,1,28,0.19178082,0,0,0,0,6,13,0,7,2,10,5,0.0,0.0,62.0,93.62,True,critical,,
+1018,GuessTheRandomNumberChallenge,,data/smartbugs_curated/dataset/bad_randomness/guess_the_random_number.sol,,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,2,4,3,1,1,0,3,0,23,1,1,1.6666666,0,6,0.26086956,2,0,0,0,5,2,0,3,0,5,3,0.0,0.0,24.0,30.72,True,complex,,
+1019,SmartBillions,,data/smartbugs_curated/dataset/bad_randomness/smart_billions.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,3,16,58,39,8,20,2,17,0,708,6,1,3.6153846,3,181,0.25564972,7,1,3,0,59,20,0,19,6,15,4,0.0,0.0,168.0,817.6,True,critical,,
+1020,PredictTheBlockHashChallenge,,data/smartbugs_curated/dataset/bad_randomness/old_blockhash.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,3,1,1,0,3,0,33,1,1,1.6666666,0,8,0.24242425,2,0,0,0,3,0,0,0,0,2,1,0.0,0.0,3.0,4.5,False,simple,,
+1021,blackjack,,data/smartbugs_curated/dataset/bad_randomness/blackjack.sol,,False,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,3,2,21,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,21,8,0,5,5,8,3,0.0,0.0,61.0,202.825,True,critical,,
+1022,IntegerOverflowBenign1,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_benign_1.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,2,0,1,0,1,0,15,1,1,1.0,0,8,0.53333336,0,0,0,0,3,0,0,0,0,2,1,0.0,0.0,2.0,3.0,False,simple,,
+1023,timelock,,data/smartbugs_curated/dataset/arithmetic/timelock.sol,,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,4,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,3,1,0,0,0,3,2,0.0,0.0,4.0,4.9333334,False,moderate,,
+1024,IntegerOverflowMultiTxMultiFuncFeasible,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_multitx_multifunc_feasible.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,3,0,2,0,3,0,22,1,1,1.6666666,0,8,0.36363637,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1025,BECToken,,data/smartbugs_curated/dataset/arithmetic/BECToken.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,24,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,26,3,0,0,0,6,1,0.0,0.0,24.0,112.4,True,complex,,
+1026,Overflow_Add,,data/smartbugs_curated/dataset/arithmetic/overflow_simple_add.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,3,2,0,1,0,1,0,13,1,1,1.0,0,6,0.46153846,0,0,0,0,3,0,0,0,0,2,1,0.0,0.0,3.0,4.5,False,simple,,
+1027,IntegerOverflowSingleTransaction,,data/smartbugs_curated/dataset/arithmetic/overflow_single_tx.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,7,0,1,0,1,0,41,1,1,1.0,0,19,0.46341464,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1028,Overflow,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_1.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,2,0,1,0,1,0,19,1,1,1.0,0,12,0.6315789,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1029,token,,data/smartbugs_curated/dataset/arithmetic/token.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,5,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,6,0,0,1,0,3,1,0.0,0.0,10.0,20.0,False,moderate,,
+1030,IntegerOverflowMinimal,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_minimal.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,2,0,1,0,1,0,15,1,1,1.0,0,8,0.53333336,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1031,IntegerOverflowMappingSym1,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_mapping_sym_1.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,1,0,1,0,1,0,14,1,1,1.0,0,7,0.5,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1032,IntegerOverflowMultiTxOneFuncFeasible,,data/smartbugs_curated/dataset/arithmetic/integer_overflow_multitx_onefunc_feasible.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,2,0,2,0,3,0,20,1,1,2.0,0,8,0.4,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1033,IntegerOverflowAdd,,data/smartbugs_curated/dataset/arithmetic/insecure_transfer.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,4,1,0,1,0,1,0,17,1,1,1.0,0,8,0.47058824,0,0,0,0,5,0,0,1,0,3,1,0.0,0.0,9.0,15.0,False,moderate,,
+1035,tokensalechallenge,,data/smartbugs_curated/dataset/arithmetic/tokensalechallenge.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1037,Log,,data/smartbugs_curated/dataset/reentrancy/0x941d225236464a25eb18076df7da6a91d0f95e9e.sol,,True,False,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,16,1,1,2,0,1,0,65,2,1,1.0,0,6,0.092307694,0,0,0,0,17,3,0,2,0,8,3,0.0,0.0,36.0,85.95,True,complex,,
+1038,Log,,data/smartbugs_curated/dataset/reentrancy/0x23a91059fdc9579a9fbd0edc5f2ea0bfdb70deb4.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,14,1,1,2,0,1,0,60,2,1,1.0,0,6,0.1,0,0,0,0,16,2,0,2,0,7,3,0.0,0.0,34.0,84.51428,True,complex,,
+1039,etherstore,,data/smartbugs_curated/dataset/reentrancy/etherstore.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,5,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,5,2,0,1,0,6,4,0.0,0.0,15.0,16.0,True,complex,,
+1040,Log,,data/smartbugs_curated/dataset/reentrancy/0xb5e1b1ee15c6fa0e48fce100125569d430f1bd12.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,15,1,1,2,0,1,0,62,2,1,1.0,0,6,0.09677419,0,0,0,0,17,2,0,2,0,7,3,0.0,0.0,35.0,92.0,True,complex,,
+1041,Log,,data/smartbugs_curated/dataset/reentrancy/0xbe4041d55db380c5ae9d4a9b9703f1ed4e7e3888.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,26,1,1,2,0,1,0,86,2,1,1.0,0,6,0.069767445,0,0,0,0,25,4,0,2,0,8,4,0.0,0.0,46.0,159.85,True,critical,,
+1042,etherbank,,data/smartbugs_curated/dataset/reentrancy/etherbank.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,4,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,4,1,0,1,0,4,3,0.0,0.0,14.0,16.45,True,moderate,,
+1043,attack,,data/smartbugs_curated/dataset/reentrancy/modifier_reentrancy.sol,,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,0,1,4,2,3,1,0,3,0,43,3,1,2.0,0,9,0.20930232,0,0,0,0,4,1,0,1,0,4,3,0.0,0.0,9.0,10.575,True,moderate,,
+1044,reentrance,,data/smartbugs_curated/dataset/reentrancy/reentrance.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,7,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,7,1,0,1,0,5,3,0.0,0.0,17.0,26.18,True,complex,,
+1045,LogFile,,data/smartbugs_curated/dataset/reentrancy/0x4e73b32ed6c35f570686b89848e5f39f20ecc106.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,20,1,1,2,0,1,0,78,2,1,1.0,0,6,0.07692308,0,0,0,0,21,2,0,2,0,6,3,0.0,0.0,40.0,149.33333,True,critical,,
+1047,Log,,data/smartbugs_curated/dataset/reentrancy/0xbaf51e761510c1a11bf48dd87c0307ac8a8c8a4f.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,15,1,1,2,0,1,0,63,2,1,1.0,0,6,0.0952381,0,0,0,0,17,2,0,2,0,7,3,0.0,0.0,35.0,92.0,True,complex,,
+1048,LogFile,,data/smartbugs_curated/dataset/reentrancy/0xaae1f51cf3339f18b6d3f3bdc75a5facd744b0b8.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,22,1,1,2,0,1,0,78,2,1,1.0,0,6,0.07692308,0,0,0,0,23,2,0,2,0,7,3,0.0,0.0,42.0,146.4,True,critical,,
+1050,Reentrancy_insecure,,data/smartbugs_curated/dataset/reentrancy/reentrancy_insecure.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,4,1,2,1,0,1,1,17,1,1,1.0,0,7,0.4117647,0,0,0,0,4,1,0,1,0,4,3,0.0,0.0,14.0,16.45,True,moderate,,
+1051,SimpleDAO,,data/smartbugs_curated/dataset/reentrancy/simple_dao.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,3,2,1,0,3,1,22,1,1,1.6666666,0,6,0.27272728,1,0,0,0,3,1,0,1,0,3,3,0.0,0.0,13.0,16.033333,True,moderate,,
+1053,Log,,data/smartbugs_curated/dataset/reentrancy/0x7541b76cb60f4c60af330c208b0623b7f54bf615.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,19,1,1,2,0,1,0,71,2,1,1.0,0,6,0.08450704,0,0,0,0,19,4,0,2,0,8,4,0.0,0.0,39.0,106.275,True,critical,,
+1055,Reentrancy_cross_function,,data/smartbugs_curated/dataset/reentrancy/reentrancy_cross_function.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,4,2,2,1,0,3,1,23,1,1,2.0,0,7,0.3043478,0,0,0,0,5,1,0,2,0,5,3,0.0,0.0,19.0,21.66,True,moderate,,
+1057,Log,,data/smartbugs_curated/dataset/reentrancy/0x7a8721a9d64c74da899424c1b52acbf58ddc9782.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,15,1,1,2,0,1,0,70,2,1,1.0,0,6,0.08571429,0,0,0,0,17,2,0,2,0,7,3,0.0,0.0,35.0,92.0,True,complex,,
+1060,LedgerChannel,,data/smartbugs_curated/dataset/reentrancy/spank_chain_payment.sol,,True,True,True,True,True,True,True,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,True,False,False,3,17,98,15,26,5,0,9,0,778,5,1,3.8666666,0,120,0.15424165,3,4,0,0,93,35,0,20,3,18,6,0.0,0.0,213.0,1390.4166,True,critical,,
+1061,TokenBank,,data/smartbugs_curated/dataset/reentrancy/0x627fa62ccbb1c1b04ffaecd72a53e37fc0e17839.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,2,1,20,6,2,2,0,5,1,88,3,1,2.3333333,0,7,0.07954545,3,0,2,0,18,5,0,3,0,9,4,0.0,0.0,45.0,107.5,True,critical,,
+1062,Reentrancy_bonus,,data/smartbugs_curated/dataset/reentrancy/reentrancy_bonus.sol,,True,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,2,0,6,2,2,3,0,1,1,25,1,1,1.0,0,7,0.28,0,0,0,0,5,3,0,2,0,7,5,0.0,0.0,26.0,26.37143,True,complex,,
+1063,Log,,data/smartbugs_curated/dataset/reentrancy/0xcead721ef5b11f1a7b530171aab69b16c5e66b6e.sol,,True,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,2,0,18,1,1,2,0,1,0,71,2,1,1.0,0,6,0.08450704,0,0,0,0,18,4,0,2,0,8,4,0.0,0.0,38.0,98.8,True,critical,,
+1064,Reentrance,,data/smartbugs_curated/dataset/reentrancy/reentrancy_simple.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,4,3,2,1,0,3,1,24,1,1,1.6666666,0,8,0.33333334,1,0,0,0,4,1,0,1,0,4,3,0.0,0.0,14.0,16.45,True,moderate,,
+1067,ReentrancyDAO,,data/smartbugs_curated/dataset/reentrancy/reentrancy_dao.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,2,2,2,0,3,1,24,1,1,2.0,0,6,0.25,1,0,0,0,3,1,0,1,0,3,3,0.0,0.0,13.0,16.033333,True,moderate,,
+1068,SimpleWallet,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x610495793564aed0f9c7fc48dc4c7c9151d34fd6.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,8,5,3,2,1,1,1,27,1,1,1.0,0,6,0.22222222,1,0,0,0,8,2,0,1,0,6,2,0.0,0.0,13.0,20.366667,False,moderate,,
+1069,Puppet,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xb0510d68f210b7db66e8c7c814f22680f2b8d1d6.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,True,False,True,False,False,0,5,18,3,4,2,0,3,1,108,3,1,1.6666666,0,22,0.2037037,2,0,0,0,11,14,0,5,0,10,3,0.0,0.0,43.0,89.44,True,critical,,
+1070,VaultProxy,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xbebbfe5b549f5db6e6c78ca97cac19d1fb03082c.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,1,1,12,4,1,2,0,3,0,35,2,1,2.5,0,6,0.17142858,3,0,1,0,11,4,0,2,0,9,4,0.0,0.0,27.0,41.4,True,complex,,
+1071,WhaleGiveaway1,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x7a4349a749e59a5736efb7826ee3496a2dfd5489.sol,,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,7,5,5,1,0,3,1,39,1,1,1.8,0,6,0.15384616,4,0,0,0,7,3,0,2,0,7,3,0.0,0.0,22.0,28.6,True,complex,,
+1072,Marriage,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x958a8f594101d2c0485a52319f29b2647f2ebc06.sol,,False,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,16,7,4,7,1,3,0,124,2,1,1.2857143,0,31,0.25,1,0,1,0,15,7,0,2,1,10,5,0.0,0.0,31.0,61.69,True,critical,,
+1073,Lotto,,data/smartbugs_curated/dataset/unchecked_low_level_calls/etherpot_lotto.sol,,False,False,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,2,7,15,2,4,0,8,0,115,1,1,2.4,0,23,0.2,0,0,0,0,3,7,0,3,2,6,4,0.0,0.0,27.0,35.55,True,complex,,
+1074,Caller,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x0cbe050f75bc8f8c2d6c0d249fea125fd6e1acc9.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,4,1,1,0,0,1,1,12,1,1,1.0,0,6,0.5,0,0,0,0,3,2,0,1,0,4,2,0.0,0.0,9.0,9.9,False,moderate,,
+1075,lotto,,data/smartbugs_curated/dataset/unchecked_low_level_calls/lotto.sol,,False,True,False,True,True,False,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,False,3,2,3,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,6,4,0,5,1,6,5,0.0,0.0,43.0,63.066666,True,complex,,
+1076,MultiplicatorX3,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x5aa88d2901c68fda244f1d0584400368d2c8e739.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,7,5,4,1,0,3,1,35,1,1,1.4,0,6,0.17142858,4,0,0,0,6,3,0,1,0,6,2,0.0,0.0,12.0,16.2,False,moderate,,
+1077,Freebie,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xe82f0742a71a02b9e9ffc142fdcb6eb1ed06fb87.sol,,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,7,5,5,1,0,3,1,35,1,1,1.8,0,6,0.17142858,4,0,0,0,7,3,0,2,0,7,3,0.0,0.0,22.0,28.6,True,complex,,
+1078,EBU,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xa46edd6a9a93feec36576ee5048146870ea2c3ae.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,7,1,1,0,0,4,1,17,1,1,4.0,0,6,0.3529412,0,0,0,0,5,4,0,1,0,7,2,0.0,0.0,12.0,13.3714285,False,moderate,,
+1079,WhaleGiveaway1,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x78c2a1e91b52bca4130b6ed9edd9fbcfd4671c37.sol,,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,6,6,5,2,0,3,1,40,1,1,1.6666666,0,6,0.15,4,0,0,0,6,3,0,2,0,7,3,0.0,0.0,21.0,24.3,True,complex,,
+1080,TownCrier,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x89c1b3807d4c67df034fffb62f3509561218d30b.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,0,0,0,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,False,simple,COMPILATION_ERROR,Compilation error: 
+1081,EtherGet,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x52d2e0f9b01101a59b38a3d05c80b7618aeed984.sol,,False,True,False,True,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,3,1,5,4,5,1,0,4,1,29,2,1,1.75,0,6,0.20689656,0,0,0,0,3,6,0,4,0,7,3,0.0,0.0,40.0,41.142857,True,complex,,
+1082,Centra4,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x524960d55174d912768678d8c606b4d50b79d7b1.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,3,1,2,0,0,3,1,21,1,1,3.0,0,6,0.2857143,0,0,0,0,3,1,0,1,0,3,2,0.0,0.0,8.0,9.866667,False,moderate,,
+1084,TokenBank,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x8fd1e427396ddb511533cf9abdbebd0a7e08da35.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,False,False,True,False,False,1,2,20,7,1,2,0,5,0,91,3,1,2.142857,0,8,0.08791209,3,0,2,0,19,4,0,3,0,9,4,0.0,0.0,40.0,96.888885,True,critical,,
+1086,Delta,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x9d06cbafa865037a01d322d3f4222fa3e04e5488.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,0,2,15,6,3,5,1,3,1,71,1,1,1.6666666,0,27,0.3802817,2,0,0,0,16,4,0,2,0,8,3,0.0,0.0,25.0,58.75,True,complex,,
+1087,keepMyEther,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xb7c5c5aa4d42967efe906e1b66cb8df9cebf04f7.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,4,2,2,1,0,1,1,22,1,1,1.0,0,12,0.54545456,1,0,0,0,4,2,0,2,0,5,3,0.0,0.0,19.0,20.52,True,moderate,,
+1088,daoPOLSKAtokens,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x19cf8481ea15427a98ba3cdd6d9e14690011ab10.sol,,True,True,False,True,False,False,True,True,False,False,False,False,False,False,False,False,False,False,True,False,True,False,True,False,False,2,3,87,29,7,29,0,11,0,402,6,1,3.2068965,1,82,0.2039801,2,0,0,0,84,15,0,5,0,17,5,0.0,0.0,122.0,678.17645,True,critical,,
+1089,ERC20Interface,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x07f7ecb66d788ab01dc93b9b71a88401de7d0f2e.sol,,False,True,True,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,3,2,14,1,0,0,0,1,0,255,2,1,1.0,0,66,0.25882354,0,0,0,0,9,11,0,5,1,12,6,0.0,0.0,54.0,75.15,True,critical,,
+1090,AirDropContract,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xa1fceeff3acc57d257b917e30c4df661401d6431.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,5,2,1,0,1,4,1,29,1,1,2.5,0,6,0.20689656,0,0,0,0,5,2,0,1,0,6,2,0.0,0.0,10.0,10.666667,False,moderate,,
+1091,mishandled,,data/smartbugs_curated/dataset/unchecked_low_level_calls/mishandled.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,2,0,0,0,0,0,0,0,1,0,0.0,0,0,0.0,0,0,0,0,2,1,0,1,0,2,2,0.0,0.0,7.0,9.45,False,moderate,,
+1094,ERC20Interface,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x7d09edb07d23acb532a82be3da5c17d9d85806b4.sol,,False,True,True,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,3,2,14,1,0,0,0,1,0,253,2,1,1.0,0,65,0.256917,0,0,0,0,9,11,0,5,1,12,6,0.0,0.0,54.0,75.15,True,critical,,
+1095,demo,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x2972d548497286d18e92b5fa1f8f9139e5653fd2.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,8,1,1,0,0,4,1,17,1,1,4.0,0,6,0.3529412,0,0,0,0,6,4,0,1,0,7,2,0.0,0.0,13.0,16.342857,False,moderate,,
+1096,B,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xf29ebe930a539a60279ace72c707cba851a57707.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,3,3,3,1,0,1,1,17,1,1,1.0,0,6,0.3529412,2,0,0,0,3,1,0,1,0,3,2,0.0,0.0,8.0,9.866667,False,moderate,,
+1097,HomeyJar,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x70f9eddb3931491aab1aeafbc1e7f1ca2a012db4.sol,,False,True,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,1,7,5,5,1,0,3,1,25,1,1,1.8,0,6,0.24,4,0,0,0,7,3,0,2,0,7,3,0.0,0.0,22.0,28.6,True,complex,,
+1098,KingOfTheEtherThrone,,data/smartbugs_curated/dataset/unchecked_low_level_calls/king_of_the_ether_throne.sol,,False,False,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,10,13,7,5,9,1,21,0,150,1,1,3.857143,1,60,0.4,0,0,0,0,8,16,0,11,1,11,5,0.0,0.0,73.0,127.41818,True,critical,,
+1099,SimpleWallet,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xb37f18af15bafb869a065b61fc83cfc44ed9cc27.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,7,5,3,2,1,1,1,27,1,1,1.0,0,6,0.22222222,1,0,0,0,6,2,0,1,0,5,2,0.0,0.0,12.0,17.76,False,moderate,,
+1101,TokenBank,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x39cfd754c85023648bf003bea2dd498c5612abfa.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,False,False,True,False,False,1,2,19,6,1,2,0,5,0,90,3,1,2.3333333,0,8,0.08888889,3,0,2,0,18,4,0,3,0,9,4,0.0,0.0,39.0,90.13333,True,critical,,
+1102,airDrop,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xe894d54dca59cb53fe9cbc5155093605c7068220.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,9,1,1,0,0,4,1,18,1,1,4.0,0,6,0.33333334,0,0,0,0,7,4,0,1,0,7,2,0.0,0.0,14.0,19.6,False,moderate,,
+1103,TokenSender,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xec329ffc97d75fe03428ae155fc7793431487f63.sol,,True,False,False,True,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,False,False,False,True,False,False,1,3,17,7,2,5,0,12,0,104,3,1,3.857143,1,31,0.29807693,0,0,1,0,14,9,0,4,0,15,5,0.0,0.0,42.0,56.84,True,critical,,
+1107,EBU,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x4a66ad0bca2d700f11e1f2fc2c106f7d3264504c.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,6,2,1,2,0,4,1,20,1,1,2.5,0,6,0.3,0,0,0,0,7,3,0,1,0,8,2,0.0,0.0,11.0,12.5125,False,moderate,,
+1108,ERC20Interface,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xe09b1ab8111c2729a76f16de96bc86a7af837928.sol,,True,True,True,True,True,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,4,1,21,1,0,0,0,1,0,317,2,1,1.0,0,54,0.170347,0,0,0,0,4,22,0,5,7,13,5,0.0,0.0,66.0,98.49231,True,critical,,
+1110,DrainMe,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xb620cee6b52f96f3c6b253e6eea556aa2d214a99.sol,,False,False,True,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,3,4,13,18,9,9,3,3,3,112,1,1,1.3888888,0,16,0.14285715,13,0,0,0,15,7,0,7,0,10,4,0.0,0.0,63.0,125.37,True,critical,,
+1112,WedIndex,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x84d9ec85c9c568eb332b7226a8f826d897e0a4a8.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,False,False,True,False,False,1,1,14,2,1,6,0,1,0,76,2,1,1.0,0,30,0.39473686,0,0,1,0,19,4,0,2,0,9,3,0.0,0.0,29.0,70.244446,True,complex,,
+1113,PandaCore,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0x663e4229142a27f00bafb5d087e1e730648314c3.sol,,True,True,True,True,True,True,True,True,False,False,False,False,False,False,True,False,False,False,False,False,False,True,True,False,False,7,12,172,9,1,1,0,3,0,2073,18,1,1.2222222,0,819,0.39507958,1,0,5,0,129,71,0,19,3,24,7,0.0,0.0,302.0,2248.6416,True,critical,,
+1114,RealOldFuckMaker,,data/smartbugs_curated/dataset/unchecked_low_level_calls/0xf2570186500a46986f3139f65afedc2afe4f445d.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,5,2,1,1,0,4,1,18,1,1,2.5,0,8,0.44444445,0,0,0,0,5,2,0,1,0,6,2,0.0,0.0,10.0,10.666667,False,moderate,,
+1118,ReturnValue,,data/smartbugs_curated/dataset/unchecked_low_level_calls/unchecked_return_value.sol,,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,1,5,2,2,0,0,1,2,15,1,1,1.0,0,6,0.4,0,0,0,0,4,2,0,1,0,4,2,0.0,0.0,10.0,13.5,False,moderate,,
+1120,MyToken,,data/smartbugs_curated/dataset/short_addresses/short_address_example.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,2,3,0,1,0,3,0,24,1,1,1.6666666,0,6,0.25,0,0,0,0,2,0,0,0,0,1,1,0.0,0.0,2.0,4.0,False,simple,,
+1121,OddsAndEvens,,data/smartbugs_curated/dataset/front_running/odds_and_evens.sol,,False,True,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,5,4,3,3,0,5,0,42,1,1,3.0,0,7,0.16666667,1,0,0,0,4,2,0,1,1,4,3,0.0,0.0,15.0,20.25,True,moderate,,
+1122,ERC20,,data/smartbugs_curated/dataset/front_running/ERC20.sol,,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,True,False,False,0,0,6,6,5,3,0,1,0,103,2,1,1.0,0,31,0.30097088,0,4,0,0,4,3,0,0,0,4,2,0.0,0.0,6.0,9.15,False,moderate,,
+1123,FindThisHash,,data/smartbugs_curated/dataset/front_running/FindThisHash.sol,,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,1,0,3,3,1,1,0,1,0,16,1,1,1.0,0,7,0.4375,1,0,0,0,4,1,0,1,0,4,2,0.0,0.0,13.0,15.275,False,moderate,,
+1124,EthTxOrderDependenceMinimal,,data/smartbugs_curated/dataset/front_running/eth_tx_order_dependence_minimal.sol,,False,False,False,False,True,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,True,False,False,0,0,5,3,2,3,0,1,0,28,1,1,1.0,0,7,0.25,1,0,0,0,2,3,0,0,2,3,2,0.0,0.0,5.0,6.8333335,False,moderate,,

@@ -1,0 +1,15 @@
+{
+  "category": "safe_complex",
+  "vulnerability_type": "none",
+  "contract_type": "lending",
+  "source": "production_verified",
+  "verification_status": "audited",
+  "contract_address": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
+  "contract_name": "InitializableImmutableAdminUpgradeabilityProxy",
+  "compiler_version": "v0.6.12+commit.27d51765",
+  "optimization": "1",
+  "optimization_runs": "200",
+  "file_path": "../data/real_world_collection/safe_complex/InitializableImmutableAdminUpgradeabilityProxy_0x7d2768.sol",
+  "collection_timestamp": "2025-12-18T22:40:44.078608",
+  "etherscan_url": "https://etherscan.io/address/0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9#code"
+}

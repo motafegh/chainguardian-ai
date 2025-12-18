@@ -1,0 +1,12 @@
+{
+  "category": "safe_complex",
+  "source": "final_batch",
+  "contract_address": "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
+  "contract_name": "CroToken",
+  "compiler_version": "v0.4.24+commit.e67f0147",
+  "optimization": "1",
+  "optimization_runs": "200",
+  "file_path": "../data/real_world_collection/safe_complex/CroToken_0xa0b73e.sol",
+  "collection_timestamp": "2025-12-18T22:42:05.377573",
+  "etherscan_url": "https://etherscan.io/address/0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b#code"
+}

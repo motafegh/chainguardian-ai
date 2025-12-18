@@ -63,6 +63,8 @@ networkx = "^3.6.1"
 lightgbm = "^4.6.0"
 shap = "^0.50.0"
 optuna = "^4.6.0"
+h2o = "^3.46.0.9"
+sweetviz = "^2.3.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"

@@ -1,0 +1,12 @@
+{
+  "category": "safe_complex",
+  "source": "final_batch",
+  "contract_address": "0xc00e94cb662c3520282e6f5717214004a7f26888",
+  "contract_name": "Comp",
+  "compiler_version": "v0.5.16+commit.9c3226ce",
+  "optimization": "1",
+  "optimization_runs": "200",
+  "file_path": "../data/real_world_collection/safe_complex/Comp_0xc00e94.sol",
+  "collection_timestamp": "2025-12-18T22:42:16.344307",
+  "etherscan_url": "https://etherscan.io/address/0xc00e94cb662c3520282e6f5717214004a7f26888#code"
+}

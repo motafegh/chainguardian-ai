@@ -1,0 +1,15 @@
+{
+  "category": "safe_complex",
+  "vulnerability_type": "none",
+  "contract_type": "dex",
+  "source": "production_verified",
+  "verification_status": "audited",
+  "contract_address": "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
+  "contract_name": "SwapRouter02",
+  "compiler_version": "v0.7.6+commit.7338295f",
+  "optimization": "1",
+  "optimization_runs": "1000000",
+  "file_path": "../data/real_world_collection/safe_complex/SwapRouter02_0x68b346.sol",
+  "collection_timestamp": "2025-12-18T22:40:34.854244",
+  "etherscan_url": "https://etherscan.io/address/0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45#code"
+}
