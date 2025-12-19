@@ -65,6 +65,8 @@ shap = "^0.50.0"
 optuna = "^4.6.0"
 h2o = "^3.46.0.9"
 sweetviz = "^2.3.1"
+dill = "^0.4.0"
+mlflow = "^3.7.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"

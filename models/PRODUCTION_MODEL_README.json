@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "created": "2025-12-20T00:08:11.869464",
+  "model_type": "XGBoost",
+  "source_model": "semantic_xgboost_20251219_235020.pkl",
+  "features": 90,
+  "semantic_features": 8,
+  "performance": {
+    "test_auc": 0.9557,
+    "test_accuracy": 0.95,
+    "adversarial_accuracy": 0.48
+  },
+  "training_data": {
+    "total_contracts": 963,
+    "training_size": 750,
+    "test_size": 188,
+    "vulnerable_ratio": 0.227
+  },
+  "semantic_analysis": {
+    "cei_violations_detected": 10,
+    "trail_of_bits_detection": "5/5 (100%)",
+    "smartbugs_detection": "2/2 (100%)"
+  },
+  "deployment_ready": true,
+  "notes": "Production model with semantic security validation"
+}

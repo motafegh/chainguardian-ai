@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:06.661964",
+  "contract_address": "0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633",
+  "contract_name": "BZxVault",
+  "compiler_version": "v0.5.2+commit.1df8f40c",
+  "optimization_used": "1",
+  "optimization_runs": "200",
+  "evm_version": "Default",
+  "license_type": "",
+  "proxy": "0",
+  "implementation": "",
+  "file_path": "data/production/vulnerable/raw/BZxVault_0x8b3d70d6.sol",
+  "etherscan_url": "https://etherscan.io/address/0x8b3d70d628ebd30d4a2ea82db95ba2e906c71633#code",
+  "api_version": "v2"
+}

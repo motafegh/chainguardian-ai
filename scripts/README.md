@@ -1,18 +1,30 @@
-# ChainGuardian AI - Scripts
+# Scripts Organization
 
-## Active Scripts
+## Directory Structure
 
-### Database Management
-- `database/create_tables.py` - Initialize PostgreSQL schema
-- `database/query_database.py` - Query contracts/features
-- `database/test_db_connection.py` - Verify DB connectivity
+### 1_setup/ - One-time setup
+Run these ONCE when setting up the project:
+- `create_tables.py` - Create PostgreSQL database tables
+- `test_db_connection.py` - Verify database connection
 
-### Data Preparation
-- `data/import_smartbugs_to_db.py` - Import vulnerable contracts
-- `prepare_ml_dataset.py` - Export features to CSV for ML
+### 2_collection/ - Data collection & import
+Run these to build your dataset:
+1. `rekt_news_collector.py` - Generate vulnerable contracts metadata
+2. `audited_defi_collector.py` - Generate safe contracts metadata
+3. `trail_of_bits_collector.py` - Copy Trail of Bits contracts
+4. `swc_registry_collector.py` - Copy SWC registry contracts
+5. `master_collector.py` - Fetch source code from Etherscan
+6. `import_smartbugs_to_db.py` - Import SmartBugs dataset
+7. `import_openzeppelin_with_mocks.py` - Import OpenZeppelin contracts
+8. `import_production_dataset.py` - Import production vulnerable/safe
 
-### Verification
-- `verification.py` - Environment setup verification (run before Day 1)
+### 3_training/ - ML training & evaluation
+Run these for model training:
+- `train_baseline.py` - Train baseline ML models
+- `predict.py` - Make predictions on unlabeled data
 
-## Archived Scripts
-Old/test scripts moved to: `../archive/old_scripts/`
+### 9_utils/ - Utility scripts
+Helper scripts:
+- `verify_dataset.py` - Check dataset quality
+- `check_duplicates.py` - Find duplicate contracts
+- `verify_data_integrity.py` - Validate data integrity

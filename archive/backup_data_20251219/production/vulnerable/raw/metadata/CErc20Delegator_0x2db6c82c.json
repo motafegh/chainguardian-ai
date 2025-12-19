@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:07.874853",
+  "contract_address": "0x2db6c82ce72c8d7d770ba1b5f5ed0b6e075066d6",
+  "contract_name": "CErc20Delegator",
+  "compiler_version": "v0.5.17+commit.d19bba13",
+  "optimization_used": "1",
+  "optimization_runs": "200",
+  "evm_version": "Default",
+  "license_type": "None",
+  "proxy": "1",
+  "implementation": "0x96cc0f947b6c8f4675159ea03144f8c17d5a2fc8",
+  "file_path": "data/production/vulnerable/raw/CErc20Delegator_0x2db6c82c/CErc20Delegator.sol",
+  "etherscan_url": "https://etherscan.io/address/0x2db6c82ce72c8d7d770ba1b5f5ed0b6e075066d6#code",
+  "api_version": "v2"
+}

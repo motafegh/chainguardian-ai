@@ -1,0 +1,27 @@
+[
+  {
+    "name": "The DAO",
+    "address": "0xbb9bc244d798123fde783fcc1c72d3bb8c189413",
+    "vulnerability": "reentrancy",
+    "year": 2016,
+    "url": "https://etherscan.io/address/0xbb9bc244d798123fde783fcc1c72d3bb8c189413"
+  },
+  {
+    "name": "Parity Multisig",
+    "address": "0x863df6bfa4469f3ead0be8f9f2aae51c91a907b4",
+    "vulnerability": "delegatecall",
+    "year": 2017
+  },
+  {
+    "name": "Parity Multisig 2",
+    "address": "0x6090a6e47849629b7245dfa1ca21d94cd15878ef",
+    "vulnerability": "uninitialized",
+    "year": 2017
+  },
+  {
+    "name": "Bancor",
+    "address": "0x5894110995b8c8401bd38262ba0c8ee41d4e4658",
+    "vulnerability": "access_control",
+    "year": 2018
+  }
+]

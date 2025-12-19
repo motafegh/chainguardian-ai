@@ -1,6 +1,6 @@
 """
-Unified Feature Extraction Pipeline - PRODUCTION VERSION
-=========================================================
+Unified Feature Extraction Pipeline - PRODUCTION VERSION WITH SEMANTIC ANALYSIS
+================================================================================
 
 Thread-safe multi-version Solidity compilation with comprehensive error handling.
 
@@ -10,14 +10,18 @@ KEY FEATURES:
 - Multi-file contract support with proper import resolution
 - Comprehensive error categorization with full error messages
 - 85+ Solidity compiler versions supported
+- **NEW**: Semantic security pattern detection (CEI, reentrancy guards)
 
-FIXES APPLIED:
-1. Direct solc-select calls (more reliable than sys.executable -m)
-2. Proper caret pragma handling (uses highest compatible version)
-3. Range pragma support (>=0.6.0 <0.8.0 → uses 0.7.6)
-4. Multi-file contracts (analyzes main file with import resolution)
-5. Full error messages (no truncation in exceptions)
-6. AST extractor receives pre-compiled Slither object (no re-compilation)
+FEATURE EXTRACTION PIPELINE (7 STEPS):
+1. Multi-file contract detection
+2. Solidity version detection & compiler switching
+3. Slither compilation & detector registration
+4. Vulnerability feature extraction (23 flags + 3 severity + 9 stats + 4 risk)
+5. AST feature extraction (17 code structure features)
+6. Graph feature extraction (25 CFG/CG/DFG features)
+7. **NEW**: Semantic security pattern analysis (8 semantic features)
+
+TOTAL: 89 features (was 81)
 """
 
 from pathlib import Path
@@ -28,11 +32,11 @@ import re
 import subprocess
 from threading import Lock
 from slither import Slither
-
 import slither.detectors.all_detectors as detector_module
 
 from chainguardian.feature_extraction.contract_analyzer import SlitherAnalyzer
 from chainguardian.feature_extraction.ast_analyzer import ASTFeatureExtractor
+from chainguardian.feature_extraction.semantic_analyzer import extract_semantic_features
 
 logger = logging.getLogger(__name__)
 
@@ -43,15 +47,25 @@ class FeaturePipeline:
     
     Thread-safe for parallel feature extraction across multiple contracts.
     Caches installed Solidity versions for performance.
+    
+    Features extracted (89 total):
+    - 23 vulnerability flags (reentrancy, access control, etc.)
+    - 3 severity counts (high, medium, low)
+    - 17 AST features (complexity, LOC, etc.)
+    - 9 detector statistics (confidence, types, etc.)
+    - 4 risk scores (simple, weighted, category)
+    - 25 graph features (CFG, call graph, data flow)
+    - 8 semantic features (CEI violations, reentrancy guards, etc.)
     """
     
     def __init__(self):
         """Initialize pipeline with version cache and thread safety."""
         from chainguardian.database.manager import DatabaseManager
-    
+        
         self.features: list[Dict] = []  # Keep for backwards compatibility
-        self.db = DatabaseManager()  # ← NEW: Database connection
+        self.db = DatabaseManager()  # Database connection
         logger.info("✅ Database connection ready")
+        
         self._lock = Lock()  # Protects version switching + compilation
         
         # Cache installed versions (call once, use many times)
@@ -60,14 +74,13 @@ class FeaturePipeline:
         
         if len(self._installed_versions) == 0:
             logger.error(
-                "⚠️ NO Solidity versions detected!\n"
+                "⚠️  NO Solidity versions detected!\n"
                 "   Install with: poetry run solc-select install 0.8.20"
             )
     
     def _get_installed_versions(self) -> set:
         """
         Get list of installed Solidity compiler versions.
-        
         Uses direct solc-select call for reliability.
         
         Returns:
@@ -91,7 +104,7 @@ class FeaturePipeline:
                         versions.add(version)
             
             return versions
-            
+        
         except Exception as e:
             logger.error(f"Failed to get installed versions: {e}")
             return set()
@@ -101,10 +114,10 @@ class FeaturePipeline:
         Extract Solidity version from pragma.
         
         HANDLES ALL PRAGMA TYPES:
-        - pragma solidity 0.8.3;           → (0.8.3, False) exact
-        - pragma solidity ^0.8.0;          → (0.8.0, True) caret
-        - pragma solidity >=0.6.0 <0.8.0;  → (0.7.6, False) range (uses highest)
-        - pragma solidity =0.8.17;         → (0.8.17, False) exact
+        - pragma solidity 0.8.3;            → (0.8.3, False) exact
+        - pragma solidity ^0.8.0;           → (0.8.0, True) caret
+        - pragma solidity >=0.6.0 <0.8.0;   → (0.7.6, False) range (uses highest)
+        - pragma solidity =0.8.17;          → (0.8.17, False) exact
         
         Args:
             contract_path: Path to Solidity file
@@ -117,7 +130,6 @@ class FeaturePipeline:
             
             # Find pragma line
             pragma_match = re.search(r'pragma\s+solidity\s+([^;]+);', content)
-            
             if not pragma_match:
                 logger.warning(f"No pragma in {contract_path.name}")
                 return "0.8.20", False
@@ -139,7 +151,6 @@ class FeaturePipeline:
             # ================================================================
             elif '>=' in pragma_text or '<' in pragma_text:
                 versions = re.findall(r'([\d.]+)', pragma_text)
-                
                 if not versions:
                     logger.warning(f"No versions in range pragma: {pragma_text}")
                     return "0.8.20", False
@@ -150,8 +161,8 @@ class FeaturePipeline:
                     max_version = versions[1] if len(versions) > 1 else None
                     
                     min_parts = tuple(map(int, min_version.split('.')))
-                    
                     compatible = []
+                    
                     for v in self._installed_versions:
                         v_parts = tuple(map(int, v.split('.')))
                         
@@ -174,7 +185,7 @@ class FeaturePipeline:
                     else:
                         logger.warning(f"No compatible versions for {pragma_text}")
                         return min_version, False
-                        
+                
                 except Exception as e:
                     logger.error(f"Failed to parse range pragma: {e}")
                     return versions[0], False
@@ -192,7 +203,7 @@ class FeaturePipeline:
             # Fallback
             logger.warning(f"Could not parse pragma: {pragma_text}")
             return "0.8.20", False
-            
+        
         except Exception as e:
             logger.error(f"Version detection failed for {contract_path}: {e}")
             return "0.8.20", False
@@ -204,7 +215,7 @@ class FeaturePipeline:
         Args:
             required_version: Version from pragma (e.g., "0.8.0")
             has_caret: Whether pragma had caret (^)
-        
+            
         Returns:
             Best version to use
         """
@@ -257,14 +268,14 @@ class FeaturePipeline:
         Check if version is compatible with caret pragma.
         
         Caret rules (see semver.org):
-        - ^1.2.3  means  >=1.2.3 <2.0.0  (next major)
-        - ^0.2.3  means  >=0.2.3 <0.3.0  (next minor when major=0)
-        - ^0.0.3  means  >=0.0.3 <0.0.4  (next patch when major=0 and minor=0)
+        - ^1.2.3 means >=1.2.3 <2.0.0 (next major)
+        - ^0.2.3 means >=0.2.3 <0.3.0 (next minor when major=0)
+        - ^0.0.3 means >=0.0.3 <0.0.4 (next patch when major=0 and minor=0)
         
         Args:
             version: Version to check (e.g., "0.8.26")
             req_major, req_minor, req_patch: Required version components
-        
+            
         Returns:
             True if compatible
         """
@@ -292,7 +303,6 @@ class FeaturePipeline:
             # Must be same minor version
             if v_minor != req_minor:
                 return False
-            
             # Must be >= required patch
             return v_patch >= req_patch
         
@@ -303,18 +313,15 @@ class FeaturePipeline:
         # Allow any minor >= required minor
         if v_minor < req_minor:
             return False
-        
         # If same minor, check patch
         if v_minor == req_minor and v_patch < req_patch:
             return False
         
         return True
-
     
     def _set_solc_version(self, version: str) -> bool:
         """
         Switch to specific Solidity compiler version.
-        
         Uses direct solc-select call for reliability.
         """
         try:
@@ -325,10 +332,8 @@ class FeaturePipeline:
                 check=True,
                 timeout=10
             )
-            
             logger.debug(f"✓ Switched to Solidity {version}")
             return True
-            
         except Exception as e:
             logger.error(f"Failed to switch to Solidity {version}: {e}")
             return False
@@ -337,17 +342,26 @@ class FeaturePipeline:
         """
         Extract ALL features from a single contract.
         
-        🎓 EXPANDED VERSION: Now extracts 58+ features (was 15)
+        🎓 COMPREHENSIVE VERSION: Extracts 89 features across 7 analysis stages
         
         THREAD-SAFE: Version switching + compilation are atomic.
         
         Args:
             contract_path: Path to .sol file OR directory with .sol files
             contract_name: Name of main contract to analyze
-        
+            metadata: Optional metadata to include (address, data_source, etc.)
+            
         Returns:
-            Dict with 60+ features (2 metadata + 23 vuln flags + 3 severity +
-                                    21 AST + 9 detector stats + 4 risk scores + 2 error)
+            Dict with 89+ features:
+            - 2 metadata (contract_name, file_path)
+            - 23 vulnerability flags (has_reentrancy, etc.)
+            - 3 severity counts (high, medium, low)
+            - 9 detector statistics (confidence, types, etc.)
+            - 4 risk scores (simple, weighted, category)
+            - 17 AST features (complexity, LOC, etc.)
+            - 25 graph features (CFG, call graph, data flow)
+            - 8 semantic features (CEI violations, reentrancy guards)
+            - 2 error tracking (failure_reason, error_message)
         """
         logger.info(f"Analyzing {contract_name}")
         
@@ -355,9 +369,11 @@ class FeaturePipeline:
             'contract_name': contract_name,
             'file_path': str(contract_path),
         }
-        # ✅ ADD METADATA EARLY (before saving)
+        
+        # Add metadata early (before saving)
         if metadata:
             combined_features.update(metadata)
+        
         try:
             # ================================================================
             # STEP 0: HANDLE MULTI-FILE CONTRACTS
@@ -370,7 +386,6 @@ class FeaturePipeline:
                 
                 # Find main contract file
                 main_candidates = list(contract_path.glob(f"{contract_name}.sol"))
-                
                 if not main_candidates:
                     main_candidates = [
                         f for f in contract_path.glob("*.sol")
@@ -411,7 +426,6 @@ class FeaturePipeline:
             # CRITICAL: LOCK AROUND VERSION SWITCH + COMPILATION
             # ================================================================
             with self._lock:
-                
                 if not self._set_solc_version(required_version):
                     raise EnvironmentError(
                         f"Solidity {required_version} not installed. "
@@ -426,7 +440,7 @@ class FeaturePipeline:
                         solc_disable_warnings=True,
                         solc_args="--optimize"
                     )
-                    
+                
                 except Exception as compile_error:
                     # Store full error (NO TRUNCATION!)
                     full_error = str(compile_error)
@@ -482,11 +496,11 @@ class FeaturePipeline:
             logger.debug(f"✓ Registered {len(slither.detectors)} detectors")
             
             # ================================================================
-            # STEP 4: EXTRACT VULNERABILITY FEATURES (EXPANDED: 58 features)
+            # STEP 4: EXTRACT VULNERABILITY FEATURES (39 features)
             # ================================================================
             vuln_analyzer = SlitherAnalyzer(slither)
             vuln_features = vuln_analyzer.extract_features(contract_name)
-
+            
             combined_features.update({
                 # ============================================================
                 # ORIGINAL VULNERABILITY FLAGS (4)
@@ -497,52 +511,39 @@ class FeaturePipeline:
                 'has_unchecked_call': vuln_features.has_unchecked_call,
                 
                 # ============================================================
-                # NEW: ADDITIONAL VULNERABILITY FLAGS (19)
+                # ADDITIONAL VULNERABILITY FLAGS (19)
                 # ============================================================
-                # Reentrancy variants
                 'has_reentrancy_unlimited': vuln_features.has_reentrancy_unlimited,
                 'has_reentrancy_benign': vuln_features.has_reentrancy_benign,
                 'has_reentrancy_events': vuln_features.has_reentrancy_events,
-                
-                # Unchecked operations
                 'has_unchecked_transfer': vuln_features.has_unchecked_transfer,
-                
-                # Delegatecall issues
                 'has_controlled_delegatecall': vuln_features.has_controlled_delegatecall,
                 'has_delegatecall_loop': vuln_features.has_delegatecall_loop,
-                
-                # Uninitialized variables
                 'has_uninitialized_state': vuln_features.has_uninitialized_state,
                 'has_uninitialized_storage': vuln_features.has_uninitialized_storage,
                 'has_uninitialized_local': vuln_features.has_uninitialized_local,
-                
-                # Dangerous patterns
                 'has_tx_origin': vuln_features.has_tx_origin,
                 'has_inline_assembly': vuln_features.has_inline_assembly,
                 'has_locked_ether': vuln_features.has_locked_ether,
                 'has_msg_value_loop': vuln_features.has_msg_value_loop,
-                
-                # Code quality issues
                 'has_shadowing_state': vuln_features.has_shadowing_state,
                 'has_shadowing_builtin': vuln_features.has_shadowing_builtin,
                 'has_shadowing_abstract': vuln_features.has_shadowing_abstract,
                 'has_unused_state_vars': vuln_features.has_unused_state_vars,
                 'has_unused_return_values': vuln_features.has_unused_return_values,
-                
-                # Compiler issues
                 'has_incorrect_solc_version': vuln_features.has_incorrect_solc_version,
                 'has_floating_pragma': vuln_features.has_floating_pragma,
                 'has_outdated_compiler': vuln_features.has_outdated_compiler,
                 
                 # ============================================================
-                # ORIGINAL SEVERITY COUNTS (3)
+                # SEVERITY COUNTS (3)
                 # ============================================================
                 'high_severity_count': vuln_features.high_severity_count,
                 'medium_severity_count': vuln_features.medium_severity_count,
                 'low_severity_count': vuln_features.low_severity_count,
                 
                 # ============================================================
-                # NEW: DETECTOR STATISTICS (9)
+                # DETECTOR STATISTICS (9)
                 # ============================================================
                 'high_confidence_detectors': vuln_features.high_confidence_detectors,
                 'medium_confidence_detectors': vuln_features.medium_confidence_detectors,
@@ -555,7 +556,7 @@ class FeaturePipeline:
                 'detectors_per_loc': vuln_features.detectors_per_loc,
                 
                 # ============================================================
-                # NEW: COMPOSITE RISK SCORES (4)
+                # COMPOSITE RISK SCORES (4)
                 # ============================================================
                 'risk_score_simple': vuln_features.risk_score_simple,
                 'risk_score_weighted': vuln_features.risk_score_weighted,
@@ -564,17 +565,15 @@ class FeaturePipeline:
             })
             
             # ================================================================
-            # STEP 5: EXTRACT AST FEATURES (21 features)
+            # STEP 5: EXTRACT AST FEATURES (17 features)
             # ================================================================
             # CRITICAL: Pass pre-compiled Slither object (no re-compilation!)
             ast_extractor = ASTFeatureExtractor(main_contract_file, slither_obj=slither)
             ast_features = ast_extractor.extract_features(contract_name)
-            
             combined_features.update(ast_features)
             
-            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
             # ================================================================
-            # STEP 6: EXTRACT GRAPH FEATURES (25 features) - NEW!
+            # STEP 6: EXTRACT GRAPH FEATURES (25 features)
             # ================================================================
             try:
                 from chainguardian.feature_extraction.graph_extractor import GraphFeatureExtractor
@@ -588,6 +587,7 @@ class FeaturePipeline:
                     f"{graph_features['cfg_num_cycles']} cycles, "
                     f"{graph_features['cg_num_external_calls']} ext calls"
                 )
+            
             except Exception as e:
                 logger.warning(f"{contract_name}: Graph extraction failed - {e}")
                 # Add default graph features
@@ -608,14 +608,54 @@ class FeaturePipeline:
                     'dfg_num_external_sources': 0, 'dfg_taint_to_sink_ratio': 0.0,
                     'dfg_num_unvalidated_inputs': 0
                 })
-
-            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
-
-        # ================================================================
-        # ERROR HANDLING: EXPECTED FAILURES
-        # ================================================================
-        except (ImportError, ValueError, RuntimeError, SyntaxError, FileNotFoundError, EnvironmentError) as e:
             
+            # ================================================================
+            # STEP 7: EXTRACT SEMANTIC SECURITY FEATURES (8 features) - NEW!
+            # ================================================================
+            # WHY: Detect CEI violations, reentrancy guards, and safe patterns
+            # that pure syntactic analysis misses
+            try:
+                # Find the contract object in Slither's compilation
+                target_contract = None
+                for contract in slither.contracts:
+                    if contract.name == contract_name:
+                        target_contract = contract
+                        break
+                
+                if target_contract:
+                    semantic_features = extract_semantic_features(target_contract)
+                    combined_features.update(semantic_features)
+                    
+                    logger.debug(
+                        f"{contract_name}: Semantic features - "
+                        f"CEI score: {semantic_features['cei_pattern_score']:.2f}, "
+                        f"Violations: {semantic_features['cei_violations']}, "
+                        f"Guard: {semantic_features['has_reentrancy_guard']}"
+                    )
+                else:
+                    logger.warning(f"{contract_name}: Contract not found in compilation")
+                    raise ValueError(f"Contract {contract_name} not found")
+            
+            except Exception as e:
+                logger.warning(f"{contract_name}: Semantic feature extraction failed - {e}")
+                # Add default semantic features
+                combined_features.update({
+                    'cei_violations': 0,
+                    'cei_safe_functions': 0,
+                    'cei_pattern_score': 1.0,
+                    'has_reentrancy_guard': False,
+                    'functions_with_reentrancy_guard': 0,
+                    'state_before_call_count': 0,
+                    'state_after_call_count': 0,
+                    'unchecked_calls_in_critical_context': 0,
+                })
+            
+            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
+            
+            # ================================================================
+            # ERROR HANDLING: EXPECTED FAILURES
+            # ================================================================
+        except (ImportError, ValueError, RuntimeError, SyntaxError, FileNotFoundError, EnvironmentError) as e:
             # Categorize expected failures
             if isinstance(e, ImportError):
                 failure_reason = "IMPORT_ERROR"
@@ -635,82 +675,10 @@ class FeaturePipeline:
             logger.debug(f"{contract_name}: {failure_reason}")
             
             # ============================================================
-            # POPULATE ALL 58 FEATURES WITH DEFAULTS
+            # POPULATE ALL 89 FEATURES WITH DEFAULTS
             # ============================================================
-            combined_features.update({
-                # VULNERABILITY FLAGS (23) - All False
-                'has_reentrancy': False,
-                'has_access_control_issues': False,
-                'has_timestamp_dependency': False,
-                'has_unchecked_call': False,
-                'has_reentrancy_unlimited': False,
-                'has_reentrancy_benign': False,
-                'has_reentrancy_events': False,
-                'has_unchecked_transfer': False,
-                'has_controlled_delegatecall': False,
-                'has_delegatecall_loop': False,
-                'has_uninitialized_state': False,
-                'has_uninitialized_storage': False,
-                'has_uninitialized_local': False,
-                'has_tx_origin': False,
-                'has_inline_assembly': False,
-                'has_locked_ether': False,
-                'has_msg_value_loop': False,
-                'has_shadowing_state': False,
-                'has_shadowing_builtin': False,
-                'has_shadowing_abstract': False,
-                'has_unused_state_vars': False,
-                'has_unused_return_values': False,
-                'has_incorrect_solc_version': False,
-                'has_floating_pragma': False,
-                'has_outdated_compiler': False,
-                
-                # SEVERITY COUNTS (3) - All 0
-                'high_severity_count': 0,
-                'medium_severity_count': 0,
-                'low_severity_count': 0,
-                
-                # AST FEATURES (17) - All 0
-                'num_functions': 0,
-                'num_external_calls': 0,
-                'num_state_vars': 0,
-                'num_modifiers': 0,
-                'max_cyclomatic_complexity': 0,
-                'num_low_level_calls': 0,
-                'lines_of_code': 0,
-                'num_contracts_in_file': 1,
-                'num_dependencies': 0,
-                'avg_function_complexity': 0.0,
-                'num_functions_high_complexity': 0,
-                'num_comments': 0,
-                'comment_to_code_ratio': 0.0,
-                'num_payable_functions': 0,
-                'num_library_calls': 0,
-                'inheritance_depth': 0,
-                'num_unused_functions': 0,
-                
-                # DETECTOR STATISTICS (9) - All 0
-                'high_confidence_detectors': 0,
-                'medium_confidence_detectors': 0,
-                'low_confidence_detectors': 0,
-                'security_detectors_triggered': 0,
-                'optimization_detectors_triggered': 0,
-                'total_detector_hits': 0,
-                'unique_vulnerability_types': 0,
-                'detectors_per_function': 0.0,
-                'detectors_per_loc': 0.0,
-                
-                # RISK SCORES (4) - Defaults
-                'risk_score_simple': 0.0,
-                'risk_score_weighted': 0.0,
-                'is_high_risk': False,
-                'contract_complexity_category': 'simple',
-                
-                # ERROR TRACKING (2)
-                'failure_reason': failure_reason,
-                'error_message': str(e)[:2000],  # Store full error (up to 2000 chars)
-            })
-            
+            combined_features.update(self._get_default_features(failure_reason, str(e)))
+        
         # ================================================================
         # ERROR HANDLING: UNEXPECTED FAILURES
         # ================================================================
@@ -720,83 +688,7 @@ class FeaturePipeline:
                 f"{contract_name}: UNEXPECTED ERROR - {type(e).__name__}: {e}",
                 exc_info=True
             )
-            
-            # ============================================================
-            # POPULATE ALL 58 FEATURES WITH DEFAULTS
-            # ============================================================
-            combined_features.update({
-                # VULNERABILITY FLAGS (23)
-                'has_reentrancy': False,
-                'has_access_control_issues': False,
-                'has_timestamp_dependency': False,
-                'has_unchecked_call': False,
-                'has_reentrancy_unlimited': False,
-                'has_reentrancy_benign': False,
-                'has_reentrancy_events': False,
-                'has_unchecked_transfer': False,
-                'has_controlled_delegatecall': False,
-                'has_delegatecall_loop': False,
-                'has_uninitialized_state': False,
-                'has_uninitialized_storage': False,
-                'has_uninitialized_local': False,
-                'has_tx_origin': False,
-                'has_inline_assembly': False,
-                'has_locked_ether': False,
-                'has_msg_value_loop': False,
-                'has_shadowing_state': False,
-                'has_shadowing_builtin': False,
-                'has_shadowing_abstract': False,
-                'has_unused_state_vars': False,
-                'has_unused_return_values': False,
-                'has_incorrect_solc_version': False,
-                'has_floating_pragma': False,
-                'has_outdated_compiler': False,
-                
-                # SEVERITY COUNTS (3)
-                'high_severity_count': 0,
-                'medium_severity_count': 0,
-                'low_severity_count': 0,
-                
-                # AST FEATURES (17)
-                'num_functions': 0,
-                'num_external_calls': 0,
-                'num_state_vars': 0,
-                'num_modifiers': 0,
-                'max_cyclomatic_complexity': 0,
-                'num_low_level_calls': 0,
-                'lines_of_code': 0,
-                'num_contracts_in_file': 1,
-                'num_dependencies': 0,
-                'avg_function_complexity': 0.0,
-                'num_functions_high_complexity': 0,
-                'num_comments': 0,
-                'comment_to_code_ratio': 0.0,
-                'num_payable_functions': 0,
-                'num_library_calls': 0,
-                'inheritance_depth': 0,
-                'num_unused_functions': 0,
-                
-                # DETECTOR STATISTICS (9)
-                'high_confidence_detectors': 0,
-                'medium_confidence_detectors': 0,
-                'low_confidence_detectors': 0,
-                'security_detectors_triggered': 0,
-                'optimization_detectors_triggered': 0,
-                'total_detector_hits': 0,
-                'unique_vulnerability_types': 0,
-                'detectors_per_function': 0.0,
-                'detectors_per_loc': 0.0,
-                
-                # RISK SCORES (4)
-                'risk_score_simple': 0.0,
-                'risk_score_weighted': 0.0,
-                'is_high_risk': False,
-                'contract_complexity_category': 'simple',
-                
-                # ERROR TRACKING (2)
-                'failure_reason': "UNEXPECTED_ERROR",
-                'error_message': str(e)[:2000],
-            })
+            combined_features.update(self._get_default_features("UNEXPECTED_ERROR", str(e)))
         
         # ================================================================
         # SAVE TO DATABASE (Thread-safe)
@@ -808,9 +700,117 @@ class FeaturePipeline:
                 logger.debug(f"Saved to database: contract_id={contract_id}")
             except Exception as e:
                 logger.error(f"Failed to save to database: {e}")
-
+        
         return combined_features
-
+    
+    def _get_default_features(self, failure_reason: str, error_message: str) -> Dict:
+        """
+        Get default feature values for failed extractions.
+        
+        Args:
+            failure_reason: Categorized failure type
+            error_message: Full error message
+            
+        Returns:
+            Dict with all 89 features set to safe defaults
+        """
+        return {
+            # VULNERABILITY FLAGS (23) - All False
+            'has_reentrancy': False,
+            'has_access_control_issues': False,
+            'has_timestamp_dependency': False,
+            'has_unchecked_call': False,
+            'has_reentrancy_unlimited': False,
+            'has_reentrancy_benign': False,
+            'has_reentrancy_events': False,
+            'has_unchecked_transfer': False,
+            'has_controlled_delegatecall': False,
+            'has_delegatecall_loop': False,
+            'has_uninitialized_state': False,
+            'has_uninitialized_storage': False,
+            'has_uninitialized_local': False,
+            'has_tx_origin': False,
+            'has_inline_assembly': False,
+            'has_locked_ether': False,
+            'has_msg_value_loop': False,
+            'has_shadowing_state': False,
+            'has_shadowing_builtin': False,
+            'has_shadowing_abstract': False,
+            'has_unused_state_vars': False,
+            'has_unused_return_values': False,
+            'has_incorrect_solc_version': False,
+            'has_floating_pragma': False,
+            'has_outdated_compiler': False,
+            
+            # SEVERITY COUNTS (3) - All 0
+            'high_severity_count': 0,
+            'medium_severity_count': 0,
+            'low_severity_count': 0,
+            
+            # AST FEATURES (17) - All 0
+            'num_functions': 0,
+            'num_external_calls': 0,
+            'num_state_vars': 0,
+            'num_modifiers': 0,
+            'max_cyclomatic_complexity': 0,
+            'num_low_level_calls': 0,
+            'lines_of_code': 0,
+            'num_contracts_in_file': 1,
+            'num_dependencies': 0,
+            'avg_function_complexity': 0.0,
+            'num_functions_high_complexity': 0,
+            'num_comments': 0,
+            'comment_to_code_ratio': 0.0,
+            'num_payable_functions': 0,
+            'num_library_calls': 0,
+            'inheritance_depth': 0,
+            'num_unused_functions': 0,
+            
+            # DETECTOR STATISTICS (9) - All 0
+            'high_confidence_detectors': 0,
+            'medium_confidence_detectors': 0,
+            'low_confidence_detectors': 0,
+            'security_detectors_triggered': 0,
+            'optimization_detectors_triggered': 0,
+            'total_detector_hits': 0,
+            'unique_vulnerability_types': 0,
+            'detectors_per_function': 0.0,
+            'detectors_per_loc': 0.0,
+            
+            # RISK SCORES (4) - Defaults
+            'risk_score_simple': 0.0,
+            'risk_score_weighted': 0.0,
+            'is_high_risk': False,
+            'contract_complexity_category': 'simple',
+            
+            # GRAPH FEATURES (25) - All 0
+            'cfg_num_nodes': 0, 'cfg_num_edges': 0, 'cfg_num_cycles': 0,
+            'cfg_max_depth': 0, 'cfg_avg_branching': 0.0, 'cfg_has_complex_loops': False,
+            'cfg_num_exit_points': 0, 'cfg_cyclomatic_total': 0,
+            'cg_num_nodes': 0, 'cg_num_edges': 0, 'cg_max_call_depth': 0,
+            'cg_num_external_calls': 0, 'cg_external_call_ratio': 0.0,
+            'cg_has_cyclic_calls': False, 'cg_num_public_entry_points': 0,
+            'cg_num_internal_functions': 0, 'cg_avg_calls_per_function': 0.0,
+            'cg_num_leaf_functions': 0,
+            'dfg_num_state_vars': 0, 'dfg_num_tainted_flows': 0,
+            'dfg_has_cross_function_flow': False, 'dfg_num_sensitive_sinks': 0,
+            'dfg_num_external_sources': 0, 'dfg_taint_to_sink_ratio': 0.0,
+            'dfg_num_unvalidated_inputs': 0,
+            
+            # SEMANTIC FEATURES (8) - Safe defaults
+            'cei_violations': 0,
+            'cei_safe_functions': 0,
+            'cei_pattern_score': 1.0,
+            'has_reentrancy_guard': False,
+            'functions_with_reentrancy_guard': 0,
+            'state_before_call_count': 0,
+            'state_after_call_count': 0,
+            'unchecked_calls_in_critical_context': 0,
+            
+            # ERROR TRACKING (2)
+            'failure_reason': failure_reason,
+            'error_message': error_message[:2000],  # Store full error (up to 2000 chars)
+        }
     
     def to_dataframe(self) -> pd.DataFrame:
         """Convert collected features to pandas DataFrame."""
@@ -839,7 +839,6 @@ class FeaturePipeline:
         
         for feature_dict in self.features:
             failure_reason = feature_dict.get('failure_reason', None)
-            
             if failure_reason:
                 failures[failure_reason] = failures.get(failure_reason, 0) + 1
             else:
@@ -864,7 +863,6 @@ class FeaturePipeline:
         
         if failures:
             print(f"\n🔍 Failure Breakdown:")
-            
             status_map = {
                 "IMPORT_ERROR": ("EXPECTED ✓", "External libraries (@openzeppelin, etc.)"),
                 "VERSION_MISMATCH": ("INVESTIGATE ⚠️", "Check pragma handling"),
@@ -877,10 +875,9 @@ class FeaturePipeline:
             for reason, count in sorted(failures.items(), key=lambda x: x[1], reverse=True):
                 percentage = count / total * 100
                 status, description = status_map.get(reason, ("INVESTIGATE ❓", "Check logs"))
-                
                 print(f"\n   {reason}: {count} ({percentage:.1f}%)")
-                print(f"   Status: {status}")
-                print(f"   Fix: {description}")
+                print(f"      Status: {status}")
+                print(f"      Fix: {description}")
         
         print(f"\n" + "="*70)
         print("🎯 RECOMMENDATIONS")
@@ -907,12 +904,11 @@ class FeaturePipeline:
             print(f"\n⚪ CLEAN CONTRACTS: {zero_feature_clean} (keep as negatives)")
         
         if failures.get('VERSION_MISMATCH', 0) > 10:
-            print(f"\n⚠️ WARNING: {failures['VERSION_MISMATCH']} VERSION_MISMATCH errors")
+            print(f"\n⚠️  WARNING: {failures['VERSION_MISMATCH']} VERSION_MISMATCH errors")
             print(f"   Check error_message column in CSV for details")
         
         print("="*70 + "\n")
     
-
     def save_dataset(self, output_path: Path):
         """
         Save features as CSV and print diagnostics.

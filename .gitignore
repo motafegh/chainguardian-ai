@@ -45,9 +45,12 @@ Thumbs.db
 
 # Data (CAREFUL - keep small samples for portfolio)
 # Ignore large raw datasets
-data/raw/
-data/external/
-data/temp/
+data/metadata/
+data/production/
+data/vulnerable_complex/
+data/safe_contracts/
+data/
+Full_RoadMap.md
 # Large data (use Git LFS)
 *.sol
 collected/

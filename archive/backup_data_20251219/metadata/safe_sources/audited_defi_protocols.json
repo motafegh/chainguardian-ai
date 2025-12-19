@@ -1,0 +1,209 @@
+[
+  {
+    "protocol": "Uniswap V2",
+    "category": "dex",
+    "contracts": [
+      {
+        "name": "UniswapV2Factory",
+        "address": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+        "function": "Factory for creating pair contracts"
+      },
+      {
+        "name": "UniswapV2Router02",
+        "address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        "function": "Main router for swaps"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2020-03",
+        "url": "https://github.com/Uniswap/v2-core/blob/master/audits/Trail_of_Bits.pdf"
+      },
+      {
+        "firm": "Consensys Diligence",
+        "date": "2020-03",
+        "url": "https://consensys.net/diligence/audits/2020/06/uniswap-v2/"
+      },
+      {
+        "firm": "ABDK",
+        "date": "2020-04",
+        "url": "https://github.com/Uniswap/v2-core/blob/master/audits/ABDK.pdf"
+      }
+    ],
+    "tvl_usd": 1500000000,
+    "years_active": 4.5,
+    "exploits": 0,
+    "github": "https://github.com/Uniswap/v2-core"
+  },
+  {
+    "protocol": "Uniswap V3",
+    "category": "dex",
+    "contracts": [
+      {
+        "name": "UniswapV3Factory",
+        "address": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "function": "Factory for V3 pools"
+      },
+      {
+        "name": "SwapRouter",
+        "address": "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+        "function": "Main router for V3 swaps"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2021-04",
+        "url": "https://github.com/Uniswap/v3-core/blob/main/audits/tob/audit.pdf"
+      },
+      {
+        "firm": "ABDK",
+        "date": "2021-05",
+        "url": "https://github.com/Uniswap/v3-core/blob/main/audits/abdk/audit.pdf"
+      }
+    ],
+    "tvl_usd": 3000000000,
+    "years_active": 3.5,
+    "exploits": 0,
+    "github": "https://github.com/Uniswap/v3-core"
+  },
+  {
+    "protocol": "Aave V2",
+    "category": "lending",
+    "contracts": [
+      {
+        "name": "LendingPool",
+        "address": "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9",
+        "function": "Main lending pool"
+      },
+      {
+        "name": "LendingPoolAddressesProvider",
+        "address": "0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5",
+        "function": "Address registry"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2020-01",
+        "url": "https://github.com/aave/aave-protocol/blob/master/docs/Aave_Protocol_Trail_of_Bits_Final_Report.pdf"
+      },
+      {
+        "firm": "OpenZeppelin",
+        "date": "2020-02",
+        "url": "https://blog.openzeppelin.com/aave-protocol-audit/"
+      },
+      {
+        "firm": "ABDK",
+        "date": "2020-08",
+        "url": "https://github.com/aave/aave-protocol/blob/master/docs/ABDK_Aave_v2_audit.pdf"
+      },
+      {
+        "firm": "Peckshield",
+        "date": "2020-09",
+        "url": "https://github.com/aave/aave-protocol/blob/master/docs/PeckShield-Audit-Report-Aave-v1.0.pdf"
+      }
+    ],
+    "tvl_usd": 5000000000,
+    "years_active": 4,
+    "exploits": 0,
+    "github": "https://github.com/aave/aave-v2"
+  },
+  {
+    "protocol": "Compound V2",
+    "category": "lending",
+    "contracts": [
+      {
+        "name": "Comptroller",
+        "address": "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B",
+        "function": "Risk management and liquidation"
+      },
+      {
+        "name": "cDAI",
+        "address": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643",
+        "function": "DAI lending market"
+      },
+      {
+        "name": "cUSDC",
+        "address": "0x39AA39c021dfbaE8faC545936693aC917d5E7563",
+        "function": "USDC lending market"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2019-03",
+        "url": "https://github.com/compound-finance/compound-protocol/tree/master/audits"
+      },
+      {
+        "firm": "OpenZeppelin",
+        "date": "2019-08",
+        "url": "https://blog.openzeppelin.com/compound-audit/"
+      }
+    ],
+    "tvl_usd": 3000000000,
+    "years_active": 5,
+    "exploits": 0,
+    "github": "https://github.com/compound-finance/compound-protocol"
+  },
+  {
+    "protocol": "MakerDAO",
+    "category": "stablecoin",
+    "contracts": [
+      {
+        "name": "Vat",
+        "address": "0x35D1b3F3D7966A1DFe207aa4514C12a259A0492B",
+        "function": "Core vault engine"
+      },
+      {
+        "name": "Dai",
+        "address": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+        "function": "DAI stablecoin"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2018-11",
+        "url": "https://github.com/makerdao/mcd-security/blob/master/audits/TOB_MakerDAO_Final_Report.pdf"
+      },
+      {
+        "firm": "Peckshield",
+        "date": "2019-06",
+        "url": "https://github.com/makerdao/mcd-security/blob/master/audits/PeckShield-Audit-Report-MakerDAO-v1.0.pdf"
+      }
+    ],
+    "tvl_usd": 5000000000,
+    "years_active": 6,
+    "exploits": 0,
+    "github": "https://github.com/makerdao/dss"
+  },
+  {
+    "protocol": "Yearn Finance",
+    "category": "yield",
+    "contracts": [
+      {
+        "name": "YearnVaultV2",
+        "address": "0xdA816459F1AB5631232FE5e97a05BBBb94970c95",
+        "function": "DAI vault"
+      }
+    ],
+    "audits": [
+      {
+        "firm": "Trail of Bits",
+        "date": "2020-08",
+        "url": "https://github.com/yearn/yearn-security/tree/master/audits/Trail_of_Bits"
+      },
+      {
+        "firm": "ChainSecurity",
+        "date": "2021-02",
+        "url": "https://github.com/yearn/yearn-security/tree/master/audits/ChainSecurity"
+      }
+    ],
+    "tvl_usd": 500000000,
+    "years_active": 4,
+    "exploits": 0,
+    "github": "https://github.com/yearn/yearn-vaults"
+  }
+]

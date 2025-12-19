@@ -1,0 +1,10 @@
+feature,importance
+code_vulnerability_prob,0.636187416781639
+security_detectors_triggered,0.18677211787598794
+medium_confidence_detectors,0.06417038062307395
+high_confidence_detectors,0.054807340078859686
+optimization_detectors_triggered,0.04372877669358894
+code_vulnerability_confidence,0.014333967946850473
+low_confidence_detectors,0.0
+detectors_per_loc,0.0
+detectors_per_function,0.0

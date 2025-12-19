@@ -1,0 +1,36 @@
+======================================================================
+MODEL B: PATTERN-LEARNING RESULTS
+======================================================================
+
+APPROACH:
+  Learn from CODE PATTERNS without Slither vulnerability flags
+
+FEATURES:
+  Total: 42
+  Graph features: 25
+  Detector stats: 8
+  Code structure: 9
+
+REMOVED (to avoid leakage):
+  Slither vulnerability flags: 28
+
+MODELS:
+
+  Gradient Boosting:
+    CV AUC: 0.971 (+/- 0.007)
+
+  XGBoost:
+    CV AUC: 0.967 (+/- 0.014)
+
+  Random Forest:
+    CV AUC: 0.965 (+/- 0.012)
+
+  Logistic Regression:
+    CV AUC: 0.956 (+/- 0.011)
+
+BEST MODEL: Gradient Boosting
+  CV AUC: 0.971
+  Test AUC: 0.976
+  Dataset Leakage AUC: 0.977
+
+  Status: ✅ STRONG - Patterns learned successfully

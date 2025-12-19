@@ -1,0 +1,8 @@
+{
+  "adversarial_accuracy": 0.48,
+  "adversarial_auc": 0.7719298245614035,
+  "ml_only_accuracy": 0.4,
+  "improvement": 0.07999999999999996,
+  "cei_contracts_detected": 10,
+  "total_contracts": 963
+}

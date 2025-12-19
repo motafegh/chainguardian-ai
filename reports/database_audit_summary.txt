@@ -1,0 +1,9 @@
+======================================================================
+DATABASE AUDIT SUMMARY
+======================================================================
+
+Total: 663 clean contracts
+Labeled: 579 (164 vulnerable + 415 safe)
+Unlabeled: 84
+Features: 83
+Proxy features to remove: 9

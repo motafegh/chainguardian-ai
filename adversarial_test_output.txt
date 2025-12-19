@@ -1,0 +1,186 @@
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 01_super_simple_safe not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 01_super_simple_safe not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 02_obvious_reentrancy not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 02_obvious_reentrancy not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 03_complex_but_safe not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 03_complex_but_safe not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 04_simple_but_vulnerable not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 04_simple_but_vulnerable not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 05_timestamp_manipulation not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 05_timestamp_manipulation not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 06_unchecked_external_call not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 06_unchecked_external_call not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 07_integer_overflow_old not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 07_integer_overflow_old not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 08_safe_with_checks not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 08_safe_with_checks not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 09_delegatecall_danger not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 09_delegatecall_danger not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 10_tx_origin_auth not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 10_tx_origin_auth not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 11_hidden_reentrancy not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 11_hidden_reentrancy not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 12_false_positive_trap not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 12_false_positive_trap not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 13_modern_defi_safe not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 13_modern_defi_safe not found
+ERROR:chainguardian.feature_extraction.pipeline:14_assembly_safe: Compilation error
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 15_gas_griefing not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 15_gas_griefing not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 16_front_running_vulnerable not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 16_front_running_vulnerable not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 17_logic_error not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 17_logic_error not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 18_oracle_manipulation not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 18_oracle_manipulation not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 19_flash_loan_attack_vector not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 19_flash_loan_attack_vector not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 20_upgradeable_safe not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 20_upgradeable_safe not found
+ERROR:chainguardian.feature_extraction.pipeline:21_timelock_missing: Compilation error
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 22_empty_contract not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 22_empty_contract not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 23_only_events not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 23_only_events not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 24_intentional_honeypot not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 24_intentional_honeypot not found
+WARNING:chainguardian.feature_extraction.ast_analyzer:Contract 25_gas_optimization_extreme not found
+WARNING:chainguardian.feature_extraction.graph_extractor:Contract 25_gas_optimization_extreme not found
+
+======================================================================
+🧪 ADVERSARIAL MODEL TESTING (FIXED)
+======================================================================
+
+Found 25 test contracts
+
+======================================================================
+📦 LOADING MODELS
+======================================================================
+✅ Models loaded
+
+======================================================================
+🔬 EXTRACTING FEATURES & PREDICTING
+======================================================================
+
+📄 01_super_simple_safe.sol
+   Risk: 34.9 | Expected: LOW | ❌
+
+📄 02_obvious_reentrancy.sol
+   Risk: 69.3 | Expected: HIGH | ❌
+
+📄 03_complex_but_safe.sol
+   Risk: 45.0 | Expected: MEDIUM | ✅
+
+📄 04_simple_but_vulnerable.sol
+   Risk: 21.6 | Expected: HIGH | ❌
+
+📄 05_timestamp_manipulation.sol
+   Risk: 32.3 | Expected: MEDIUM-HIGH | ❌
+
+📄 06_unchecked_external_call.sol
+   Risk: 56.5 | Expected: HIGH | ❌
+
+📄 07_integer_overflow_old.sol
+   Risk: 16.1 | Expected: HIGH | ❌
+
+📄 08_safe_with_checks.sol
+   Risk: 32.4 | Expected: LOW | ✅
+
+📄 09_delegatecall_danger.sol
+   Risk: 76.5 | Expected: HIGH | ✅
+
+📄 10_tx_origin_auth.sol
+   Risk: 86.2 | Expected: MEDIUM-HIGH | ❌
+
+📄 11_hidden_reentrancy.sol
+   Risk: 26.6 | Expected: HIGH | ❌
+
+📄 12_false_positive_trap.sol
+   Risk: 53.3 | Expected: LOW-MEDIUM | ❌
+
+📄 13_modern_defi_safe.sol
+   Risk: 34.4 | Expected: LOW-MEDIUM | ✅
+
+📄 14_assembly_safe.sol
+   Risk: 16.2 | Expected: MEDIUM | ❌
+
+📄 15_gas_griefing.sol
+   Risk: 27.7 | Expected: MEDIUM-HIGH | ❌
+
+📄 16_front_running_vulnerable.sol
+   Risk: 52.6 | Expected: LOW-MEDIUM | ❌
+
+📄 17_logic_error.sol
+   Risk: 64.3 | Expected: LOW-MEDIUM | ❌
+
+📄 18_oracle_manipulation.sol
+   Risk: 28.0 | Expected: HIGH | ❌
+
+📄 19_flash_loan_attack_vector.sol
+   Risk: 16.1 | Expected: MEDIUM-HIGH | ❌
+
+📄 20_upgradeable_safe.sol
+   Risk: 52.8 | Expected: LOW-MEDIUM | ❌
+
+📄 21_timelock_missing.sol
+   Risk: 16.2 | Expected: MEDIUM | ❌
+
+📄 22_empty_contract.sol
+   Risk: 16.1 | Expected: VERY LOW | ❌
+
+📄 23_only_events.sol
+   Risk: 16.1 | Expected: VERY LOW | ❌
+
+📄 24_intentional_honeypot.sol
+   Risk: 16.1 | Expected: HIGH | ❌
+
+📄 25_gas_optimization_extreme.sol
+   Risk: 30.7 | Expected: LOW-MEDIUM | ✅
+
+======================================================================
+📊 RESULTS
+======================================================================
+
+🎯 ACCURACY: 5/25 (20.0%)
+
+Contract                                        Risk     Expected   Result
+--------------------------------------------------------------------------------
+01_super_simple_safe.sol                        34.9          LOW        ❌
+02_obvious_reentrancy.sol                       69.3         HIGH        ❌
+03_complex_but_safe.sol                         45.0       MEDIUM        ✅
+04_simple_but_vulnerable.sol                    21.6         HIGH        ❌
+05_timestamp_manipulation.sol                   32.3   MEDIUM-HIG        ❌
+06_unchecked_external_call.sol                  56.5         HIGH        ❌
+07_integer_overflow_old.sol                     16.1         HIGH        ❌
+08_safe_with_checks.sol                         32.4          LOW        ✅
+09_delegatecall_danger.sol                      76.5         HIGH        ✅
+10_tx_origin_auth.sol                           86.2   MEDIUM-HIG        ❌
+11_hidden_reentrancy.sol                        26.6         HIGH        ❌
+12_false_positive_trap.sol                      53.3   LOW-MEDIUM        ❌
+13_modern_defi_safe.sol                         34.4   LOW-MEDIUM        ✅
+14_assembly_safe.sol                            16.2       MEDIUM        ❌
+15_gas_griefing.sol                             27.7   MEDIUM-HIG        ❌
+16_front_running_vulnerable.sol                 52.6   LOW-MEDIUM        ❌
+17_logic_error.sol                              64.3   LOW-MEDIUM        ❌
+18_oracle_manipulation.sol                      28.0         HIGH        ❌
+19_flash_loan_attack_vector.sol                 16.1   MEDIUM-HIG        ❌
+20_upgradeable_safe.sol                         52.8   LOW-MEDIUM        ❌
+21_timelock_missing.sol                         16.2       MEDIUM        ❌
+22_empty_contract.sol                           16.1     VERY LOW        ❌
+23_only_events.sol                              16.1     VERY LOW        ❌
+24_intentional_honeypot.sol                     16.1         HIGH        ❌
+25_gas_optimization_extreme.sol                 30.7   LOW-MEDIUM        ✅
+
+📊 CATEGORY BREAKDOWN:
+
+1️⃣  Obvious Vulnerabilities:
+   02_obvious_reentrancy.sol                 69.3
+   04_simple_but_vulnerable.sol              21.6
+
+2️⃣  Obviously Safe:
+   01_super_simple_safe.sol                  34.9
+   22_empty_contract.sol                     16.1
+
+✅ Saved: reports/adversarial_test_results.csv
+======================================================================
+

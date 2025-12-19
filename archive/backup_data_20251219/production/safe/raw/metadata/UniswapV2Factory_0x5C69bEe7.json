@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:09.358113",
+  "contract_address": "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
+  "contract_name": "UniswapV2Factory",
+  "compiler_version": "v0.5.16+commit.9c3226ce",
+  "optimization_used": "1",
+  "optimization_runs": "999999",
+  "evm_version": "istanbul",
+  "license_type": "GNU GPLv3",
+  "proxy": "0",
+  "implementation": "",
+  "file_path": "data/production/safe/raw/UniswapV2Factory_0x5C69bEe7.sol",
+  "etherscan_url": "https://etherscan.io/address/0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f#code",
+  "api_version": "v2"
+}

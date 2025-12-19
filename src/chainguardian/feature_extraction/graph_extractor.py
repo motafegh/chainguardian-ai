@@ -20,15 +20,35 @@ class GraphFeatureExtractor:
     
     def extract_features(self, contract_name: str) -> Dict:
         """Extract all 25 graph features."""
-        # Find target contract
+        # Find target contract with fuzzy matching
         target_contract = None
+        
+        # Try exact match first
         for contract in self.slither.contracts:
             if contract.name == contract_name:
                 target_contract = contract
                 break
         
+        # Fuzzy match: case-insensitive, ignore underscores/dashes
         if not target_contract:
-            logger.warning(f"Contract {contract_name} not found")
+            name_clean = contract_name.lower().replace('_', '').replace('-', '')
+            for contract in self.slither.contracts:
+                contract_clean = contract.name.lower().replace('_', '').replace('-', '')
+                if contract_clean in name_clean or name_clean in contract_clean:
+                    target_contract = contract
+                    logger.info(f"Fuzzy matched '{contract_name}' -> '{contract.name}'")
+                    break
+        
+        # Use first non-interface contract if nothing matched
+        if not target_contract and self.slither.contracts:
+            for contract in self.slither.contracts:
+                if not contract.is_interface and not contract.is_library:
+                    target_contract = contract
+                    logger.info(f"Using first contract '{contract.name}' for '{contract_name}'")
+                    break
+        
+        if not target_contract:
+            logger.warning(f"No suitable contract found for {contract_name}")
             return self._default_features()
         
         try:

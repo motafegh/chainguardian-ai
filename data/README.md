@@ -1,24 +1,24 @@
-# ChainGuardian AI - Data
+# Data Organization
 
-## Active Datasets
+## Directory Structure
 
-### Main Dataset
-- `chainguardian_features_clean.csv` - **312 contracts with 65 columns**
-  - 25 vulnerability labels
-  - ~40 features (will expand to 45+ in Week 1)
-  - Ready for ML training
+### raw/ - Raw source datasets
+Curated datasets cloned from external sources:
+- `smartbugs_curated/` - Academic vulnerable contracts
+- `openzeppelin-contracts/` - Battle-tested safe contracts  
+- `trail_of_bits/` - Trail of Bits vulnerable examples
+- `swc_registry/` - SWC vulnerability examples
 
-### SmartBugs Curated
-- `smartbugs_curated/dataset/` - Ground truth vulnerable contracts
-  - reentrancy/
-  - access_control/
-  - arithmetic/
-  - unchecked_low_level_calls/
-  - etc.
+DO NOT edit these - they are source data!
 
-### Contract Storage
-- `smartbugs_contracts/` - Cached .sol files (2,384 contracts)
+### processed/ - Feature-extracted datasets
+Clean, ML-ready datasets:
+- `production_dataset.csv` - Final dataset for training
+- `training_labeled.csv` - Known labels only
+- `prediction_unlabeled.csv` - Unknown labels for prediction
 
-## Archived Data
-- Old datasets: `../archive/old_data/`
-- Backups: `../archive/backups/`
+### metadata/ - Collection metadata
+Metadata from collection runs:
+- `vulnerable_sources/` - Vulnerable contract metadata
+- `safe_sources/` - Safe contract metadata
+- `production_runs/` - Etherscan scraping outputs

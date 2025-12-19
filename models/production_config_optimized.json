@@ -1,0 +1,18 @@
+{
+  "model_version": "hybrid_v2_optimized",
+  "ml_weight": 0.3,
+  "semantic_weight": 0.7,
+  "threshold": 0.2,
+  "performance": {
+    "f1_score": 0.4799999999999999,
+    "accuracy": 0.48,
+    "precision": 0.3157894736842105,
+    "recall": 1.0,
+    "true_positives": 6,
+    "false_positives": 13,
+    "true_negatives": 6,
+    "false_negatives": 0
+  },
+  "use_case": "balanced_security_audit",
+  "notes": "Optimized for maximum vulnerability detection with acceptable false positive rate"
+}

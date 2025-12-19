@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:10.942642",
+  "contract_address": "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B",
+  "contract_name": "Unitroller",
+  "compiler_version": "v0.5.8+commit.23d335f2",
+  "optimization_used": "1",
+  "optimization_runs": "200",
+  "evm_version": "Default",
+  "license_type": "",
+  "proxy": "1",
+  "implementation": "0xbafe01ff935c7305907c33bf824352ee5979b526",
+  "file_path": "data/production/safe/raw/Unitroller_0x3d981921.sol",
+  "etherscan_url": "https://etherscan.io/address/0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B#code",
+  "api_version": "v2"
+}

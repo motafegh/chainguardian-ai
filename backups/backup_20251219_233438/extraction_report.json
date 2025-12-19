@@ -1,0 +1,20 @@
+{
+  "timestamp": "2025-12-19T23:35:01.811128",
+  "contracts_processed": 56,
+  "successful": 56,
+  "failed": 0,
+  "sources": {
+    "smartbugs": 474,
+    "production_safe": 49,
+    "smartbugs_curated": 143,
+    "production_vulnerable": 45,
+    "defi_hacks": 0,
+    "rekt_news": 0,
+    "swc_registry": 0,
+    "trail_of_bits": 25,
+    "etherscan_exploits": 0,
+    "slowmist_hacked": 0,
+    "adversarial_test": 0
+  },
+  "output": "data/complete_dataset_with_semantic.csv"
+}

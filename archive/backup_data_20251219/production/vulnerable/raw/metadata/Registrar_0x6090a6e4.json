@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:06.288596",
+  "contract_address": "0x6090a6e47849629b7245dfa1ca21d94cd15878ef",
+  "contract_name": "Registrar",
+  "compiler_version": "v0.4.10+commit.f0d539ae",
+  "optimization_used": "1",
+  "optimization_runs": "200",
+  "evm_version": "Default",
+  "license_type": "",
+  "proxy": "0",
+  "implementation": "",
+  "file_path": "data/production/vulnerable/raw/Registrar_0x6090a6e4.sol",
+  "etherscan_url": "https://etherscan.io/address/0x6090a6e47849629b7245dfa1ca21d94cd15878ef#code",
+  "api_version": "v2"
+}

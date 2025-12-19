@@ -1,0 +1,15 @@
+{
+  "collection_timestamp": "2025-12-19T13:39:08.409268",
+  "contract_address": "0x1a2a1c938ce3ec39b6d47113c7955baa9dd454f2",
+  "contract_name": "MainchainGatewayProxy",
+  "compiler_version": "v0.5.17+commit.d19bba13",
+  "optimization_used": "1",
+  "optimization_runs": "200",
+  "evm_version": "Default",
+  "license_type": "None",
+  "proxy": "1",
+  "implementation": "0x8407dc57739bcda7aa53ca6f12f82f9d51c2f21e",
+  "file_path": "data/production/vulnerable/raw/MainchainGatewayProxy_0x1a2a1c93.sol",
+  "etherscan_url": "https://etherscan.io/address/0x1a2a1c938ce3ec39b6d47113c7955baa9dd454f2#code",
+  "api_version": "v2"
+}

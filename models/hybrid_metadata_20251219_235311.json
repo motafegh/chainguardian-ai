@@ -1,0 +1,9 @@
+{
+  "timestamp": "20251219_235311",
+  "ml_model": "models/semantic_xgboost_20251219_235020.pkl",
+  "semantic_weight": 0.4,
+  "ml_weight": 0.6,
+  "adversarial_accuracy": 0.48,
+  "ml_only_accuracy": 0.44,
+  "improvement": 0.03999999999999998
+}

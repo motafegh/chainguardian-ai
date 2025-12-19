@@ -1,0 +1,12 @@
+{
+  "category": "safe_complex",
+  "source": "final_batch",
+  "contract_address": "0x00000000219ab540356cbb839cbe05303d7705fa",
+  "contract_name": "DepositContract",
+  "compiler_version": "v0.6.11+commit.5ef660b1",
+  "optimization": "1",
+  "optimization_runs": "5000000",
+  "file_path": "../data/real_world_collection/safe_complex/DepositContract_0x000000.sol",
+  "collection_timestamp": "2025-12-18T22:42:02.648282",
+  "etherscan_url": "https://etherscan.io/address/0x00000000219ab540356cbb839cbe05303d7705fa#code"
+}

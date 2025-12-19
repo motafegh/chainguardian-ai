@@ -1,0 +1,10 @@
+{
+  "total_contracts": 458,
+  "vulnerable_contracts": 164,
+  "safe_contracts": 210,
+  "vulnerable_sources": 2,
+  "safe_sources": 2,
+  "max_source_percentage": 44.75982532751092,
+  "min_samples_per_source": 5,
+  "passes_requirements": true
+}
