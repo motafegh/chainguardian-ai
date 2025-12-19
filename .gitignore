@@ -70,7 +70,7 @@ models/*/*.pth
 models/*/*.pkl
 # Keep model configs
 !models/*/config.json
-
+*.sol
 # Logs
 logs/
 *.log
