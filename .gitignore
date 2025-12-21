@@ -1,36 +1,55 @@
-# Python
+# ============================================================================
+# CHAINGUARDIAN AI - .gitignore
+# ============================================================================
+# Last Updated: 2025-12-21
+# Optimized for project structure with external datasets and large artifacts
+# ============================================================================
+
+
+# ============================================================================
+# PYTHON
+# ============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
 
 # Virtual environments
 venv/
 .venv/
 ENV/
 env/
+.virtualenv/
 
-# Testing
+
+# ============================================================================
+# TESTING & CODE QUALITY
+# ============================================================================
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+.tox/
+.hypothesis/
 
-# Poetry
-# DO NOT ignore poetry.lock - needed for reproducible builds
 
-# Jupyter checkpoints (but keep notebooks themselves)
-.ipynb_checkpoints/
-*/.ipynb_checkpoints/*
+# ============================================================================
+# DEPENDENCY MANAGEMENT
+# ============================================================================
+# Poetry: Keep poetry.lock tracked for reproducibility
 
-# Environment variables
-.env
-.env.local
-.env.*.local
 
-# IDE
+# ============================================================================
+# DEVELOPMENT ENVIRONMENT
+# ============================================================================
+# IDEs
 .vscode/
 .idea/
 *.swp
@@ -38,78 +57,214 @@ htmlcov/
 *.sublime-project
 *.sublime-workspace
 
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+**/.ipynb_checkpoints/
+
 # OS
 .DS_Store
 Thumbs.db
 *.bak
+*.tmp
 
-# Data (CAREFUL - keep small samples for portfolio)
-# Ignore large raw datasets
-data/metadata/
-data/production/
-data/vulnerable_complex/
-data/safe_contracts/
-data/
-Full_RoadMap.md
-# Large data (use Git LFS)
-*.sol
-collected/
-# Keep processed/sample data for demonstration
-# data/processed/*.csv  # Uncomment if files get too large
-# data/*.csv  # NEVER ignore blindly
 
-# ML Artifacts
+# ============================================================================
+# ENVIRONMENT & SECRETS (CRITICAL)
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+service-account.json
+secrets/
+.secrets/
+
+
+# ============================================================================
+# DATA FILES - PROJECT SPECIFIC
+# ============================================================================
+# External datasets (large, can be re-downloaded)
+data/safe_contracts/openzeppelin-contracts/**
+!data/safe_contracts/openzeppelin-contracts/README.md
+!data/safe_contracts/openzeppelin-contracts/LICENSE
+
+data/smartbugs_curated/dataset/**/*.sol
+# Keep smartbugs metadata
+!data/smartbugs_curated/vulnerabilities.json
+!data/smartbugs_curated/versions.csv
+!data/smartbugs_curated/README.md
+
+data/vulnerable_complex/defi_hacks/**
+data/vulnerable_complex/etherscan_exploits/**
+data/vulnerable_complex/rekt_news/**
+!data/vulnerable_complex/rekt_news/rekt_metadata.json
+data/vulnerable_complex/slowmist_hacked/**
+data/vulnerable_complex/swc_registry/entries/**
+data/vulnerable_complex/trail_of_bits/**/*.sol
+!data/vulnerable_complex/trail_of_bits/README.md
+!data/vulnerable_complex/trail_of_bits/LICENSE
+
+# Raw contract sources (regenerable)
+data/production/safe/raw/**
+data/production/vulnerable/raw/**
+
+# Keep metadata and processed data
+!data/production/*/metadata/**
+
+# Large temporary CSVs (if any get too big, uncomment)
+# data/*_full.csv
+# data/*_unlabeled*.csv
+
+# Scraping checkpoints (regenerable)
+data/scraping_checkpoint.json
+data/collection_log.csv
+
+
+# ============================================================================
+# SMART CONTRACTS (Solidity files in datasets)
+# ============================================================================
+# Ignore all .sol files in data directories
+data/**/*.sol
+
+# Keep example contracts for documentation
+!test_contracts/examples/*.sol
+!docs/examples/**/*.sol
+
+# Slither/Mythril artifacts
+crytic-export/
+.solc-select/
+slither_report.txt
+
+
+# ============================================================================
+# ML MODELS & ARTIFACTS
+# ============================================================================
+# Model binaries (too large for Git)
+models/**/*.pkl
+models/**/*.joblib
+models/**/*.h5
+models/**/*.pt
+models/**/*.pth
+models/**/*.onnx
+
+# Keep configs and documentation
+!models/**/.gitkeep
+!models/**/config.json
+!models/**/metadata.json
+!models/**/README.md
+!models/**/MODEL_CARD.md
+!models/**/PRODUCTION_MODEL_README.json
+
+
+# ============================================================================
+# MLOPS & EXPERIMENT TRACKING
+# ============================================================================
+# MLflow
 mlruns/
-wandb/
+mlflow.db
 .mlflow/
 
-# Large model files (use Git LFS or model registry instead)
-*.h5
-models/*/*.pt
-models/*/*.pth
-models/*/*.pkl
-# Keep model configs
-!models/*/config.json
-*.sol
-# Logs
+# Weights & Biases
+wandb/
+
+# TensorBoard
+runs/
+events.out.tfevents.*
+
+
+# ============================================================================
+# DATABASES
+# ============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+airflow.db
+chainguardian.db
+
+
+# ============================================================================
+# LOGS
+# ============================================================================
 logs/
 *.log
 *.log.*
+*.out
 
-# Airflow
+
+# ============================================================================
+# AIRFLOW
+# ============================================================================
 airflow/logs/
 airflow/*.pid
 airflow/*.db
+airflow/*.cfg.local
 
-# Slither temporary files
-slither_report.txt
-crytic-export/
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
-
+# ============================================================================
+# INFRASTRUCTURE
+# ============================================================================
 # Terraform
 infrastructure/terraform/.terraform/
 infrastructure/terraform/*.tfstate
 infrastructure/terraform/*.tfstate.backup
 
-# Secrets (CRITICAL)
-*.pem
-*.key
-credentials.json
-service-account.json
+# Kubernetes secrets
+k8s/secrets/
 
-# MLflow artifacts (databases contain metadata, not actual code)
-mlflow.db
-*.db
-*.sqlite
-mlruns/**/*.db
 
-# Model files (too large for git, use DVC or git-lfs)
-models/*.pkl
-!models/.gitkeep
+# ============================================================================
+# DOCUMENTATION DRAFTS
+# ============================================================================
+Full_RoadMap.md
+**/DRAFT_*.md
+**/*_OLD.md
 
-# Logs
-logs/**/*.log
+
+# ============================================================================
+# TEMPORARY & CACHE
+# ============================================================================
+*.tmp
+*.temp
+.cache/
+tmp/
+
+
+# ============================================================================
+# PROJECT ARCHIVES
+# ============================================================================
+# Old experiments (keep structure, ignore large files)
+archive/**/models/*.pkl
+archive/**/data/*.csv
+
+
+# ============================================================================
+# REPORTS
+# ============================================================================
+# Keep final reports, ignore temp/drafts
+reports/temp/
+reports/draft/
+
+
+# ============================================================================
+# BACKUP FILES
+# ============================================================================
+*.backup
+*.bkp
+*_backup/
+*.old
+
+
+# ============================================================================
+# EXCEPTIONS (Force-include despite patterns above)
+# ============================================================================
+# Force-include specific critical files
+!data/README.md
+!data/metadata/**
+!data/production/*/metadata/**
+!data/collection_metadata.json
+!data/production_dataset_verification.json
+

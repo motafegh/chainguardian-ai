@@ -1,7 +1,0 @@
-{
-  "contract_address": "0x0000000000085d4780b73119b644ae5ecd22b376",
-  "original_url": "https://raw.githubusercontent.com/smartbugs/smartbugs-wild/master/contracts/0x0000000000085d4780b73119b644ae5ecd22b376.sol",
-  "file_size": 7113,
-  "downloaded_at": "2025-12-16 12:36:36",
-  "first_lines": "pragma solidity ^0.4.23;\r\n\r\n// This is the proxy contract for the TrustToken Registry\r\n\r\n// File: contracts/Proxy/Proxy.sol\r\n\r\n/**\r\n * @title Proxy\r\n * @dev Gives the possibility to delegate any call to a foreign implementation.\r\n */\r\ncontract Proxy {\r\n    \r\n    /**\r\n    * @dev Tells the address of "
-}

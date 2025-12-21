@@ -1,5 +1,0 @@
-model_type,accuracy,precision,recall,f1_score,roc_auc,model_path,Model
-logistic,1.0,1.0,1.0,1.0,1.0,models/saved_models/logistic_20251216_1939.pkl,Logistic
-random_forest,1.0,1.0,1.0,1.0,1.0,models/saved_models/random_forest_20251216_1939.pkl,Random Forest
-xgboost,1.0,1.0,1.0,1.0,1.0,models/saved_models/xgboost_20251216_1939.pkl,Xgboost
-ensemble,1.0,1.0,1.0,1.0,1.0,models/saved_models/ensemble_20251216_1939.pkl,Ensemble

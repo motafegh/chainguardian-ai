@@ -1,0 +1,128 @@
+"""
+Test Two-Stage Ensemble on Adversarial Cases
+"""
+
+import pandas as pd
+import numpy as np
+from pathlib import Path
+import logging
+import joblib
+
+from chainguardian.feature_extraction.pipeline import FeaturePipeline
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def load_two_stage_model():
+    """Load trained two-stage ensemble."""
+    stage1 = joblib.load('models/stage1_code_detector.pkl')
+    stage2 = joblib.load('models/stage2_risk_scorer.pkl')
+    scaler = joblib.load('models/feature_scaler.pkl')
+    metadata = joblib.load('models/two_stage_metadata.pkl')
+    
+    return {
+        'stage1': stage1,
+        'stage2': stage2,
+        'scaler': scaler,
+        'code_features': metadata['code_features'],
+        'detector_features': metadata['detector_features']
+    }
+
+
+def predict_two_stage(features_dict, models):
+    """Make prediction using two-stage model."""
+    
+    # Extract code features
+    X_code = pd.DataFrame([{
+        f: features_dict.get(f, 0)
+        for f in models['code_features']
+    }])
+    
+    # Scale
+    X_code_scaled = models['scaler'].transform(X_code)
+    
+    # Stage 1: Vulnerability probability
+    vuln_proba = models['stage1'].predict_proba(X_code_scaled)[0, 1]
+    
+    # Extract detector features
+    X_detector = pd.DataFrame([{
+        f: features_dict.get(f, 0)
+        for f in models['detector_features']
+    }])
+    
+    # Add Stage 1 outputs
+    X_detector['code_vulnerability_prob'] = vuln_proba
+    X_detector['code_vulnerability_confidence'] = abs(vuln_proba - 0.5) * 2
+    
+    # Stage 2: Risk score
+    risk_score = models['stage2'].predict(X_detector)[0]
+    risk_score = np.clip(risk_score, 10, 100)
+    
+    return risk_score, vuln_proba
+
+
+def main():
+    logger.info("="*70)
+    logger.info("🧪 TWO-STAGE ADVERSARIAL TESTING")
+    logger.info("="*70)
+    
+    # Load models
+    logger.info("📦 Loading models...")
+    models = load_two_stage_model()
+    logger.info("✅ Models loaded")
+    
+    # Find adversarial contracts
+    adversarial_dir = Path("data/adversarial_contracts")
+    contracts = sorted(adversarial_dir.glob("*.sol"))
+    
+    if not contracts:
+        logger.error("❌ No adversarial contracts found!")
+        return
+    
+    logger.info(f"Found {len(contracts)} test contracts\n")
+    
+    # Test each contract
+    pipeline = FeaturePipeline()
+    results = []
+    
+    for contract_path in contracts:
+        contract_name = contract_path.stem
+        logger.info(f"📄 {contract_name}.sol")
+        
+        try:
+            # Extract features
+            features = pipeline.extract_features(contract_path, contract_name)
+            
+            # Predict
+            risk_score, vuln_prob = predict_two_stage(features, models)
+            
+            logger.info(f"   Risk: {risk_score:.1f} | Vuln Prob: {vuln_prob:.3f}")
+            
+            results.append({
+                'contract': contract_name,
+                'risk_score': risk_score,
+                'vulnerability_probability': vuln_prob
+            })
+            
+        except Exception as e:
+            logger.error(f"   ❌ Error: {e}")
+            results.append({
+                'contract': contract_name,
+                'risk_score': None,
+                'vulnerability_probability': None
+            })
+    
+    # Save results
+    df_results = pd.DataFrame(results)
+    df_results.to_csv('reports/two_stage_adversarial_results.csv', index=False)
+    
+    logger.info("")
+    logger.info("="*70)
+    logger.info("✅ Testing complete")
+    logger.info(f"📁 Results saved to reports/two_stage_adversarial_results.csv")
+    logger.info("="*70)
+
+
+if __name__ == "__main__":
+    main()
