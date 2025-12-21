@@ -100,3 +100,16 @@ infrastructure/terraform/*.tfstate.backup
 *.key
 credentials.json
 service-account.json
+
+# MLflow artifacts (databases contain metadata, not actual code)
+mlflow.db
+*.db
+*.sqlite
+mlruns/**/*.db
+
+# Model files (too large for git, use DVC or git-lfs)
+models/*.pkl
+!models/.gitkeep
+
+# Logs
+logs/**/*.log
