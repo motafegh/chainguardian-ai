@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 try:
     # Try to import the new v2 predictor
     sys.path.append(str(Path(__file__).parent.parent.parent))
-    from .hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
+    from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
     
     # Create wrapper class that inherits from v2 but maintains v1 API
     class EnhancedHybridPredictor(EnhancedHybridPredictorV2):

@@ -11,13 +11,13 @@ Enhanced ML pipeline with:
 - Batch prediction support
 """
 
-from .config_manager import ConfigManager, get_config
-from .hyperparameter_tuner import HyperparameterTuner
-from .heterogeneous_ensemble import HeterogeneousEnsemble
-from .data_augmenter import SmartContractAugmenter
-from .model_registry import ModelRegistry
-from .monitoring import MLMonitor
-from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2, EnhancedHybridPredictor
+from  chainguardian.ml.core.config_manager import ConfigManager, get_config
+from chainguardian.ml.core.hyperparameter_tuner import HyperparameterTuner
+from chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble
+from chainguardian.ml.core.data_augmenter import SmartContractAugmenter
+from chainguardian.ml.core.model_registry import ModelRegistry
+from chainguardian.ml.core.monitoring import MLMonitor
+# from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2, EnhancedHybridPredictor
 
 __version__ = "2.0.0"
 __all__ = [

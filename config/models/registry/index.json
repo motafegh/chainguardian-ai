@@ -1,0 +1,54 @@
+{
+  "versions": {
+    "1.0.0": {
+      "path": "models/registry/v1.0.0",
+      "timestamp": "2025-12-23T20:16:11.893514",
+      "hash": "f7b7055c3442a9fb2559cf9c9b82efe6",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485494,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.04268795737399983
+      }
+    },
+    "1.0.1": {
+      "path": "models/registry/v1.0.1",
+      "timestamp": "2025-12-23T20:30:25.699512",
+      "hash": "a0640ad52a472a0e0c697e05b4ba2883",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485494,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.04268795737399983
+      }
+    },
+    "1.0.2": {
+      "path": "models/registry/v1.0.2",
+      "timestamp": "2025-12-23T21:14:56.884778",
+      "hash": "1d93bb09cab1c9a4cf8b8b62c7911ec9",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485494,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.04268795737399983
+      }
+    },
+    "1.0.3": {
+      "path": "models/registry/v1.0.3",
+      "timestamp": "2025-12-23T21:25:54.078059",
+      "hash": "07ae7a0c1a1193b97ac60909dd57fafc",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485494,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.04268795737399983
+      }
+    }
+  },
+  "latest_version": "1.0.3",
+  "metadata": {
+    "created": "2025-12-23T20:16:11.888750",
+    "total_models": 4,
+    "last_updated": "2025-12-23T21:25:54.086855"
+  }
+}

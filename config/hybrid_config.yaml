@@ -1,168 +1,280 @@
-# (Paste the entire YAML config from previous section here)
-# ChainGuardian AI - Hybrid Predictor Configuration
-# All tunable parameters centralized for easy management and A/B testing
-
 # ============ HYPERPARAMETER TUNING ============
 hyperparameter_tuning:
   enable_optuna: true
-  n_trials: 50                     # Reduce for faster iteration
-  timeout_seconds: 3600
+  n_trials: 200                     # Increased from 50 - use more of your RAM
+  timeout_seconds: 7200             # Increased from 3600
   direction: maximize
-  study_name: "chainguardian_optimization"
-  metrics:
-    primary: "roc_auc"
-    secondary: ["accuracy", "brier_score"]
+  study_name: "chainguardian_optimization_v2"
+  n_jobs: -1                        # Use all CPU cores
+  gpu_id: 0                         # Use GPU if available
   
-  # Search spaces (Optuna will explore these)
+  # GPU-accelerated models (if you install GPU versions)
+  gpu_acceleration:
+    xgboost_gpu: true
+    lightgbm_gpu: true
+  
+  # Expanded search spaces with more values
   search_spaces:
     xgboost:
-      n_estimators: [100, 300]
-      max_depth: [3, 8]
-      learning_rate: [0.01, 0.2]
-      subsample: [0.6, 1.0]
-      colsample_bytree: [0.6, 1.0]
-      gamma: [0, 5]
-      reg_alpha: [0, 10]
-      reg_lambda: [1, 10]
+      n_estimators: [100, 500]      # Increased upper bound
+      max_depth: [3, 12]            # Deeper trees possible
+      learning_rate: [0.005, 0.3]   # Wider range
+      subsample: [0.5, 1.0]
+      colsample_bytree: [0.5, 1.0]
+      gamma: [0, 10]
+      reg_alpha: [0, 20]
+      reg_lambda: [0.1, 20]
+      tree_method: ["hist", "gpu_hist"]  # GPU option
+      predictor: ["gpu_predictor"]       # GPU prediction
     
     random_forest:
-      n_estimators: [100, 300]
-      max_depth: [5, 15]
-      min_samples_split: [2, 10]
-      min_samples_leaf: [1, 4]
+      n_estimators: [100, 500]      # More estimators
+      max_depth: [5, 30]            # Much deeper
+      min_samples_split: [2, 20]
+      min_samples_leaf: [1, 10]
+      n_jobs: -1                    # Parallel processing
+      max_features: [0.3, 1.0]
     
     lightgbm:
-      n_estimators: [100, 300]
-      num_leaves: [20, 100]
-      learning_rate: [0.01, 0.2]
-      feature_fraction: [0.6, 1.0]
+      n_estimators: [100, 500]
+      num_leaves: [20, 200]         # Increased for more complex patterns
+      learning_rate: [0.005, 0.3]
+      feature_fraction: [0.5, 1.0]
+      bagging_fraction: [0.5, 1.0]
+      bagging_freq: [1, 10]
+      device: ["gpu"]               # GPU acceleration
+      gpu_platform_id: 0
+      gpu_device_id: 0
 
 # ============ ENSEMBLE CONFIGURATION ============
 ensemble:
   enabled: true
-  voting_method: "soft"             # soft, hard, or weighted
-  initial_weights:                  # Can be optimized later
+  voting_method: "soft"
+  use_gpu: true                     # Enable GPU for ensemble
+  batch_size: 1024                  # Larger batch for GPU
+  
+  # More sophisticated weight optimization
+  weight_optimization:
+    method: "genetic_algorithm"     # Options: grid_search, bayesian, genetic
+    population_size: 50             # For genetic algorithm
+    generations: 100
+    n_folds: 5                      # More folds for stable weights
+  
+  initial_weights:
     xgboost: 0.4
     random_forest: 0.3
     lightgbm: 0.2
     logistic_regression: 0.1
-  calibration_method: "sigmoid"     # Changed from 'isotonic' for small datasets
   
-  # Uncertainty quantification
+  calibration_method: 
+    value: "isotonic"               # Back to isotonic with more data
+  
+  # Enhanced uncertainty quantification
   uncertainty:
     enable_bootstrap: true
-    n_bootstrap_samples: 100
+    n_bootstrap_samples: 1000       # Increased from 100
     confidence_level: 0.95
-
-# ============ HYBRID PREDICTOR WEIGHTS ============
-weights:
-  # Dynamic weight adjustment based on data quality
-  data_quality_profiles:
-    EXCELLENT:
-      ml: 0.3
-      semantic: 0.7
-      confidence_boost: 0.2
-    GOOD:
-      ml: 0.4
-      semantic: 0.6
-      confidence_boost: 0.1
-    FAIR:
-      ml: 0.6
-      semantic: 0.4
-      confidence_boost: 0.0
-    POOR:
-      ml: 0.9
-      semantic: 0.1
-      confidence_boost: -0.1
-    UNKNOWN:
-      ml: 0.5
-      semantic: 0.5
-      confidence_boost: -0.2
-  
-  # Semantic risk weights (tunable)
-  semantic_risk:
-    cei_violation: 0.40
-    cei_score_low: 0.20
-    state_after_call: 0.30
-    unchecked_critical: 0.20
-    reentrancy_guard_bonus: -0.50
-  
-  # Confidence calibration parameters
-  confidence_calibration:
-    ml_certainty_alignment: 0.4
-    semantic_completeness: 0.25
-    contradiction_penalty: -0.2
-    data_quality_multiplier: 1.3
-    static_signal_boost: 0.15
-    moderate_ml_boost: 0.25
+    method: "bayesian"              # More sophisticated uncertainty
+    mc_dropout_samples: 100         # For neural networks if added
 
 # ============ DATA AUGMENTATION ============
 augmentation:
   enabled: true
-  strategy: "smote"                 # Options: mixup, gaussian, smote, none
-  mixup_alpha: 0.2                  # Mixup: Beta distribution parameter
-  gaussian_std: 0.05                # Gaussian noise standard deviation
-  max_augmentation_factor: 2.0      # Don't generate more than 2x original data
+  strategy: "mixed"                 # Combined strategies
+  mixup_alpha: 0.4                  # Increased alpha
+  gaussian_std: 0.1                 # Increased noise
+  smote_neighbors: 10               # More neighbors for SMOTE
+  max_augmentation_factor: 4.0      # Increased from 2.0 - generate 4x data
+  
+  # Progressive augmentation
+  progressive_augmentation: true
+  epochs: 3                         # Multiple augmentation rounds
+  quality_filter: true              # Filter low-quality synthetic samples
 
 # ============ BATCH PROCESSING ============
 batch_processing:
   enabled: true
-  batch_size: 32
-  max_workers: 4                    # For parallel processing
-  enable_vectorization: true        # Use numpy vectorization when possible
+  batch_size: 512                   # Increased from 32 - better GPU utilization
+  max_workers: 8                    # Increased from 4 - use more CPU cores
+  enable_vectorization: true
+  use_gpu_batches: true             # GPU batch processing
+  
+  # Memory optimization
+  preload_data: true                # Preload all data to RAM
+  cache_size_gb: 16                 # Cache 16GB of data
+  chunk_size: 10000                 # Process in larger chunks
 
 # ============ MODEL REGISTRY ============
 model_registry:
   registry_path: "models/registry"
-  keep_last_n_versions: 10
+  keep_last_n_versions: 20          # Keep more versions
   auto_versioning: true
+  enable_experiment_tracking: true
+  
+  # Advanced metadata
   metadata_schema:
     - model_type
     - performance_metrics
     - training_date
     - feature_list
     - hyperparameters
+    - hardware_used
+    - training_time
+    - data_statistics
+  
+  # GPU-specific info
+  gpu_metadata:
+    track_gpu_metrics: true
+    memory_usage: true
+    inference_speed: true
 
 # ============ MONITORING ============
 monitoring:
   enable_performance_logging: true
   log_dir: "logs"
+  realtime_metrics: true
+  enable_tensorboard: true          # TensorBoard integration
+  
   metrics_to_track:
     - accuracy
     - auc
+    - precision
+    - recall
+    - f1_score
     - inference_latency
+    - gpu_memory_usage
+    - cpu_utilization
     - data_quality_scores
   
   drift_detection:
     enabled: true
-    window_size: 1000               # Samples to consider for drift
-    drift_threshold: 0.05           # KS test threshold
-    check_interval: 100             # Check every 100 predictions
+    window_size: 5000               # Increased from 1000
+    drift_threshold: 0.03           # More sensitive
+    check_interval: 1000            # Check every 1000 predictions
+    methods: ["ks_test", "mmd", "classifier"]  # Multiple methods
 
 # ============ FEATURE ENGINEERING ============
 features:
-  # These features are preserved from your comprehensive engineering
   preserve_all_engineered: true
   
-  # Feature groups for selective augmentation
-  boolean_features: "has_*"          # Wildcard pattern for boolean features
-  continuous_features: "*_count,*_ratio,*_score"
-  categorical_features: "none"       # Not used in our current setup
+  # # Enable advanced feature engineering
+  # polynomial_features: true         # Generate polynomial features
+  # interaction_features: true        # Generate interaction terms
+  # degree: 2                         # Degree for polynomial features
   
-  # Feature scaling
-  scaler_type: "robust"             # Options: standard, robust, minmax
+  # # Feature selection
+  # feature_selection:
+  #   method: "mutual_info"           # Options: mutual_info, chi2, rf_importance
+  #   n_features_to_select: 100       # Select top N features
+  #   threshold: 0.01
+  
+  boolean_features: "has_*"
+  continuous_features: "*_count,*_ratio,*_score,*_length,*_depth"
+  categorical_features: "none"
+  
+  scaler_type: "robust"
 
 # ============ THRESHOLDS ============
 thresholds:
-  vulnerability_prediction: 0.20
-  high_confidence: 0.85
-  low_confidence: 0.40
-  override_cei_violations: 3
+  vulnerability_prediction: 0.15    # More sensitive threshold
+  high_confidence: 0.90             # Higher bar for high confidence
+  low_confidence: 0.30              # Lower bar for low confidence
+  override_cei_violations: 2        # More sensitive override
   override_perfect_cei_with_guard: true
+  
+  # Adaptive thresholds
+  adaptive_thresholds: true
+  threshold_smoothing: 0.1          # Smooth threshold changes
 
 # ============ PERFORMANCE OPTIMIZATION ============
 performance:
   enable_feature_caching: true
-  cache_size: 1000
-  prediction_timeout_ms: 5000       # Max time per prediction
-  memory_limit_mb: 4096             # Memory limit for batch processing
+  cache_size: 10000                 # Increased from 1000
+  prediction_timeout_ms: 10000      # Increased timeout for complex models
+  memory_limit_mb: 32768            # Increased to 32GB (half of your RAM)
+  
+  # GPU optimization
+  gpu_memory_fraction: 0.8          # Use 80% of GPU memory
+  enable_mixed_precision: true      # Use FP16 for faster inference
+  gpu_batch_size: 2048              # Larger GPU batches
+  
+  # Parallel processing
+  parallel_feature_extraction: true
+  n_feature_workers: 4
+  
+  # Model optimization
+  enable_model_pruning: true
+  enable_quantization: true         # Quantize models for faster inference
+
+# ============ ADVANCED TRAINING ============
+# training:
+#   # Cross-validation
+#   cv_strategy: "stratified_kfold"
+#   n_splits: 10                      # More folds for better validation
+#   stratified: true
+  
+#   # Early stopping
+#   early_stopping:
+#     enabled: true
+#     patience: 20                    # More patience
+#     min_delta: 0.0001
+  
+#   # Learning rate scheduling
+#   lr_scheduler:
+#     enabled: true
+#     method: "reduce_on_plateau"
+#     factor: 0.5
+#     patience: 10
+  
+#   # Model checkpointing
+#   checkpoint:
+#     enabled: true
+#     save_best_only: true
+#     monitor: "val_auc"
+#     mode: "max"
+
+# ============ GPU SPECIFIC SETTINGS ============
+gpu:
+  enabled: true
+  device_id: 0
+  memory_growth: true               # Allow memory growth
+  per_process_gpu_memory_fraction: 0.8
+  
+  # CUDA optimization
+  cuda_optimizations:
+    allow_tensor_core: true
+    enable_cudnn_autotune: true
+    cudnn_benchmark: true
+  
+  # Multi-GPU (if you add more GPUs)
+  multi_gpu: false
+  gpu_devices: [0]
+
+# ============ MEMORY MANAGEMENT ============
+memory:
+  preallocate: false                # Don't preallocate all GPU memory
+  allow_growth: true                # Allow memory growth
+  max_allocated_gb: 48              # Max 48GB RAM for data (leave 16GB for system)
+  swap_if_needed: false
+  
+  # Data loading
+  prefetch_buffer: 10               # Prefetch 10 batches
+  num_parallel_calls: 8             # Parallel data loading
+
+# ============ LOGGING AND DEBUGGING ============
+logging:
+  level: "INFO"
+  enable_profiling: true
+  profile_batch_range: [10, 20]     # Profile batches 10-20
+  
+  # TensorBoard
+  tensorboard:
+    enabled: true
+    log_dir: "logs/tensorboard"
+    update_freq: "batch"
+    
+  # MLflow integration
+  mlflow:
+    enabled: true
+    tracking_uri: "http://localhost:5000"
+    experiment_name: "chainguardian_ai"

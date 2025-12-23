@@ -1,0 +1,276 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-12-23T20:16:11.893514",
+  "hash": "f7b7055c3442a9fb2559cf9c9b82efe6",
+  "description": "Enhanced v7 model",
+  "performance_metrics": {
+    "test_auc": 0.9876208897485494,
+    "test_accuracy": 0.9463087248322147,
+    "test_brier": 0.04268795737399983
+  },
+  "training_info": {
+    "version": "v7_enhanced",
+    "date": "2025-12-23T20:16:11.888315",
+    "dataset_size": 745,
+    "ensemble_used": false,
+    "hyperparameter_tuning": true
+  },
+  "feature_count": 70,
+  "model_type": "CalibratedClassifierCV",
+  "feature_names": [
+    "has_reentrancy",
+    "has_access_control_issues",
+    "has_timestamp_dependency",
+    "has_unchecked_call",
+    "has_reentrancy_unlimited",
+    "has_reentrancy_benign",
+    "has_reentrancy_events",
+    "has_unchecked_transfer",
+    "has_controlled_delegatecall",
+    "has_uninitialized_state",
+    "has_uninitialized_storage",
+    "has_uninitialized_local",
+    "has_tx_origin",
+    "has_inline_assembly",
+    "has_locked_ether",
+    "has_shadowing_state",
+    "has_shadowing_builtin",
+    "has_shadowing_abstract",
+    "has_unused_state_vars",
+    "has_unused_return_values",
+    "has_floating_pragma",
+    "num_functions",
+    "num_external_calls",
+    "num_state_vars",
+    "num_modifiers",
+    "max_cyclomatic_complexity",
+    "num_low_level_calls",
+    "lines_of_code",
+    "num_contracts_in_file",
+    "avg_function_complexity",
+    "num_functions_high_complexity",
+    "num_comments",
+    "comment_to_code_ratio",
+    "num_payable_functions",
+    "num_library_calls",
+    "inheritance_depth",
+    "optimization_detectors_triggered",
+    "is_high_risk",
+    "complexity_level",
+    "cfg_num_nodes",
+    "cfg_num_edges",
+    "cfg_num_cycles",
+    "cfg_max_depth",
+    "cfg_avg_branching",
+    "cfg_has_complex_loops",
+    "cfg_num_exit_points",
+    "cfg_cyclomatic_total",
+    "cg_num_nodes",
+    "cg_num_edges",
+    "cg_max_call_depth",
+    "cg_num_external_calls",
+    "cg_external_call_ratio",
+    "cg_has_cyclic_calls",
+    "cg_num_public_entry_points",
+    "cg_num_internal_functions",
+    "cg_avg_calls_per_function",
+    "cg_num_leaf_functions",
+    "dfg_num_state_vars",
+    "dfg_num_tainted_flows",
+    "dfg_has_cross_function_flow",
+    "dfg_num_sensitive_sinks",
+    "dfg_num_external_sources",
+    "dfg_taint_to_sink_ratio",
+    "dfg_num_unvalidated_inputs",
+    "cei_safe_functions",
+    "has_reentrancy_guard",
+    "functions_with_reentrancy_guard",
+    "state_before_call_count",
+    "state_after_call_count",
+    "complexity_encoded"
+  ],
+  "config": {
+    "hyperparameter_tuning": {
+      "enable_optuna": true,
+      "n_trials": 50,
+      "timeout_seconds": 3600,
+      "study_name": "chainguardian_optimization",
+      "search_spaces": {
+        "xgboost": {
+          "n_estimators": [
+            100,
+            300
+          ],
+          "max_depth": [
+            3,
+            8
+          ],
+          "learning_rate": [
+            0.01,
+            0.2
+          ],
+          "subsample": [
+            0.6,
+            1.0
+          ],
+          "colsample_bytree": [
+            0.6,
+            1.0
+          ],
+          "gamma": [
+            0,
+            5
+          ],
+          "reg_alpha": [
+            0,
+            10
+          ],
+          "reg_lambda": [
+            1,
+            10
+          ]
+        },
+        "random_forest": {
+          "n_estimators": [
+            100,
+            300
+          ],
+          "max_depth": [
+            5,
+            15
+          ],
+          "min_samples_split": [
+            2,
+            10
+          ],
+          "min_samples_leaf": [
+            1,
+            4
+          ]
+        },
+        "lightgbm": {
+          "n_estimators": [
+            100,
+            300
+          ],
+          "num_leaves": [
+            20,
+            100
+          ],
+          "learning_rate": [
+            0.01,
+            0.2
+          ],
+          "feature_fraction": [
+            0.6,
+            1.0
+          ]
+        }
+      }
+    },
+    "ensemble": {
+      "enabled": true,
+      "voting_method": "soft",
+      "calibration_method": "sigmoid",
+      "initial_weights": {
+        "xgboost": 0.4,
+        "random_forest": 0.3,
+        "lightgbm": 0.2,
+        "logistic_regression": 0.1
+      }
+    },
+    "weights": {
+      "data_quality_profiles": {
+        "EXCELLENT": {
+          "ml": 0.3,
+          "semantic": 0.7,
+          "confidence_boost": 0.2
+        },
+        "GOOD": {
+          "ml": 0.4,
+          "semantic": 0.6,
+          "confidence_boost": 0.1
+        },
+        "FAIR": {
+          "ml": 0.6,
+          "semantic": 0.4,
+          "confidence_boost": 0.0
+        },
+        "POOR": {
+          "ml": 0.9,
+          "semantic": 0.1,
+          "confidence_boost": -0.1
+        },
+        "UNKNOWN": {
+          "ml": 0.5,
+          "semantic": 0.5,
+          "confidence_boost": -0.2
+        }
+      },
+      "semantic_risk": {
+        "cei_violation": 0.4,
+        "cei_score_low": 0.2,
+        "state_after_call": 0.3,
+        "unchecked_critical": 0.2,
+        "reentrancy_guard_bonus": -0.5
+      },
+      "confidence_calibration": {
+        "ml_certainty_alignment": 0.4,
+        "semantic_completeness": 0.25,
+        "contradiction_penalty": -0.2,
+        "data_quality_multiplier": 1.3,
+        "static_signal_boost": 0.15,
+        "moderate_ml_boost": 0.25
+      }
+    },
+    "augmentation": {
+      "enabled": true,
+      "strategy": "smote",
+      "mixup_alpha": 0.2,
+      "gaussian_std": 0.05,
+      "max_augmentation_factor": 2.0
+    },
+    "batch_processing": {
+      "enabled": true,
+      "batch_size": 32,
+      "max_workers": 4,
+      "enable_vectorization": true
+    },
+    "model_registry": {
+      "registry_path": "models/registry",
+      "keep_last_n_versions": 10,
+      "auto_versioning": true,
+      "metadata_schema": [
+        "model_type",
+        "performance_metrics",
+        "training_date",
+        "feature_list",
+        "hyperparameters"
+      ]
+    },
+    "monitoring": {
+      "enable_performance_logging": true,
+      "log_dir": "logs",
+      "metrics_to_track": [
+        "accuracy",
+        "auc",
+        "inference_latency",
+        "data_quality_scores"
+      ],
+      "drift_detection": {
+        "enabled": true,
+        "window_size": 1000,
+        "drift_threshold": 0.05,
+        "check_interval": 100
+      }
+    },
+    "thresholds": {
+      "vulnerability_prediction": 0.2,
+      "high_confidence": 0.85,
+      "low_confidence": 0.4,
+      "override_cei_violations": 3,
+      "override_perfect_cei_with_guard": true
+    }
+  },
+  "hyperparameters": {}
+}

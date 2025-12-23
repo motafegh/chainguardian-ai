@@ -1,4 +1,4 @@
-# (Paste the entire hybrid_predictor_enhanced_v2.py content here)
+
 """
 Enhanced Hybrid Predictor v2 with All New Features
 ===================================================
@@ -29,7 +29,10 @@ from functools import lru_cache
 # Import our new modules
 from chainguardian.ml.core.config_manager import get_config
 from chainguardian.ml.core.monitoring import MLMonitor
+print(f"🔍 DEBUG: Starting import of hybrid_predictor_enhanced_v2 from {__file__}")
 
+import sys
+print(f"🔍 DEBUG: Module in sys.modules: {'hybrid_predictor_enhanced_v2' in sys.modules}")
 # SHAP for explainability
 try:
     import shap
@@ -138,7 +141,7 @@ class EnhancedHybridPredictorV2:
         if models_dir:
             models_dir = Path(models_dir)
         else:
-            models_dir = Path(__file__).parent.parent.parent.parent.parent / 'models'
+            models_dir = Path(__file__).parent.parent.parent.parent.parent /'config/models'
         
         # Set default paths if not provided
         if model_path is None:
@@ -206,7 +209,7 @@ class EnhancedHybridPredictorV2:
                 self.use_ensemble = False
             elif isinstance(model_data, dict) and 'ensemble' in model_data:
                 # It's our saved ensemble
-                from src.chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble
+                from chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble
                 self.ml_model = HeterogeneousEnsemble.load(model_path, self.config)
                 self.use_ensemble = True
             else:
@@ -268,7 +271,7 @@ class EnhancedHybridPredictorV2:
     def _initialize_monitoring(self):
         """Initialize performance monitoring."""
         try:
-            from src.chainguardian.ml.core.monitoring import MLMonitor
+            from chainguardian.ml.core.monitoring import MLMonitor
             self.monitor = MLMonitor(self.config)
             logger.info("✅ Performance monitoring initialized")
         except Exception as e:
@@ -281,6 +284,12 @@ class EnhancedHybridPredictorV2:
         Convert features dictionary to numpy array with caching.
         Caching significantly speeds up batch predictions.
         """
+
+        # Handle both dict and frozenset
+        if isinstance(features, frozenset):
+            # Convert frozenset back to dict
+            features_dict = dict(features)
+            features = features_dict
         # Create feature vector with exact feature order
         feature_vector = np.zeros(len(self.feature_names))
         

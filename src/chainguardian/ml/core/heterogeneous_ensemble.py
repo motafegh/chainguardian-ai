@@ -40,14 +40,61 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         self.config = config
         self.feature_names = feature_names
         self.models = {}
-        self.ensemble = None
         self.calibrated_models = {}
         self.is_fitted = False
+        
+        # FIX: Ensure config has required structure
+        self._validate_and_fix_config()
         
         # Initialize base models
         self._initialize_models()
         
         logger.info("Heterogeneous Ensemble initialized")
+
+    def _validate_and_fix_config(self):
+        """Ensure config has all required attributes."""
+        # Ensure ensemble config exists
+        if not hasattr(self.config, 'ensemble'):
+            # Create minimal ensemble config
+            class MockEnsembleConfig:
+                enabled = True
+                initial_weights = {
+                    'xgboost': 0.4,
+                    'random_forest': 0.3,
+                    'lightgbm': 0.2,
+                    'logistic_regression': 0.1
+                }
+                calibration_method = type('Calib', (), {'value': 'sigmoid'})()
+                uncertainty = type('Uncertainty', (), {
+                    'enable_bootstrap': False,
+                    'n_bootstrap_samples': 100,
+                    'confidence_level': 0.95
+                })()
+            
+            self.config.ensemble = MockEnsembleConfig()
+        
+        # Ensure calibration_method has value attribute
+        if hasattr(self.config.ensemble, 'calibration_method'):
+            calibration = self.config.ensemble.calibration_method
+            if isinstance(calibration, str):
+                # Convert string to object with value attribute
+                class CalibrationMethod:
+                    def __init__(self, value):
+                        self.value = value
+                self.config.ensemble.calibration_method = CalibrationMethod(calibration)
+        elif not hasattr(self.config.ensemble, 'calibration_method'):
+            # Add default calibration method
+            class CalibrationMethod:
+                value = 'sigmoid'
+            self.config.ensemble.calibration_method = CalibrationMethod()
+        
+        # Ensure uncertainty config exists
+        if not hasattr(self.config.ensemble, 'uncertainty'):
+            class UncertaintyConfig:
+                enable_bootstrap = False
+                n_bootstrap_samples = 100
+                confidence_level = 0.95
+            self.config.ensemble.uncertainty = UncertaintyConfig()
     
     def _initialize_models(self):
         """Initialize base models with default or provided parameters."""
@@ -93,7 +140,9 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
             Self for chaining
         """
         logger.info("Training heterogeneous ensemble...")
-        
+        # FIX: Store training data for later refitting
+        self.X_train = X.copy()
+        self.y_train = y.copy()
         # 1. Train individual models
         self._train_individual_models(X, y, sample_weight)
         
@@ -401,7 +450,10 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         
         # Recreate ensemble with new weights
         self._create_voting_ensemble()
-        
+        # FIX: Refit the voting classifier with the same training data
+        # This is necessary because VotingClassifier needs to be fitted
+        self.ensemble.fit(self.X_train, self.y_train)
+        logger.info("Refitted ensemble with optimized weights")
         return new_weights
     
     def save(self, path: str):

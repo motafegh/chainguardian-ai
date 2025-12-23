@@ -335,6 +335,28 @@ if ENSEMBLE_AVAILABLE and CONFIG_AVAILABLE and config.ensemble.enabled:
     print("="*80)
     
     try:
+        # Debug: Print what calibration_method actually is
+        print(f"   Debug - calibration_method type: {type(config.ensemble.calibration_method)}")
+        print(f"   Debug - calibration_method: {config.ensemble.calibration_method}")
+        # Fix calibration_method if it's a string or dict
+        calibration = config.ensemble.calibration_method
+        
+        # If it's a dictionary (from YAML), extract the value
+        if isinstance(calibration, dict) and 'value' in calibration:
+            calibration_value = calibration['value']
+            # Create a mock object with value attribute
+            class MockCalibration:
+                def __init__(self, val):
+                    self.value = val
+            config.ensemble.calibration_method = MockCalibration(calibration_value)
+            print(f"   Fixed calibration_method: {calibration_value}")
+        # If it's already a string, also fix it
+        elif isinstance(calibration, str):
+            class MockCalibration:
+                def __init__(self, val):
+                    self.value = val
+            config.ensemble.calibration_method = MockCalibration(calibration)
+            print(f"   Fixed calibration_method (string): {calibration}")
         # Create ensemble
         ensemble = HeterogeneousEnsemble(config, X.columns.tolist())
         

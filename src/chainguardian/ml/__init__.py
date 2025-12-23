@@ -6,20 +6,20 @@ Exposes ML models and utilities for vulnerability prediction.
 """
 
 # Existing imports
-from .models.hybrid_predictor import HybridPredictor
-from .models.hybrid_predictor_enhanced import EnhancedHybridPredictor
+from chainguardian.ml.models.hybrid_predictor import HybridPredictor
+from chainguardian.ml.models.hybrid_predictor_enhanced import EnhancedHybridPredictor
 
 # New imports from core modules
-from .core.config_manager import ConfigManager, get_config
-from .core.hyperparameter_tuner import HyperparameterTuner
-from .core.heterogeneous_ensemble import HeterogeneousEnsemble
-from .core.data_augmenter import SmartContractAugmenter
-from .core.model_registry import ModelRegistry
-from .core.monitoring import MLMonitor
-
+from chainguardian.ml.core.config_manager import ConfigManager, get_config
+from chainguardian.ml.core.hyperparameter_tuner import HyperparameterTuner
+from chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble
+from chainguardian.ml.core.data_augmenter import SmartContractAugmenter
+from chainguardian.ml.core.model_registry import ModelRegistry
+from chainguardian.ml.core.monitoring import MLMonitor
+from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
 # For backward compatibility - expose EnhancedHybridPredictorV2 as EnhancedHybridPredictor
 try:
-    from .models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
+    from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
     EnhancedHybridPredictorV2 = EnhancedHybridPredictorV2
 except ImportError:
     pass
