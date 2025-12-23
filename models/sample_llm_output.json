@@ -1,0 +1,70 @@
+{
+  "prediction": {
+    "label": "VULNERABLE",
+    "confidence": 0.3,
+    "risk_level": "LOW",
+    "method": "HYBRID"
+  },
+  "ml_analysis": {
+    "score": 1.0,
+    "weight": 0.3,
+    "interpretation": "Model detects vulnerability patterns"
+  },
+  "semantic_analysis": {
+    "score": 0.0,
+    "weight": 0.7,
+    "cei_violations": 0,
+    "cei_pattern_score": 1.0,
+    "has_reentrancy_guard": false,
+    "state_after_call_count": 0,
+    "findings": [
+      "\u2705 Perfect CEI compliance"
+    ]
+  },
+  "contract_metadata": {
+    "lines_of_code": 65,
+    "num_functions": 5,
+    "num_external_calls": 4,
+    "max_complexity": 5,
+    "has_inline_assembly": false
+  },
+  "static_analysis": {
+    "total_issues": 8,
+    "high_severity": 2,
+    "medium_severity": 0,
+    "low_severity": 16,
+    "has_reentrancy": true,
+    "has_unchecked_call": true,
+    "has_tx_origin": false
+  },
+  "explainability": {
+    "method": "SHAP (SHapley Additive exPlanations)",
+    "top_risk_factors": [
+      {
+        "feature": "dfg_num_sensitive_sinks",
+        "contribution": 2.359,
+        "direction": "increases risk"
+      },
+      {
+        "feature": "cg_avg_calls_per_function",
+        "contribution": 0.59,
+        "direction": "increases risk"
+      },
+      {
+        "feature": "has_unchecked_call",
+        "contribution": 0.519,
+        "direction": "increases risk"
+      },
+      {
+        "feature": "cg_num_public_entry_points",
+        "contribution": 0.506,
+        "direction": "increases risk"
+      },
+      {
+        "feature": "inheritance_depth",
+        "contribution": 0.461,
+        "direction": "increases risk"
+      }
+    ]
+  }
+}

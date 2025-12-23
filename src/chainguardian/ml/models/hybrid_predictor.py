@@ -1,31 +1,56 @@
 """
-Production Hybrid Predictor with SHAP Explainability
-====================================================
-Combines ML model with semantic security rules AND per-prediction explanations.
+Production Hybrid Predictor with SHAP & LLM-Ready Output
+========================================================
+Combines ML predictions with semantic security rules.
 
-WHAT'S NEW (Dec 21, 2024):
-- SHAP TreeExplainer integration for XGBoost/RandomForest
-- Waterfall plots showing feature contributions
-- Top-K most important features per prediction
-- Combined ML + semantic explanations
-
-EDUCATIONAL NOTES:
-- SHAP = SHapley Additive exPlanations (game theory)
-- TreeExplainer = Fast SHAP for tree models (XGBoost, RF)
-- Waterfall plot = Visual breakdown of prediction
-- Base value = Expected prediction before seeing features
+WHAT THIS DOES:
+1. Loads trained XGBoost model (calibrated) + RobustScaler
+2. Predicts vulnerability with hybrid ensemble (ML + Semantic)
+3. Explains predictions with SHAP (feature contributions)
+4. Outputs structured data for LLM integration
+5. Applies domain knowledge overrides (CEI violations)
 
 ARCHITECTURE:
-HybridPredictor
-├─ ML Component (XGBoost)
-│  ├─ predict_proba() → 0.75
-│  └─ SHAP explain() → Why 0.75?
-├─ Semantic Component (Rules)
-│  └─ Calculate CEI risk → 0.65
-└─ Ensemble (weighted) → Final 0.70
+┌─────────────────────────────────────────────────┐
+│ INPUT: Contract Features (91 numeric features)  │
+└─────────────────────────────────────────────────┘
+                    ↓
+    ┌───────────────────────────────┐
+    │   RobustScaler Transform      │
+    │   (median + IQR normalization)│
+    └───────────────────────────────┘
+                    ↓
+    ┌───────────────────────────────────────────┐
+    │         Hybrid Predictor                  │
+    │  ┌─────────────┐   ┌──────────────────┐  │
+    │  │ ML Model    │   │ Semantic Rules   │  │
+    │  │ (XGBoost)   │   │ (CEI Analysis)   │  │
+    │  │ Weight: 30% │   │ Weight: 70%      │  │
+    │  └─────────────┘   └──────────────────┘  │
+    │           ↓              ↓                │
+    │      ┌──────────────────────┐            │
+    │      │  Override Logic      │            │
+    │      │  (3+ CEI → VULN)     │            │
+    │      └──────────────────────┘            │
+    └───────────────────────────────────────────┘
+                    ↓
+    ┌───────────────────────────────┐
+    │   SHAP Explainer              │
+    │   (Feature Contributions)     │
+    └───────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────────┐
+│ OUTPUT: LLM-Ready Structured JSON               │
+│  • Prediction + Confidence                      │
+│  • Risk Level (CRITICAL/HIGH/MEDIUM/LOW)        │
+│  • SHAP Explanations (Top 10 features)          │
+│  • Semantic Analysis (CEI violations)           │
+│  • Contract Metadata (LOC, functions, etc.)     │
+└─────────────────────────────────────────────────┘
 
 Author: Ali
-Date: December 21, 2024
+Date: December 22, 2024
+Version: 2.0 (Final Production)
 """
 
 import numpy as np
@@ -33,191 +58,142 @@ import pandas as pd
 import joblib
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 import logging
 
-# SHAP for explainability - NEW!
-import shap
+# SHAP for explainability
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
+    logging.warning("SHAP not available. Install with: pip install shap")
 
 logger = logging.getLogger(__name__)
 
 
 class HybridPredictor:
     """
-    Production-ready hybrid vulnerability predictor with SHAP explainability.
-    
-    WHAT IT DOES:
-    1. Predicts vulnerability using ensemble (ML + semantic rules)
-    2. Explains predictions with SHAP values (feature contributions)
-    3. Provides human-readable explanations ("3 CEI violations found")
-    4. Handles override logic (domain knowledge > ML when appropriate)
-    
-    WHY HYBRID:
-    - ML catches general patterns (learns from 963 contracts)
-    - Semantic rules catch specific vulnerabilities (CEI violations)
-    - SHAP explains ML predictions (builds trust)
-    - Overrides prevent ML confusion on edge cases
+    Production Hybrid Vulnerability Predictor with SHAP Explainability.
     
     USAGE:
-        predictor = HybridPredictor()
-        result = predictor.predict(contract_features, return_details=True)
+        # Initialize
+        predictor = HybridPredictor(enable_shap=True)
         
-        # result includes:
+        # Predict with full analysis
+        result = predictor.predict(
+            features=contract_features,
+            return_details=True,
+            explain=True,
+            llm_ready=True  # Returns LLM-formatted output
+        )
+        
+        # result contains:
         # - prediction: 0 (safe) or 1 (vulnerable)
         # - confidence: 0.0 to 1.0
-        # - shap_explanation: Top features with contributions
-        # - semantic_reasons: List of security issues found
+        # - risk_level: CRITICAL/HIGH/MEDIUM/LOW/MINIMAL
+        # - shap_explanation: Feature contributions
+        # - semantic_analysis: CEI violations, guards, etc.
+        # - contract_metadata: LOC, functions, complexity
+    
+    HYBRID WEIGHTS (Optimized via Grid Search):
+        ML Weight:       30% (pattern recognition)
+        Semantic Weight: 70% (rule-based precision)
+        Threshold:       0.20 (high recall for security)
+    
+    OVERRIDE LOGIC:
+        • 3+ CEI violations → Force VULNERABLE
+        • Perfect CEI + Guard + Low ML → Force SAFE
     """
     
-    # Optimized defaults (from hybrid optimization)
-    # EDUCATIONAL NOTE: These weights were tuned via grid search
-    # 30% ML, 70% semantic = best adversarial accuracy (76%)
-    DEFAULT_ML_WEIGHT = 0.60      # Optimized for adversarial robustness
-    DEFAULT_SEMANTIC_WEIGHT = 0.40
-    DEFAULT_THRESHOLD = 0.60
+    # Optimized defaults from hyperparameter search
+    DEFAULT_ML_WEIGHT = 0.30
+    DEFAULT_SEMANTIC_WEIGHT = 0.70
+    DEFAULT_THRESHOLD = 0.20
     
     def __init__(
-        self, 
-        model_path: str = None, 
-        scaler_path: str = None, 
+        self,
+        model_path: str = None,
+        scaler_path: str = None,
         metadata_path: str = None,
         enable_shap: bool = True
     ):
         """
-        Initialize hybrid predictor with SHAP explainability.
+        Initialize hybrid predictor.
         
         PARAMETERS:
-            model_path: Path to trained ML model (.pkl)
-            scaler_path: Path to feature scaler (.pkl)
-            metadata_path: Path to metadata JSON with feature list
-            enable_shap: Whether to load SHAP explainer (default: True)
-                        Set to False for faster initialization if explanations not needed
-        
-        EDUCATIONAL NOTE: enable_shap parameter lets you trade speed for explainability
-        - True: Slower init (~5s), can explain predictions
-        - False: Fast init (~0.5s), predictions only (no explanations)
+            model_path: Path to trained model (.pkl)
+            scaler_path: Path to RobustScaler (.pkl)
+            metadata_path: Path to feature metadata (.json)
+            enable_shap: Enable SHAP explanations (slower but explainable)
         """
-        # Determine model directory (handles different execution contexts)
-        # EDUCATIONAL NOTE: This path resolution works whether you run from:
-        # - scripts/3_training/
-        # - project root
-        # - anywhere else
+        # Paths
         models_dir = Path(__file__).parent.parent.parent.parent.parent / 'models'
         
-        # Load ML model
         if model_path is None:
             model_path = models_dir / 'production_model.pkl'
-        
         if scaler_path is None:
             scaler_path = models_dir / 'production_scaler.pkl'
+        if metadata_path is None:
+            metadata_path = models_dir / 'feature_metadata.json'
         
+        # Load model and scaler
         try:
             self.ml_model = joblib.load(model_path)
             self.scaler = joblib.load(scaler_path)
-            logger.info(f"✅ Loaded ML model from {model_path}")
+            logger.info(f"✅ Loaded model from {model_path}")
         except Exception as e:
             logger.error(f"❌ Failed to load model: {e}")
             raise
         
-        # Load feature names from metadata
-        # EDUCATIONAL NOTE: Feature names needed for:
-        # 1. Extracting features in correct order
-        # 2. SHAP explanations (labeling contributions)
-        if metadata_path is None:
-            # Try to find latest metadata file
-            metadata_files = sorted(models_dir.glob('semantic_metadata_*.json'))
-            if metadata_files:
-                metadata_path = metadata_files[-1]
-            else:
-                metadata_path = models_dir / 'PRODUCTION_MODEL_README.json'
-        
+        # Load feature names
         if Path(metadata_path).exists():
             with open(metadata_path, 'r') as f:
                 metadata = json.load(f)
-                self.feature_names = metadata.get('feature_list', None)
-                if self.feature_names:
-                    logger.info(f"✅ Loaded {len(self.feature_names)} feature names from metadata")
+                self.feature_names = metadata.get('feature_names', [])
+                self.model_metrics = metadata.get('metrics', {})
+                logger.info(f"✅ Loaded {len(self.feature_names)} feature names")
+        else:
+            logger.warning("⚠️ Metadata file not found, using default feature order")
+            self.feature_names = self._get_default_features()
+            self.model_metrics = {}
         
-        # Fallback: try to get feature names from model
-        if not hasattr(self, 'feature_names') or self.feature_names is None:
-            try:
-                self.feature_names = self.ml_model.get_booster().feature_names
-                logger.info("✅ Loaded feature names from model")
-            except:
-                logger.warning("⚠️ Could not load feature names, using default order")
-                self.feature_names = self._get_default_features()
-        
-        # Initialize SHAP explainer (optional)
-        # EDUCATIONAL NOTE: TreeExplainer is model-specific and FAST
-        # - Works for: XGBoost, RandomForest, LightGBM, CatBoost
-        # - Time: O(TLD²) where T=trees, L=leaves, D=depth
-        # - For 300 trees, depth 6: ~0.1 seconds per prediction
-        # Initialize SHAP explainer (with calibrated model support)
-        # EDUCATIONAL NOTE: CalibratedClassifierCV wraps the base model
-        # We need to extract the base estimator for SHAP
+        # Initialize SHAP explainer
         self.shap_explainer = None
-        if enable_shap:
+        if enable_shap and SHAP_AVAILABLE:
             try:
                 logger.info("🔍 Initializing SHAP TreeExplainer...")
                 
-                # Check if model is calibrated (wrapper)
-                # EDUCATIONAL NOTE: CalibratedClassifierCV has .calibrated_classifiers_
-                # which is a list of (classifier, calibrator) pairs from CV
+                # Handle calibrated models
                 if hasattr(self.ml_model, 'calibrated_classifiers_'):
-                    # Extract base model from first calibrated classifier
-                    # EDUCATIONAL NOTE: We use [0] because CV creates multiple calibrators
-                    # They're all trained on same base model type, so any works for SHAP
                     base_model = self.ml_model.calibrated_classifiers_[0].estimator
-                    logger.info("   Detected calibrated model, extracting base estimator...")
                     self.shap_explainer = shap.TreeExplainer(base_model)
                 else:
-                    # Direct model (not calibrated)
                     self.shap_explainer = shap.TreeExplainer(self.ml_model)
                 
                 logger.info("✅ SHAP explainer ready")
             except Exception as e:
                 logger.warning(f"⚠️ Could not initialize SHAP: {e}")
-                logger.warning("   Predictions will work but explanations unavailable")
-        # Semantic rule weights (for vulnerability scoring)
-        # EDUCATIONAL NOTE: These weights define how semantic features combine
-        # Positive weights = increase risk, Negative weights = decrease risk
+        
+        # Semantic weights
         self.semantic_weights = {
-            'cei_violation': 0.40,           # CEI violations are CRITICAL
-            'cei_score_low': 0.20,           # Low CEI compliance is risky
-            'state_after_call': 0.30,        # State changes after calls = reentrancy risk
-            'unchecked_critical': 0.20,      # Unchecked calls in critical contexts
-            'reentrancy_guard_bonus': -0.50, # Guard reduces risk by 50%
+            'cei_violation': 0.40,
+            'cei_score_low': 0.20,
+            'state_after_call': 0.30,
+            'unchecked_critical': 0.20,
+            'reentrancy_guard_bonus': -0.50,
         }
         
-        # Override thresholds (when to ignore ML and force prediction)
-        # EDUCATIONAL NOTE: Domain knowledge overrides when:
-        # 1. Evidence is overwhelming (3+ CEI violations = definitely vulnerable)
-        # 2. Safety is guaranteed (perfect CEI + guard = definitely safe)
+        # Override thresholds
         self.override_thresholds = {
-            'high_cei_violations': 3,      # 3+ violations → force VULNERABLE
-            'perfect_cei_with_guard': True, # Perfect CEI + guard → force SAFE
+            'high_cei_violations': 3,
+            'perfect_cei_with_guard': True,
         }
-        
+    
     def _get_default_features(self) -> List[str]:
-        """
-        Return default feature list in expected order (93 features total).
-        
-        EDUCATIONAL NOTE: Feature order MATTERS because:
-        - ML models expect features in training order
-        - Wrong order → wrong predictions (silently!)
-        - This method ensures consistency even without metadata
-        
-        FEATURE GROUPS:
-        - Vulnerability flags (23): Binary indicators from Slither
-        - Severity counts (3): High/medium/low issue counts
-        - AST features (17): Code structure metrics
-        - Detector stats (9): Slither analysis metadata
-        - Risk scores (3): Composite risk indicators
-        - Graph features (25): CFG, CG, DFG properties
-        - Semantic features (8): CEI pattern analysis ⭐ YOUR INNOVATION
-        """
-        # [Previous _get_default_features implementation - keep as is]
-        vulnerability_flags = [
+        """Return default 91-feature list in training order."""
+        # Vulnerability flags (26)
+        vuln_flags = [
             'has_reentrancy', 'has_access_control_issues', 'has_timestamp_dependency',
             'has_unchecked_call', 'has_reentrancy_unlimited', 'has_reentrancy_benign',
             'has_reentrancy_events', 'has_unchecked_transfer', 'has_controlled_delegatecall',
@@ -226,20 +202,23 @@ class HybridPredictor:
             'has_locked_ether', 'has_msg_value_loop', 'has_shadowing_state',
             'has_shadowing_builtin', 'has_shadowing_abstract', 'has_unused_state_vars',
             'has_unused_return_values', 'has_incorrect_solc_version', 'has_floating_pragma',
-            'has_outdated_compiler'
+            'has_outdated_compiler', 'has_arbitrary_send'
         ]
         
+        # Severity counts (3)
         severity = ['high_severity_count', 'medium_severity_count', 'low_severity_count']
         
-        ast_features = [
-            'num_functions', 'num_external_calls', 'num_state_vars', 'num_modifiers',
-            'max_cyclomatic_complexity', 'num_low_level_calls', 'lines_of_code',
-            'num_contracts_in_file', 'num_dependencies', 'avg_function_complexity',
-            'num_functions_high_complexity', 'num_comments', 'comment_to_code_ratio',
-            'num_payable_functions', 'num_library_calls', 'inheritance_depth',
-            'num_unused_functions'
+        # Code metrics (17)
+        code_metrics = [
+            'lines_of_code', 'num_functions', 'num_external_calls', 'num_state_vars',
+            'num_modifiers', 'num_low_level_calls', 'num_contracts_in_file',
+            'num_dependencies', 'num_payable_functions', 'num_library_calls',
+            'num_unused_functions', 'inheritance_depth', 'max_cyclomatic_complexity',
+            'avg_function_complexity', 'num_functions_high_complexity',
+            'comment_to_code_ratio', 'num_comments'
         ]
         
+        # Detector stats (9)
         detector_stats = [
             'high_confidence_detectors', 'medium_confidence_detectors',
             'low_confidence_detectors', 'security_detectors_triggered',
@@ -247,8 +226,10 @@ class HybridPredictor:
             'unique_vulnerability_types', 'detectors_per_function', 'detectors_per_loc'
         ]
         
+        # Risk scores (3)
         risk_scores = ['risk_score_simple', 'risk_score_weighted', 'is_high_risk']
         
+        # Graph features (25)
         graph_features = [
             'cfg_num_nodes', 'cfg_num_edges', 'cfg_num_cycles', 'cfg_max_depth',
             'cfg_avg_branching', 'cfg_has_complex_loops', 'cfg_num_exit_points',
@@ -261,6 +242,7 @@ class HybridPredictor:
             'dfg_num_unvalidated_inputs'
         ]
         
+        # Semantic features (8) ⭐
         semantic_features = [
             'cei_violations', 'cei_safe_functions', 'cei_pattern_score',
             'has_reentrancy_guard', 'functions_with_reentrancy_guard',
@@ -268,113 +250,79 @@ class HybridPredictor:
             'unchecked_calls_in_critical_context'
         ]
         
-        return (vulnerability_flags + severity + ast_features + detector_stats + 
+        return (vuln_flags + severity + code_metrics + detector_stats +
                 risk_scores + graph_features + semantic_features)
-        
+    
     def calculate_semantic_risk(self, features: Dict) -> Tuple[float, List[str]]:
         """
-        Calculate semantic risk score based on security patterns.
-        
-        WHAT THIS DOES:
-        1. Analyzes CEI (Checks-Effects-Interactions) pattern compliance
-        2. Checks for reentrancy guards
-        3. Detects state modifications after external calls
-        4. Returns risk score (0-1) and human-readable reasons
-        
-        WHY SEPARATE FROM ML:
-        - Semantic rules are explainable (CEI violation at line 67)
-        - ML learns patterns but can't articulate specific issues
-        - Combination gives best of both worlds
+        Calculate semantic risk based on CEI pattern analysis.
         
         RETURNS:
-            tuple: (risk_score: float, reasons: List[str])
+            (risk_score: float, reasons: List[str])
         """
         risk = 0.0
         reasons = []
         
-        # CEI Pattern Violations (HIGH RISK)
-        # EDUCATIONAL NOTE: CEI = Checks-Effects-Interactions pattern
-        # Safe: balance -= amount; externalCall();
-        # Unsafe: externalCall(); balance -= amount; ← REENTRANCY!
+        # CEI violations
         cei_violations = features.get('cei_violations', 0)
         if cei_violations > 0:
             violation_risk = self.semantic_weights['cei_violation'] * min(cei_violations / 5, 1.0)
             risk += violation_risk
             reasons.append(f"🚨 CEI violations: {cei_violations} (+{violation_risk:.0%} risk)")
         
-        # Low CEI Compliance Score (MEDIUM RISK)
-        # EDUCATIONAL NOTE: cei_pattern_score = ratio of safe functions
-        # 1.0 = perfect (all functions follow CEI), 0.0 = terrible
+        # Low CEI score
         cei_score = features.get('cei_pattern_score', 1.0)
         if cei_score < 0.8:
             score_risk = self.semantic_weights['cei_score_low'] * (1.0 - cei_score)
             risk += score_risk
             reasons.append(f"⚠️ Low CEI score: {cei_score:.2f} (+{score_risk:.0%} risk)")
         
-        # State Modifications After External Calls (HIGH RISK)
-        # EDUCATIONAL NOTE: This is the CORE reentrancy vulnerability pattern
-        # externalCall() then balance-- = attacker can re-enter with old balance
-        state_after_call = features.get('state_after_call_count', 0)
-        if state_after_call > 0:
-            state_risk = self.semantic_weights['state_after_call'] * min(state_after_call / 3, 1.0)
+        # State after call
+        state_after = features.get('state_after_call_count', 0)
+        if state_after > 0:
+            state_risk = self.semantic_weights['state_after_call'] * min(state_after / 3, 1.0)
             risk += state_risk
-            reasons.append(f"🚨 State-after-call: {state_after_call} (+{state_risk:.0%} risk)")
+            reasons.append(f"🚨 State-after-call: {state_after} (+{state_risk:.0%} risk)")
         
-        # Unchecked Calls in Critical Context (MEDIUM RISK)
-        # EDUCATIONAL NOTE: call() returns bool but result not checked
-        # If call fails silently, contract logic continues with wrong assumptions
-        unchecked_critical = features.get('unchecked_calls_in_critical_context', 0)
-        if unchecked_critical > 0:
-            unchecked_risk = self.semantic_weights['unchecked_critical'] * min(unchecked_critical / 2, 1.0)
+        # Unchecked calls
+        unchecked = features.get('unchecked_calls_in_critical_context', 0)
+        if unchecked > 0:
+            unchecked_risk = self.semantic_weights['unchecked_critical'] * min(unchecked / 2, 1.0)
             risk += unchecked_risk
-            reasons.append(f"⚠️ Unchecked critical calls: {unchecked_critical} (+{unchecked_risk:.0%} risk)")
+            reasons.append(f"⚠️ Unchecked critical calls: {unchecked} (+{unchecked_risk:.0%} risk)")
         
-        # Reentrancy Guard Bonus (REDUCES RISK)
-        # EDUCATIONAL NOTE: nonReentrant modifier prevents recursive calls
-        # modifier nonReentrant() { require(!locked); locked = true; _; locked = false; }
+        # Reentrancy guard bonus
         has_guard = features.get('has_reentrancy_guard', False)
-        num_external_calls = features.get('num_external_calls', 0)
+        num_external = features.get('num_external_calls', 0)
         
-        if has_guard and num_external_calls > 0:
+        if has_guard and num_external > 0:
             risk *= (1 + self.semantic_weights['reentrancy_guard_bonus'])
             reasons.append(f"✅ Reentrancy guard detected (-50% risk)")
         
-        # Perfect CEI compliance (POSITIVE SIGNAL)
+        # Perfect CEI
         if cei_score == 1.0 and cei_violations == 0:
             reasons.append(f"✅ Perfect CEI compliance")
         
         return min(risk, 1.0), reasons
     
     def check_overrides(
-        self, 
-        features: Dict, 
-        ml_score: float, 
+        self,
+        features: Dict,
+        ml_score: float,
         semantic_score: float
     ) -> Optional[Tuple[int, str]]:
         """
-        Check if semantic rules should override ML prediction.
-        
-        WHEN TO OVERRIDE:
-        1. Multiple CEI violations (≥3) → Force VULNERABLE
-           WHY: 3+ violations is overwhelming evidence, trust semantic analysis
-        2. Perfect CEI + guard + low ML score → Force SAFE
-           WHY: Strong safety signals override ML uncertainty
-        
-        EDUCATIONAL NOTE: Overrides implement "domain knowledge trumps ML"
-        - ML can be confused by dataset artifacts
-        - Semantic rules are trustworthy (based on security principles)
-        - Hybrid approach: ML for general patterns, rules for edge cases
+        Check if domain knowledge should override ML prediction.
         
         RETURNS:
-            None if no override needed
-            (prediction, reason) if override triggered
+            None or (prediction, reason)
         """
-        # AUTO VULNERABLE: Multiple CEI violations
+        # Override VULNERABLE: Multiple CEI violations
         cei_violations = features.get('cei_violations', 0)
         if cei_violations >= self.override_thresholds['high_cei_violations']:
             return (1, f"OVERRIDE: {cei_violations} CEI violations → VULNERABLE")
         
-        # AUTO SAFE: Perfect CEI + Guard + Low ML score
+        # Override SAFE: Perfect CEI + Guard
         cei_score = features.get('cei_pattern_score', 0)
         has_guard = features.get('has_reentrancy_guard', False)
         
@@ -383,44 +331,14 @@ class HybridPredictor:
         
         return None
     
-    def explain_with_shap(
-        self, 
-        X_scaled: np.ndarray, 
-        top_k: int = 10
-    ) -> Dict:
+    def explain_with_shap(self, X_scaled: np.ndarray, top_k: int = 10) -> Dict:
         """
-        Generate SHAP explanation for a single prediction.
-        
-        WHAT SHAP DOES:
-        - Calculates each feature's contribution to prediction
-        - Uses game theory (Shapley values) for fair attribution
-        - Handles feature interactions correctly
-        
-        HOW TO READ RESULTS:
-        - Positive SHAP value = pushes toward VULNERABLE
-        - Negative SHAP value = pushes toward SAFE
-        - Sum of all SHAP values = prediction - base_value
-        
-        EXAMPLE OUTPUT:
-        {
-            'base_value': 0.20,  # Expected prediction before seeing features
-            'prediction_value': 0.85,  # Actual prediction after seeing features
-            'top_features': [
-                {'feature': 'cei_violations', 'value': 3, 'shap_value': +0.45},
-                {'feature': 'num_external_calls', 'value': 45, 'shap_value': +0.25},
-                {'feature': 'has_reentrancy_guard', 'value': 0, 'shap_value': +0.20},
-            ]
-        }
-        
-        PARAMETERS:
-            X_scaled: Scaled feature vector (1 x 93 numpy array)
-            top_k: Number of most important features to return
+        Generate SHAP explanation for prediction.
         
         RETURNS:
-            Dictionary with base_value, prediction_value, and top_features
+            Dict with base_value, prediction_value, top_features
         """
         if self.shap_explainer is None:
-            logger.warning("⚠️ SHAP explainer not initialized, returning empty explanation")
             return {
                 'base_value': 0.0,
                 'prediction_value': 0.0,
@@ -429,44 +347,29 @@ class HybridPredictor:
             }
         
         try:
-            # Calculate SHAP values for this prediction
-            # EDUCATIONAL NOTE: shap_values has shape (1, n_features)
-            # Each value shows how much that feature pushed the prediction
+            # Calculate SHAP values
             shap_values = self.shap_explainer.shap_values(X_scaled)
-            
-            # Get base value (expected prediction before seeing features)
-            # EDUCATIONAL NOTE: This is the training set average prediction
-            # For balanced dataset: ~0.5, For imbalanced: ~class ratio
             base_value = self.shap_explainer.expected_value
-            
-            # Get prediction value (actual prediction after seeing features)
             prediction_value = self.ml_model.predict_proba(X_scaled)[0, 1]
             
-            # Extract feature values (unscale for human readability)
-            # EDUCATIONAL NOTE: X_scaled has mean=0, std=1
-            # We want original values for display (e.g., "3 CEI violations" not "1.5 std")
-            # But unscaling needs original data statistics - so we use scaled values for now
+            # Extract feature values
             feature_values = X_scaled[0]
             
-            # Create list of (feature_name, feature_value, shap_value) tuples
+            # Create feature explanations
             feature_explanations = []
-            for i, (name, value, shap_val) in enumerate(zip(
-                self.feature_names, feature_values, shap_values[0]
-            )):
+            for name, value, shap_val in zip(self.feature_names, feature_values, shap_values[0]):
                 feature_explanations.append({
                     'feature': name,
-                    'value': float(value),  # Convert numpy to Python float
+                    'value': float(value),
                     'shap_value': float(shap_val),
-                    'abs_shap': abs(float(shap_val))  # For sorting
+                    'abs_shap': abs(float(shap_val))
                 })
             
-            # Sort by absolute SHAP value (most impactful features first)
+            # Sort by importance
             feature_explanations.sort(key=lambda x: x['abs_shap'], reverse=True)
             
-            # Keep only top K features
+            # Keep top K
             top_features = feature_explanations[:top_k]
-            
-            # Remove abs_shap (was only for sorting)
             for feat in top_features:
                 del feat['abs_shap']
             
@@ -492,34 +395,25 @@ class HybridPredictor:
         semantic_weight: float = None,
         threshold: float = None,
         return_details: bool = True,
-        explain: bool = True
+        explain: bool = True,
+        llm_ready: bool = False
     ) -> Dict:
         """
-        Predict vulnerability with hybrid approach and SHAP explanations.
-        
-        COMPLETE WORKFLOW:
-        1. Extract feature vector from features dict
-        2. Scale features (normalize to mean=0, std=1)
-        3. Get ML prediction (XGBoost probability)
-        4. Get semantic risk (CEI analysis)
-        5. Check for overrides (domain knowledge)
-        6. Combine predictions (weighted ensemble)
-        7. Generate SHAP explanation (if requested)
-        8. Return comprehensive results
+        Predict vulnerability with hybrid approach.
         
         PARAMETERS:
-            features: Dict of contract features (93 features)
-            ml_weight: Weight for ML prediction (default: 0.30)
-            semantic_weight: Weight for semantic risk (default: 0.70)
+            features: Contract features dict (91 features)
+            ml_weight: ML component weight (default: 0.30)
+            semantic_weight: Semantic component weight (default: 0.70)
             threshold: Classification threshold (default: 0.20)
-            return_details: Include all metrics in response (default: True)
+            return_details: Include all metrics (default: True)
             explain: Generate SHAP explanation (default: True)
-                    Set to False for faster predictions when explanations not needed
+            llm_ready: Format output for LLM prompts (default: False)
         
         RETURNS:
-            Dict with prediction, confidence, explanations, and metadata
+            Dict with prediction, confidence, explanations, etc.
         """
-        # Use optimized defaults
+        # Use defaults
         if ml_weight is None:
             ml_weight = self.DEFAULT_ML_WEIGHT
         if semantic_weight is None:
@@ -527,26 +421,34 @@ class HybridPredictor:
         if threshold is None:
             threshold = self.DEFAULT_THRESHOLD
         
-        # Validate weights sum to 1.0
-        assert abs(ml_weight + semantic_weight - 1.0) < 0.001, "Weights must sum to 1.0"
+        # Extract feature vector (align to model's expected features)
+        # Get scaler's expected feature count
+        n_features_expected = self.scaler.n_features_in_
         
-        # Extract feature vector for ML model (must be in training order!)
-        # EDUCATIONAL NOTE: Wrong order = wrong predictions (silently!)
-        # Example: If model trained with [cei, loc] but we pass [loc, cei]
-        # → Model thinks "loc=3 cei=5000" when reality is "cei=3 loc=5000"
+        # If feature count mismatch, filter to scaler's features
+        if len(self.feature_names) != n_features_expected:
+            logger.warning(
+                f"Feature mismatch: {len(self.feature_names)} vs {n_features_expected}. "
+                f"Using first {n_features_expected} features."
+            )
+            model_features = self.feature_names[:n_features_expected]
+        else:
+            model_features = self.feature_names
+        
+        # Create feature vector
         X = pd.DataFrame(
-            [[features.get(f, 0) for f in self.feature_names]],
-            columns=self.feature_names
+            [[features.get(f, 0) for f in model_features]],
+            columns=model_features
         )
-        X_scaled = self.scaler.transform(X)
-                
-        # Get ML prediction (probability of vulnerable)
+        X_scaled = self.scaler.transform(X.values)
+        
+        # ML prediction
         ml_proba = self.ml_model.predict_proba(X_scaled)[0, 1]
         
-        # Calculate semantic risk (CEI pattern analysis)
+        # Semantic risk
         semantic_score, semantic_reasons = self.calculate_semantic_risk(features)
         
-        # Check for overrides (domain knowledge trumps ML)
+        # Check overrides
         override = self.check_overrides(features, ml_proba, semantic_score)
         
         if override:
@@ -554,13 +456,12 @@ class HybridPredictor:
             final_score = 1.0 if prediction == 1 else 0.0
             method = "OVERRIDE"
         else:
-            # Weighted ensemble (ML + semantic)
             final_score = (ml_weight * ml_proba) + (semantic_weight * semantic_score)
-            prediction = 1 if final_score >= threshold else 0
+            prediction = 1 if final_score > threshold else 0
             override_reason = None
             method = "HYBRID"
         
-        # Base result (always included)
+        # Base result
         result = {
             'prediction': prediction,
             'prediction_label': 'VULNERABLE' if prediction == 1 else 'SAFE',
@@ -568,7 +469,7 @@ class HybridPredictor:
             'method': method,
         }
         
-        # Add detailed information (if requested)
+        # Add details
         if return_details:
             result.update({
                 'ml_score': ml_proba,
@@ -581,70 +482,18 @@ class HybridPredictor:
                 'risk_level': self._get_risk_level(final_score),
             })
         
-        # Add SHAP explanation (if requested and available)
-        # EDUCATIONAL NOTE: SHAP adds ~0.1 seconds per prediction
-        # Disable if doing batch predictions (1000s of contracts)
+        # Add SHAP explanation
         if explain and self.shap_explainer is not None:
             result['shap_explanation'] = self.explain_with_shap(X_scaled, top_k=10)
         
+        # LLM-ready format
+        if llm_ready:
+            result = self._format_for_llm(result, features)
+        
         return result
     
-    def predict_batch(
-        self,
-        contracts: List[Dict],
-        ml_weight: float = None,
-        semantic_weight: float = None,
-        threshold: float = None,
-        explain: bool = False  # Default False for batch (performance)
-    ) -> pd.DataFrame:
-        """
-        Predict vulnerabilities for multiple contracts.
-        
-        EDUCATIONAL NOTE: Batch prediction is more efficient than loop
-        - Can leverage vectorization (NumPy operations on arrays)
-        - SHAP explanations disabled by default (slow for large batches)
-        - Use explain=True only for small batches (<100 contracts)
-        
-        PARAMETERS:
-            contracts: List of feature dictionaries
-            ml_weight: Weight for ML component
-            semantic_weight: Weight for semantic component
-            threshold: Classification threshold
-            explain: Whether to include SHAP explanations (slow!)
-        
-        RETURNS:
-            DataFrame with predictions and key metrics
-        """
-        results = []
-        
-        for features in contracts:
-            pred = self.predict(
-                features, ml_weight, semantic_weight, threshold, 
-                return_details=True, explain=explain
-            )
-            results.append({
-                'contract_name': features.get('contract_name', 'Unknown'),
-                'prediction': pred['prediction_label'],
-                'confidence': pred['confidence'],
-                'method': pred['method'],
-                'ml_score': pred['ml_score'],
-                'semantic_score': pred['semantic_score'],
-                'risk_level': pred['risk_level'],
-            })
-        
-        return pd.DataFrame(results)
-    
     def _get_risk_level(self, score: float) -> str:
-        """
-        Convert numerical score to human-readable risk level.
-        
-        EDUCATIONAL NOTE: Risk levels for user communication
-        - CRITICAL: Immediate action required
-        - HIGH: Review urgently
-        - MEDIUM: Review soon
-        - LOW: Consider reviewing
-        - MINIMAL: Likely safe
-        """
+        """Convert score to risk level."""
         if score >= 0.8:
             return "CRITICAL"
         elif score >= 0.6:
@@ -655,3 +504,84 @@ class HybridPredictor:
             return "LOW"
         else:
             return "MINIMAL"
+    
+    def _format_for_llm(self, result: Dict, features: Dict) -> Dict:
+        """
+        Format output for LLM prompts.
+        
+        STRUCTURED OUTPUT FOR LLM:
+        - Clear sections (prediction, analysis, metadata)
+        - Human-readable descriptions
+        - Actionable insights
+        - Context for report generation
+        """
+        llm_output = {
+            # Core prediction
+            "prediction": {
+                "label": result['prediction_label'],
+                "confidence": round(result['confidence'], 3),
+                "risk_level": result['risk_level'],
+                "method": result['method']
+            },
+            
+            # ML analysis
+            "ml_analysis": {
+                "score": round(result['ml_score'], 3),
+                "weight": result['ml_weight'],
+                "interpretation": "Model detects vulnerability patterns" if result['ml_score'] > 0.5 else "Model detects safe patterns"
+            },
+            
+            # Semantic analysis
+            "semantic_analysis": {
+                "score": round(result['semantic_score'], 3),
+                "weight": result['semantic_weight'],
+                "cei_violations": int(features.get('cei_violations', 0)),
+                "cei_pattern_score": round(features.get('cei_pattern_score', 0), 3),
+                "has_reentrancy_guard": bool(features.get('has_reentrancy_guard', False)),
+                "state_after_call_count": int(features.get('state_after_call_count', 0)),
+                "findings": result.get('semantic_reasons', [])
+            },
+            
+            # Contract metadata
+            "contract_metadata": {
+                "lines_of_code": int(features.get('lines_of_code', 0)),
+                "num_functions": int(features.get('num_functions', 0)),
+                "num_external_calls": int(features.get('num_external_calls', 0)),
+                "max_complexity": int(features.get('max_cyclomatic_complexity', 0)),
+                "has_inline_assembly": bool(features.get('has_inline_assembly', False))
+            },
+            
+            # Slither detectors
+            "static_analysis": {
+                "total_issues": int(features.get('total_detector_hits', 0)),
+                "high_severity": int(features.get('high_severity_count', 0)),
+                "medium_severity": int(features.get('medium_severity_count', 0)),
+                "low_severity": int(features.get('low_severity_count', 0)),
+                "has_reentrancy": bool(features.get('has_reentrancy', False)),
+                "has_unchecked_call": bool(features.get('has_unchecked_call', False)),
+                "has_tx_origin": bool(features.get('has_tx_origin', False))
+            }
+        }
+        
+        # Add SHAP if available
+        if 'shap_explanation' in result and 'top_features' in result['shap_explanation']:
+            llm_output['explainability'] = {
+                "method": "SHAP (SHapley Additive exPlanations)",
+                "top_risk_factors": [
+                    {
+                        "feature": f['feature'],
+                        "contribution": round(f['shap_value'], 3),
+                        "direction": "increases risk" if f['shap_value'] > 0 else "decreases risk"
+                    }
+                    for f in result['shap_explanation']['top_features'][:5]
+                ]
+            }
+        
+        # Add override info if applicable
+        if result.get('override_reason'):
+            llm_output['override'] = {
+                "triggered": True,
+                "reason": result['override_reason']
+            }
+        
+        return llm_output

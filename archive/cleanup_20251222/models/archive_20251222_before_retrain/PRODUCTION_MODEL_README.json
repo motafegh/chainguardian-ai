@@ -1,0 +1,11 @@
+{
+  "model_type": "XGBoost_Calibrated",
+  "calibration_method": "isotonic",
+  "scaler_type": "RobustScaler",
+  "mlflow_run_id": "4843728dddf8467894386cf6514a5824",
+  "mlflow_experiment": "smart_contract_robust_calibrated",
+  "test_auc": 0.9536487570168404,
+  "brier_score": 0.04327478268984462,
+  "exported_date": "2025-12-21T19:40:33.757874",
+  "notes": "Calibrated model with RobustScaler for outlier robustness"
+}

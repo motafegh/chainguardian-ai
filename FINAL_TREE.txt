@@ -1,0 +1,172 @@
+.
+├── CURRENT_STATUS.md
+├── FINAL_TREE.txt
+├── Full_RoadMap.md
+├── PROGRESS.md
+├── PROJECT_SUMMARY.md
+├── README.md
+├── SESSION_REPORT_20251221.md
+├── STRUCTURE.md
+├── WORKFLOW.md
+├── adversarial_test_output.txt
+├── calibration_curve.png
+├── calibration_curve_XGBoost.png
+├── cleanup_project.sh
+├── cleanup_to_archive.sh
+├── config
+│   └── collection_config.yaml
+├── confusion_matrix.png
+├── docker-compose.yml
+├── docs
+│   ├── DATASET_VALIDATION_REPORT.md
+│   ├── DAY4_COMPLETE_FINAL.md
+│   ├── DAY4_SEMANTIC_ANALYSIS.md
+│   ├── FINAL_PROJECT_STRUCTURE.md
+│   ├── ML_STRATEGY.md
+│   ├── api
+│   │   ├── api_specification.md
+│   │   ├── error_codes.md
+│   │   ├── integration_plan.md
+│   │   └── pydantic_schemas.md
+│   ├── feature_extraction_results.md
+│   └── learning_notes
+│       └── README.md
+├── logs
+├── models
+│   ├── PRODUCTION_MODEL_README.json
+│   ├── backup_20251222_1425
+│   ├── feature_importance_20251222_1341.csv
+│   ├── feature_metadata.json
+│   └── feature_names_20251222_1341.txt
+├── notebooks
+│   ├── 01_vulnerability_distribution.png
+│   ├── README.md
+│   └── reports
+│       └── figures
+├── package-lock.json
+├── package.json
+├── poetry.lock
+├── pyproject.toml
+├── reports
+│   ├── adversarial_validation_summary.txt
+│   ├── baseline_training_results.txt
+│   ├── best_hybrid_config.json
+│   ├── database_audit_summary.txt
+│   ├── day2_summary.txt
+│   ├── feature_importance.csv
+│   ├── feature_importance_honest.csv
+│   ├── figures
+│   │   ├── confusion_matrices.png
+│   │   ├── feature_importance.png
+│   │   ├── proxy_vs_honest_features.png
+│   │   └── roc_curves.png
+│   ├── final_inverted_signals_discovery.txt
+│   ├── honest_model_summary.txt
+│   ├── hybrid_adversarial_results.csv
+│   ├── hybrid_cei_results.csv
+│   ├── hybrid_optimization_grid_search.csv
+│   ├── hybrid_optimization_production.csv
+│   ├── hybrid_performance_summary.json
+│   ├── hyperparameter_search.csv
+│   ├── hyperparameter_tradeoff.png
+│   ├── model_comparison.csv
+│   ├── pattern_learning_results.txt
+│   └── vulnerability_only_model_results.txt
+├── roc_curve.png
+├── roc_curve_GradientBoosting.png
+├── roc_curve_RandomForest.png
+├── roc_curve_XGBoost.png
+├── roc_curve_XGBoost_calibrated.png
+├── scripts
+│   ├── 1_setup
+│   │   ├── apply_semantic_schema.py
+│   │   ├── check_db_schema.py
+│   │   ├── create_tables.py
+│   │   ├── create_tables.py.backup
+│   │   ├── reset_and_extract_all.py
+│   │   ├── reset_and_extract_all_COMPLETE.py
+│   │   ├── test_db_connection.py
+│   │   └── update_schema_semantic.sql
+│   ├── 2_collection
+│   │   ├── audited_defi_collector.py
+│   │   ├── download_smartbugs_curated.py
+│   │   ├── extract_semantic_direct.py
+│   │   ├── import_openzeppelin_with_mocks.py
+│   │   ├── import_production_dataset.py
+│   │   ├── import_smartbugs_to_db.py
+│   │   ├── master_collector.py
+│   │   ├── reextract_with_semantic.py
+│   │   ├── rekt_news_collector.py
+│   │   ├── swc_registry_collector.py
+│   │   └── trail_of_bits_collector.py
+│   ├── 3_training
+│   │   └── train_production_model.py
+│   ├── 4_fixes
+│   │   ├── analyze_tradeoff.py
+│   │   ├── apply_fuzzy_match_fix.py
+│   │   ├── check_all_extractors.py
+│   │   ├── diagnose_extraction_failures.py
+│   │   ├── fix_ast_analyzer_manual.py
+│   │   ├── fix_ast_final.py
+│   │   ├── fix_pipeline_contract_detection.py
+│   │   ├── hyperparameter_search.py
+│   │   └── update_production_config.py
+│   ├── 9_utils
+│   │   ├── check_duplicates.py
+│   │   ├── database_info.py
+│   │   ├── quick_db_queries.sh
+│   │   ├── verify_data_integrity.py
+│   │   ├── verify_database_standalone.py
+│   │   └── verify_dataset.py
+│   ├── README.md
+│   ├── fix_adversarial_semantic.py
+│   ├── inspect_data.py
+│   ├── test_integrated_pipeline.py
+│   └── verify_dataset.py
+├── src
+│   └── chainguardian
+│       ├── __init__.py
+│       ├── api
+│       ├── data_collection
+│       ├── database
+│       ├── feature_extraction
+│       ├── llm
+│       ├── ml
+│       └── mlops
+├── test_contracts
+│   ├── 01_super_simple_safe.sol
+│   ├── 02_obvious_reentrancy.sol
+│   ├── 03_complex_but_safe.sol
+│   ├── 04_simple_but_vulnerable.sol
+│   ├── 05_timestamp_manipulation.sol
+│   ├── 06_unchecked_external_call.sol
+│   ├── 07_integer_overflow_old.sol
+│   ├── 08_safe_with_checks.sol
+│   ├── 09_delegatecall_danger.sol
+│   ├── 10_tx_origin_auth.sol
+│   ├── 11_hidden_reentrancy.sol
+│   ├── 12_false_positive_trap.sol
+│   ├── 13_modern_defi_safe.sol
+│   ├── 14_assembly_safe.sol
+│   ├── 15_gas_griefing.sol
+│   ├── 16_front_running_vulnerable.sol
+│   ├── 17_logic_error.sol
+│   ├── 18_oracle_manipulation.sol
+│   ├── 19_flash_loan_attack_vector.sol
+│   ├── 20_upgradeable_safe.sol
+│   ├── 21_timelock_missing.sol
+│   ├── 22_empty_contract.sol
+│   ├── 23_only_events.sol
+│   ├── 24_intentional_honeypot.sol
+│   └── 25_gas_optimization_extreme.sol
+├── test_plot.png
+└── tests
+    ├── README.md
+    ├── __init__.py
+    ├── integration
+    │   ├── __init__.py
+    │   └── test_collection_only.py
+    └── unit
+        └── __init__.py
+
+32 directories, 138 files

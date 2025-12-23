@@ -1,0 +1,168 @@
+# (Paste the entire YAML config from previous section here)
+# ChainGuardian AI - Hybrid Predictor Configuration
+# All tunable parameters centralized for easy management and A/B testing
+
+# ============ HYPERPARAMETER TUNING ============
+hyperparameter_tuning:
+  enable_optuna: true
+  n_trials: 50                     # Reduce for faster iteration
+  timeout_seconds: 3600
+  direction: maximize
+  study_name: "chainguardian_optimization"
+  metrics:
+    primary: "roc_auc"
+    secondary: ["accuracy", "brier_score"]
+  
+  # Search spaces (Optuna will explore these)
+  search_spaces:
+    xgboost:
+      n_estimators: [100, 300]
+      max_depth: [3, 8]
+      learning_rate: [0.01, 0.2]
+      subsample: [0.6, 1.0]
+      colsample_bytree: [0.6, 1.0]
+      gamma: [0, 5]
+      reg_alpha: [0, 10]
+      reg_lambda: [1, 10]
+    
+    random_forest:
+      n_estimators: [100, 300]
+      max_depth: [5, 15]
+      min_samples_split: [2, 10]
+      min_samples_leaf: [1, 4]
+    
+    lightgbm:
+      n_estimators: [100, 300]
+      num_leaves: [20, 100]
+      learning_rate: [0.01, 0.2]
+      feature_fraction: [0.6, 1.0]
+
+# ============ ENSEMBLE CONFIGURATION ============
+ensemble:
+  enabled: true
+  voting_method: "soft"             # soft, hard, or weighted
+  initial_weights:                  # Can be optimized later
+    xgboost: 0.4
+    random_forest: 0.3
+    lightgbm: 0.2
+    logistic_regression: 0.1
+  calibration_method: "sigmoid"     # Changed from 'isotonic' for small datasets
+  
+  # Uncertainty quantification
+  uncertainty:
+    enable_bootstrap: true
+    n_bootstrap_samples: 100
+    confidence_level: 0.95
+
+# ============ HYBRID PREDICTOR WEIGHTS ============
+weights:
+  # Dynamic weight adjustment based on data quality
+  data_quality_profiles:
+    EXCELLENT:
+      ml: 0.3
+      semantic: 0.7
+      confidence_boost: 0.2
+    GOOD:
+      ml: 0.4
+      semantic: 0.6
+      confidence_boost: 0.1
+    FAIR:
+      ml: 0.6
+      semantic: 0.4
+      confidence_boost: 0.0
+    POOR:
+      ml: 0.9
+      semantic: 0.1
+      confidence_boost: -0.1
+    UNKNOWN:
+      ml: 0.5
+      semantic: 0.5
+      confidence_boost: -0.2
+  
+  # Semantic risk weights (tunable)
+  semantic_risk:
+    cei_violation: 0.40
+    cei_score_low: 0.20
+    state_after_call: 0.30
+    unchecked_critical: 0.20
+    reentrancy_guard_bonus: -0.50
+  
+  # Confidence calibration parameters
+  confidence_calibration:
+    ml_certainty_alignment: 0.4
+    semantic_completeness: 0.25
+    contradiction_penalty: -0.2
+    data_quality_multiplier: 1.3
+    static_signal_boost: 0.15
+    moderate_ml_boost: 0.25
+
+# ============ DATA AUGMENTATION ============
+augmentation:
+  enabled: true
+  strategy: "smote"                 # Options: mixup, gaussian, smote, none
+  mixup_alpha: 0.2                  # Mixup: Beta distribution parameter
+  gaussian_std: 0.05                # Gaussian noise standard deviation
+  max_augmentation_factor: 2.0      # Don't generate more than 2x original data
+
+# ============ BATCH PROCESSING ============
+batch_processing:
+  enabled: true
+  batch_size: 32
+  max_workers: 4                    # For parallel processing
+  enable_vectorization: true        # Use numpy vectorization when possible
+
+# ============ MODEL REGISTRY ============
+model_registry:
+  registry_path: "models/registry"
+  keep_last_n_versions: 10
+  auto_versioning: true
+  metadata_schema:
+    - model_type
+    - performance_metrics
+    - training_date
+    - feature_list
+    - hyperparameters
+
+# ============ MONITORING ============
+monitoring:
+  enable_performance_logging: true
+  log_dir: "logs"
+  metrics_to_track:
+    - accuracy
+    - auc
+    - inference_latency
+    - data_quality_scores
+  
+  drift_detection:
+    enabled: true
+    window_size: 1000               # Samples to consider for drift
+    drift_threshold: 0.05           # KS test threshold
+    check_interval: 100             # Check every 100 predictions
+
+# ============ FEATURE ENGINEERING ============
+features:
+  # These features are preserved from your comprehensive engineering
+  preserve_all_engineered: true
+  
+  # Feature groups for selective augmentation
+  boolean_features: "has_*"          # Wildcard pattern for boolean features
+  continuous_features: "*_count,*_ratio,*_score"
+  categorical_features: "none"       # Not used in our current setup
+  
+  # Feature scaling
+  scaler_type: "robust"             # Options: standard, robust, minmax
+
+# ============ THRESHOLDS ============
+thresholds:
+  vulnerability_prediction: 0.20
+  high_confidence: 0.85
+  low_confidence: 0.40
+  override_cei_violations: 3
+  override_perfect_cei_with_guard: true
+
+# ============ PERFORMANCE OPTIMIZATION ============
+performance:
+  enable_feature_caching: true
+  cache_size: 1000
+  prediction_timeout_ms: 5000       # Max time per prediction
+  memory_limit_mb: 4096             # Memory limit for batch processing

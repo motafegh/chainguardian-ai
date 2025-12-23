@@ -62,7 +62,7 @@ class FeaturePipeline:
         """Initialize pipeline with version cache and thread safety."""
         from chainguardian.database.manager import DatabaseManager
         
-        self.features: list[Dict] = []  # Keep for backwards compatibility
+        self.features = None  # Keep for backwards compatibility
         self.db = DatabaseManager()  # Database connection
         logger.info("✅ Database connection ready")
         
@@ -694,7 +694,7 @@ class FeaturePipeline:
         # SAVE TO DATABASE (Thread-safe)
         # ================================================================
         with self._lock:
-            self.features.append(combined_features)
+            #self.features.append(combined_features)
             try:
                 contract_id = self.db.save_contract_and_features(combined_features)
                 logger.debug(f"Saved to database: contract_id={contract_id}")

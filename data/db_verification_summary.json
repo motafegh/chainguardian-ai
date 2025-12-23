@@ -1,0 +1,9 @@
+{
+  "total_contracts": 582,
+  "successful_extractions": 429,
+  "vulnerable": 194,
+  "safe": 235,
+  "feature_count": 93,
+  "cei_violations_found": 10,
+  "ml_ready": false
+}
