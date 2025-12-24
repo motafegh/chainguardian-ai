@@ -396,7 +396,7 @@ try:
     project_root = Path(__file__).parent.parent.parent
     sys.path.append(str(project_root))
 
-    from src.chainguardian.ml.models.hybrid_predictor_enhanced import EnhancedHybridPredictor
+    from chainguardian.ml.models.hybrid_predictor_enhanced_v2.models.hybrid_predictor_enhanced import EnhancedHybridPredictor
     
     # Create sample features for validation
     sample_idx = 0

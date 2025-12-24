@@ -138,7 +138,7 @@ poetry run chainguardian audit \
 
 #### **2. Start API Server**
 ```bash
-poetry run uvicorn src.chainguardian.api.main:app --reload
+poetry run uvicorn chainguardian.api.main:app --reload
 
 # API available at http://localhost:8000
 # OpenAPI docs at http://localhost:8000/docs

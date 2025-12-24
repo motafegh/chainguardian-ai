@@ -37,11 +37,11 @@ def main():
                 'from model_registry import ModelRegistry'
             ],
             'new': [
-                'from src.chainguardian.ml.core.config_manager import ConfigManager, get_config',
-                'from src.chainguardian.ml.core.hyperparameter_tuner import HyperparameterTuner',
-                'from src.chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble',
-                'from src.chainguardian.ml.core.data_augmenter import SmartContractAugmenter',
-                'from src.chainguardian.ml.core.model_registry import ModelRegistry'
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.config_manager import ConfigManager, get_config',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.hyperparameter_tuner import HyperparameterTuner',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.heterogeneous_ensemble import HeterogeneousEnsemble',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.data_augmenter import SmartContractAugmenter',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.model_registry import ModelRegistry'
             ]
         },
         {
@@ -52,9 +52,9 @@ def main():
                 'from heterogeneous_ensemble import HeterogeneousEnsemble'
             ],
             'new': [
-                'from src.chainguardian.ml.core.config_manager import get_config',
-                'from src.chainguardian.ml.core.monitoring import MLMonitor',
-                'from src.chainguardian.ml.core.heterogeneous_ensemble import HeterogeneousEnsemble'
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.config_manager import get_config',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.monitoring import MLMonitor',
+                'from chainguardian.ml.models.hybrid_predictor_enhanced_v2.core.heterogeneous_ensemble import HeterogeneousEnsemble'
             ]
         }
     ]

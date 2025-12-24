@@ -6,6 +6,7 @@ authors = ["Ali rj <you@example.com>"]
 license = "MIT"
 readme = "README.md"
 
+# Safe packages configuration - minimal change
 packages = [
     { include = "chainguardian", from = "src" }
 ]
@@ -74,11 +75,50 @@ pytest-asyncio = "^0.23.0"
 black = "^25.12.0"
 httpx = "^0.28.1"
 gpustat = "^1.1.1"
+mypy = "^1.19.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+# MyPy configuration - ADD THIS SECTION
+[tool.mypy]
+python_version = "3.11"
+
+# Critical: Disable cache to avoid duplicate module detection
+cache_dir = "/dev/null"
+
+# Safe path configuration
+mypy_path = "src"
+
+# Type checking settings (non-breaking)
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Keep as false to avoid breaking existing code
+disallow_incomplete_defs = false  # Keep as false
+ignore_missing_imports = true  # Keep as true to avoid import errors
+
+# Package discovery
+namespace_packages = true
+explicit_package_bases = true
+
+# Exclude patterns (safe)
+exclude = [
+    "^tests/",
+    "^scripts/",
+    "^docs/",
+    "^build/",
+    "^dist/",
+    "^\\.venv/",
+    "^\\.mypy_cache/",
+]
+
+# Plugin for pydantic (if you use it)
+plugins = [
+    "pydantic.mypy",
+]
+
+# Keep existing pytest configuration unchanged
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
@@ -86,6 +126,7 @@ addopts = "-v --import-mode=importlib"
 log_cli = true
 log_cli_level = "INFO"
 
+# Keep existing black configuration unchanged
 [tool.black]
 line-length = 88
 target-version = ['py311']

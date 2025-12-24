@@ -134,16 +134,21 @@ class EnhancedHybridPredictorV2:
         enable_monitoring: bool = True
     ):
         """Initialize enhanced predictor v2."""
-        # Load configuration
-        self.config = get_config()
         
-        # Paths - use provided models_dir or default
+        # ✅ STEP 1: Initialize ALL attributes FIRST (defensive programming)
+        self.use_ensemble = False  # Default value, will update if needed
+        self.config = get_config()
+        self.shap_explainer = None
+        self.monitor = None
+        self.feature_cache = {}
+        
+        # ✅ STEP 2: Determine paths
         if models_dir:
             models_dir = Path(models_dir)
         else:
-            models_dir = Path(__file__).parent.parent.parent.parent.parent /'config/models'
+            models_dir = Path(__file__).parent.parent.parent.parent.parent / 'config/models'
         
-        # Set default paths if not provided
+        # ✅ STEP 3: Set model path and use_ensemble flag
         if model_path is None:
             # Try ensemble model first, fall back to single model
             ensemble_path = models_dir / "ensemble_model_v7.pkl"
@@ -159,7 +164,13 @@ class EnhancedHybridPredictorV2:
                 # Fall back to v6 for backward compatibility
                 model_path = models_dir / "production_model_v6.pkl"
                 self.use_ensemble = False
+        else:
+            # ✅ NEW: Handle case where model_path is provided
+            # Detect if it's an ensemble based on filename
+            model_path = Path(model_path)
+            self.use_ensemble = "ensemble" in model_path.name
         
+        # ✅ STEP 4: Set scaler path (now self.use_ensemble always exists)
         if scaler_path is None:
             if self.use_ensemble:
                 scaler_path = models_dir / "ensemble_scaler_v7.pkl"
@@ -169,30 +180,27 @@ class EnhancedHybridPredictorV2:
         if metadata_path is None:
             metadata_path = models_dir / "feature_metadata_v7.json"
         
-        # Load model and scaler
+        # ✅ STEP 5: Load models
         self._load_models(model_path, scaler_path)
         
-        # Load feature names and metadata
+        # ✅ STEP 6: Load metadata
         self._load_metadata(metadata_path)
         
-        # Initialize SHAP explainer
-        self.shap_explainer = None
+        # ✅ STEP 7: Initialize SHAP (optional)
         if enable_shap and SHAP_AVAILABLE:
             self._initialize_shap()
         
-        # Initialize monitoring
-        self.monitor = None
+        # ✅ STEP 8: Initialize monitoring (optional)
         if enable_monitoring:
             self._initialize_monitoring()
         
-        # Feature cache for batch processing
-        self.feature_cache = {}
+        # ✅ STEP 9: Warmup
         self._warmup_prediction()
-    
-        logger.info(f"✅ EnhancedHybridPredictorV2 initialized")
+
         logger.info(f"✅ EnhancedHybridPredictorV2 initialized")
         logger.info(f"   Using {'ensemble' if self.use_ensemble else 'single'} model")
         logger.info(f"   Features: {len(self.feature_names)}")
+
     def _warmup_prediction(self):
         """
         Run warmup predictions for both fast and full paths.
@@ -539,46 +547,6 @@ class EnhancedHybridPredictorV2:
             # ✅ Use pre-computed semantic data (no recalculation!)
             semantic_score = semantic_data[i]['score']
             semantic_reasons = semantic_data[i]['reasons']
-            
-            # Calculate dynamic weights
-            ml_weight, semantic_weight = self.calculate_dynamic_weights(
-                data_completeness.get_quality_level()
-            )
-            
-            # Apply hybrid scoring
-            final_score = (ml_weight * ml_probas[i]) + (semantic_weight * semantic_score)
-            prediction = 1 if final_score > self.config.thresholds.get('vulnerability_prediction', 0.2) else 0
-            
-            # Calibrate confidence
-            calibrated_confidence, calibration_notes = self.calibrate_confidence(
-                ml_probas[i], semantic_score, features, data_completeness
-            )
-            
-            # Compile results
-            result = self._compile_results(
-                prediction=prediction,
-                final_score=final_score,
-                ml_proba=ml_probas[i],
-                semantic_score=semantic_score,
-                calibrated_confidence=calibrated_confidence,
-                ml_uncertainty=ml_uncertainties[i],
-                data_completeness=data_completeness,
-                semantic_reasons=semantic_reasons,
-                calibration_notes=calibration_notes,
-                ml_weight=ml_weight,
-                semantic_weight=semantic_weight
-            )
-            
-            batch_results.append(result)
-        
-        return batch_results
-
-        # Process each sample in batch
-        batch_results = []
-        for i, features in enumerate(batch):
-            # These steps are still per-sample (data quality, semantic analysis)
-            data_completeness = self.assess_data_completeness(features)
-            semantic_score, semantic_reasons, _ = self.calculate_semantic_risk(features)
             
             # Calculate dynamic weights
             ml_weight, semantic_weight = self.calculate_dynamic_weights(

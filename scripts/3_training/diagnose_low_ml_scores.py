@@ -14,7 +14,7 @@ import seaborn as sns
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
-from src.chainguardian.ml.models.hybrid_predictor_enhanced import EnhancedHybridPredictor
+from chainguardian.ml.models.hybrid_predictor_enhanced_v2.models.hybrid_predictor_enhanced import EnhancedHybridPredictor
 
 def analyze_low_ml_score_contracts():
     """Analyze contracts with low ML scores despite being vulnerable."""
