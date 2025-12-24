@@ -1,0 +1,30 @@
+{
+  "version": "1.0.5",
+  "timestamp": "2025-12-24T12:55:03.005444",
+  "hash": "f97288f458c8781f7085f77ef5314038",
+  "description": "Test model for path validation",
+  "performance_metrics": {
+    "test_auc": 0.95,
+    "test_accuracy": 0.92
+  },
+  "training_info": {
+    "version": "test_v1",
+    "dataset_size": 50
+  },
+  "feature_count": 10,
+  "model_type": "RandomForestClassifier",
+  "feature_names": [
+    "feature_0",
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4",
+    "feature_5",
+    "feature_6",
+    "feature_7",
+    "feature_8",
+    "feature_9"
+  ],
+  "config": {},
+  "hyperparameters": {}
+}

@@ -73,15 +73,220 @@
   ],
   "model_type": "ensemble",
   "performance_metrics": {
-    "test_auc": 0.9876208897485493,
-    "test_accuracy": 0.9463087248322147,
-    "test_brier": 0.03775564644829294
+    "test_auc": 0.9978154137201026,
+    "test_accuracy": 0.9832214765100671,
+    "test_brier": 0.014609806108369549
   },
   "training_info": {
     "version": "v7_enhanced",
-    "date": "2025-12-23T23:16:24.492081",
-    "dataset_size": 745,
+    "date": "2025-12-24T13:16:34.916580",
+    "dataset_size": 2980,
     "ensemble_used": true,
     "hyperparameter_tuning": true
+  },
+  "config": {
+    "hyperparameter_tuning": {
+      "enable_optuna": true,
+      "n_trials": 3,
+      "timeout_seconds": 120,
+      "study_name": "chainguardian_optimization_v2",
+      "search_spaces": {
+        "xgboost": {
+          "n_estimators": [
+            50,
+            100
+          ],
+          "max_depth": [
+            3,
+            5
+          ],
+          "learning_rate": [
+            0.05,
+            0.1
+          ],
+          "subsample": [
+            0.5,
+            1.0
+          ],
+          "colsample_bytree": [
+            0.5,
+            1.0
+          ],
+          "gamma": [
+            0,
+            10
+          ],
+          "reg_alpha": [
+            0,
+            20
+          ],
+          "reg_lambda": [
+            0.1,
+            20
+          ],
+          "tree_method": [
+            "hist",
+            "gpu_hist"
+          ],
+          "predictor": [
+            "gpu_predictor"
+          ]
+        },
+        "random_forest": {
+          "n_estimators": [
+            50,
+            100
+          ],
+          "max_depth": [
+            5,
+            10
+          ],
+          "min_samples_split": [
+            2,
+            20
+          ],
+          "min_samples_leaf": [
+            1,
+            10
+          ],
+          "n_jobs": -1,
+          "max_features": [
+            0.3,
+            1.0
+          ]
+        },
+        "lightgbm": {
+          "n_estimators": [
+            50,
+            100
+          ],
+          "num_leaves": [
+            20,
+            60
+          ],
+          "learning_rate": [
+            0.005,
+            0.3
+          ],
+          "feature_fraction": [
+            0.5,
+            1.0
+          ],
+          "bagging_fraction": [
+            0.5,
+            1.0
+          ],
+          "bagging_freq": [
+            1,
+            10
+          ],
+          "min_child_samples": [
+            5,
+            50
+          ],
+          "device": [
+            "gpu"
+          ],
+          "gpu_platform_id": 0,
+          "gpu_device_id": 0
+        }
+      }
+    },
+    "ensemble": {
+      "enabled": true,
+      "voting_method": "soft",
+      "calibration_method": {},
+      "initial_weights": {
+        "xgboost": 0.4,
+        "random_forest": 0.3,
+        "lightgbm": 0.2,
+        "logistic_regression": 0.1
+      },
+      "uncertainty": {
+        "enable_bootstrap": true,
+        "n_bootstrap_samples": 100,
+        "confidence_level": 0.95
+      }
+    },
+    "weights": {},
+    "augmentation": {
+      "enabled": true,
+      "strategy": "smote",
+      "mixup_alpha": 0.4,
+      "gaussian_std": 0.1,
+      "smote_neighbors": 10,
+      "max_augmentation_factor": 4.0,
+      "progressive_augmentation": true,
+      "epochs": 3,
+      "quality_filter": true
+    },
+    "batch_processing": {
+      "enabled": true,
+      "batch_size": 512,
+      "max_workers": 8,
+      "enable_vectorization": true,
+      "use_gpu_batches": true,
+      "preload_data": true,
+      "cache_size_gb": 16,
+      "chunk_size": 10000
+    },
+    "model_registry": {
+      "registry_path": "config/models/registry",
+      "keep_last_n_versions": 20,
+      "auto_versioning": true,
+      "enable_experiment_tracking": true,
+      "metadata_schema": [
+        "model_type",
+        "performance_metrics",
+        "training_date",
+        "feature_list",
+        "hyperparameters",
+        "hardware_used",
+        "training_time",
+        "data_statistics"
+      ],
+      "gpu_metadata": {
+        "track_gpu_metrics": true,
+        "memory_usage": true,
+        "inference_speed": true
+      }
+    },
+    "monitoring": {
+      "enable_performance_logging": true,
+      "log_dir": "logs",
+      "realtime_metrics": true,
+      "enable_tensorboard": true,
+      "metrics_to_track": [
+        "accuracy",
+        "auc",
+        "precision",
+        "recall",
+        "f1_score",
+        "inference_latency",
+        "gpu_memory_usage",
+        "cpu_utilization",
+        "data_quality_scores"
+      ],
+      "drift_detection": {
+        "enabled": true,
+        "window_size": 5000,
+        "drift_threshold": 0.03,
+        "check_interval": 1000,
+        "methods": [
+          "ks_test",
+          "mmd",
+          "classifier"
+        ]
+      }
+    },
+    "thresholds": {
+      "vulnerability_prediction": 0.15,
+      "high_confidence": 0.9,
+      "low_confidence": 0.3,
+      "override_cei_violations": 2,
+      "override_perfect_cei_with_guard": true,
+      "adaptive_thresholds": true,
+      "threshold_smoothing": 0.1
+    }
   }
 }

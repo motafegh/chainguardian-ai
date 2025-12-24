@@ -14,6 +14,7 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 import logging
 from typing import Dict, Any, Optional, Union  # Add Union
+from chainguardian.ml.core.path_resolver import path_resolver
 
 logger = logging.getLogger(__name__)
 
@@ -206,30 +207,34 @@ class ConfigManager:
         Returns:
             Config object
         """
-        # Try explicit path first
-        if config_path and Path(config_path).exists():
-            config_dict = self._load_yaml(config_path)
-        else:
-            # Try default paths
-            config_dict = None
-            for path in self.default_config_paths:
-                if Path(path).exists():
-                    config_dict = self._load_yaml(path)
-                    logger.info(f"Loaded configuration from {path}")
-                    break
+        # Try explicit path first (convert to absolute)
+        if config_path:
+            config_path_obj = Path(config_path)
+            if not config_path_obj.is_absolute():
+                config_path_obj = path_resolver.project_root / config_path_obj
             
-            if config_dict is None:
-                logger.warning("No configuration file found. Using defaults.")
-                config_dict = {}
+            if config_path_obj.exists():
+                config_dict = self._load_yaml(str(config_path_obj))
+                logger.info(f"✅ Loaded config from: {config_path_obj}")
+            else:
+                config_dict = None
+        else:
+            # Try default paths (now using path_resolver)
+            config_dict = None
+            default_config = path_resolver.get_config_file("hybrid_config.yaml")
+            
+            if default_config.exists():
+                config_dict = self._load_yaml(str(default_config))
+                logger.info(f"✅ Loaded config from: {default_config}")
+        
+        if config_dict is None:
+            logger.warning("⚠️  No configuration file found. Using defaults.")
+            config_dict = {}
         
         # Convert nested dictionaries to dataclasses
         self.config = self._dict_to_dataclass(config_dict, Config)
         
-        # Set up paths relative to config file location
-        if config_path:
-            self._setup_paths(config_path)
-        
-        logger.info("Configuration loaded successfully")
+        logger.info("✅ Configuration loaded successfully")
         return self.config
     
     def _load_yaml(self, path: str) -> Dict[str, Any]:
@@ -263,10 +268,9 @@ class ConfigManager:
     
     def _setup_paths(self, config_path: str):
         """Setup relative paths based on config file location."""
-        config_dir = Path(config_path).parent
-        # os.chdir(config_dir)
-        # logger.info(f"Working directory set to: {os.getcwd()}")
-    
+        logger.debug(f"Config loaded from: {config_path}")
+        logger.debug(f"Project root: {path_resolver.project_root}")
+        
     def get_config(self) -> Config:
         """Get current configuration."""
         if self.config is None:

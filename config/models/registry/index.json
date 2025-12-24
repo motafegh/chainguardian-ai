@@ -54,12 +54,44 @@
         "test_accuracy": 0.9463087248322147,
         "test_brier": 0.03775564644829295
       }
+    },
+    "1.0.5": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.5",
+      "timestamp": "2025-12-24T12:55:03.005444",
+      "hash": "f97288f458c8781f7085f77ef5314038",
+      "description": "Test model for path validation",
+      "performance": {
+        "test_auc": 0.95,
+        "test_accuracy": 0.92
+      }
+    },
+    "1.0.6": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.6",
+      "timestamp": "2025-12-24T13:09:10.383798",
+      "hash": "e488d185fa1229034e462907310a6d45",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829295
+      }
+    },
+    "1.0.7": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.7",
+      "timestamp": "2025-12-24T13:16:34.919741",
+      "hash": "cae79f2a2d6ef54be748430ac2f8843b",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9978154137201026,
+        "test_accuracy": 0.9832214765100671,
+        "test_brier": 0.014609806108369549
+      }
     }
   },
-  "latest_version": "1.0.4",
+  "latest_version": "1.0.7",
   "metadata": {
     "created": "2025-12-23T20:16:11.888750",
-    "total_models": 5,
-    "last_updated": "2025-12-23T22:53:40.175872"
+    "total_models": 8,
+    "last_updated": "2025-12-24T13:16:35.006251"
   }
 }

@@ -15,6 +15,7 @@ import hashlib
 from typing import Dict, List, Optional, Any, Tuple
 import logging
 import shutil
+from chainguardian.ml.core.path_resolver import path_resolver
 
 logger = logging.getLogger(__name__)
 
@@ -24,21 +25,33 @@ class ModelRegistry:
     Implements semantic versioning and comprehensive metadata storage.
     """
     
-    def __init__(self, registry_path: str = "config/models/registry"):
+    def __init__(self, registry_path: Optional[str] = None):
         """
-        Initialize model registry.
+        Initialize model registry with absolute paths.
         
         Args:
-            registry_path: Path to registry directory
+            registry_path: Path to registry directory (relative to project root or absolute)
         """
-        self.registry_path = Path(registry_path)
+        if registry_path is None:
+            # Default: use path_resolver
+            self.registry_path = path_resolver.registry_dir
+        else:
+            # Convert to absolute path
+            registry_path_obj = Path(registry_path)
+            if not registry_path_obj.is_absolute():
+                self.registry_path = path_resolver.project_root / registry_path_obj
+            else:
+                self.registry_path = registry_path_obj
+        
+        # Ensure directory exists
         self.registry_path.mkdir(parents=True, exist_ok=True)
         
         # Registry index file
         self.index_file = self.registry_path / "index.json"
         self.registry_index = self._load_index()
         
-        logger.info(f"Model registry initialized at {self.registry_path}")
+        logger.info(f"✅ Model registry initialized at: {self.registry_path}")
+
     
     def _load_index(self) -> Dict:
         """Load or create registry index."""

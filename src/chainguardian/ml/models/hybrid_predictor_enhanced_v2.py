@@ -187,11 +187,62 @@ class EnhancedHybridPredictorV2:
         
         # Feature cache for batch processing
         self.feature_cache = {}
-        
+        self._warmup_prediction()
+    
+        logger.info(f"✅ EnhancedHybridPredictorV2 initialized")
         logger.info(f"✅ EnhancedHybridPredictorV2 initialized")
         logger.info(f"   Using {'ensemble' if self.use_ensemble else 'single'} model")
         logger.info(f"   Features: {len(self.feature_names)}")
-    
+    def _warmup_prediction(self):
+        """
+        Run warmup predictions for both fast and full paths.
+        Eliminates cold start on first user request.
+        """
+        try:
+            import time
+            print("🔥 Running warmup predictions...")
+            
+            # Create dummy features
+            dummy_features = {name: 0.0 for name in self.feature_names}
+            
+            # Warmup 1: Fast path (batch mode)
+            start = time.time()
+            _ = self.predict_single(
+                dummy_features, 
+                return_details=False,  # Fast path
+                explain=False
+            )
+            fast_time = (time.time() - start) * 1000
+            print(f"   ✅ Fast path warmed up ({fast_time:.0f}ms)")
+            
+            # Warmup 2: Full path (single prediction with all bells and whistles)
+            start = time.time()
+            _ = self.predict_single(
+                dummy_features, 
+                return_details=True,   # Full path with calibration
+                explain=False
+            )
+            full_time = (time.time() - start) * 1000
+            print(f"   ✅ Full path warmed up ({full_time:.0f}ms)")
+            
+            # Warmup 3: Repeat full path to verify caching
+            start = time.time()
+            _ = self.predict_single(
+                dummy_features, 
+                return_details=True,
+                explain=False
+            )
+            cached_time = (time.time() - start) * 1000
+            print(f"   ✅ Cached path verified ({cached_time:.0f}ms)")
+            
+            total_time = fast_time + full_time + cached_time
+            print(f"✅ Warmup complete in {total_time:.0f}ms total")
+            
+        except Exception as e:
+            print(f"⚠️  Warmup FAILED: {e}")
+            import traceback
+            traceback.print_exc()
+
     def _load_models(self, model_path: Path, scaler_path: Path):
         """Load model(s) and scaler with error handling."""
         try:
@@ -438,6 +489,7 @@ class EnhancedHybridPredictorV2:
     
     def _process_batch_vectorized(self, batch: List[Dict], return_details: bool) -> List[Dict]:
         """Process batch using vectorized operations for efficiency."""
+        
         # Extract features in batch
         X_batch = self._extract_features_batch(batch)
         
@@ -451,6 +503,76 @@ class EnhancedHybridPredictorV2:
             predictions = (ml_probas > 0.5).astype(int)
             ml_uncertainties = np.zeros(len(batch))
         
+        # ✅ Pre-compute semantic scores and reasons for ALL samples (avoid recalculation)
+        semantic_data = []
+        for features in batch:
+            semantic_score, semantic_reasons, semantic_metadata = self.calculate_semantic_risk(features)
+            semantic_data.append({
+                'score': semantic_score,
+                'reasons': semantic_reasons,
+                'metadata': semantic_metadata
+            })
+        
+        # ✅ Fast path: Simplified batch processing (skip calibration if not needed)
+        if not return_details:
+            batch_results = []
+            for i, features in enumerate(batch):
+                semantic_score = semantic_data[i]['score']
+                final_score = 0.8 * ml_probas[i] + 0.2 * semantic_score  # Default weights
+                prediction = 1 if final_score > self.config.thresholds.get('vulnerability_prediction', 0.2) else 0
+                
+                batch_results.append({
+                    'prediction': prediction,
+                    'prediction_label': 'VULNERABLE' if prediction == 1 else 'SAFE',
+                    'probability': float(ml_probas[i]),
+                    'confidence': float(ml_probas[i]),  # Simplified confidence
+                    'raw_score': float(final_score)
+                })
+            return batch_results
+        
+        # ✅ Full processing path: Use pre-computed semantic data
+        batch_results = []
+        for i, features in enumerate(batch):
+            # Assess data completeness (per-sample, but fast)
+            data_completeness = self.assess_data_completeness(features)
+            
+            # ✅ Use pre-computed semantic data (no recalculation!)
+            semantic_score = semantic_data[i]['score']
+            semantic_reasons = semantic_data[i]['reasons']
+            
+            # Calculate dynamic weights
+            ml_weight, semantic_weight = self.calculate_dynamic_weights(
+                data_completeness.get_quality_level()
+            )
+            
+            # Apply hybrid scoring
+            final_score = (ml_weight * ml_probas[i]) + (semantic_weight * semantic_score)
+            prediction = 1 if final_score > self.config.thresholds.get('vulnerability_prediction', 0.2) else 0
+            
+            # Calibrate confidence
+            calibrated_confidence, calibration_notes = self.calibrate_confidence(
+                ml_probas[i], semantic_score, features, data_completeness
+            )
+            
+            # Compile results
+            result = self._compile_results(
+                prediction=prediction,
+                final_score=final_score,
+                ml_proba=ml_probas[i],
+                semantic_score=semantic_score,
+                calibrated_confidence=calibrated_confidence,
+                ml_uncertainty=ml_uncertainties[i],
+                data_completeness=data_completeness,
+                semantic_reasons=semantic_reasons,
+                calibration_notes=calibration_notes,
+                ml_weight=ml_weight,
+                semantic_weight=semantic_weight
+            )
+            
+            batch_results.append(result)
+        
+        return batch_results
+
         # Process each sample in batch
         batch_results = []
         for i, features in enumerate(batch):

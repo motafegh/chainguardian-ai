@@ -165,48 +165,42 @@ class SmartContractAugmenter:
         return X_combined, y_combined
     
     def _smote_augmentation(self, X: pd.DataFrame, y: pd.Series) -> Tuple[pd.DataFrame, pd.Series]:
-        """
-        SMOTE (Synthetic Minority Over-sampling Technique).
-        Use only if dataset is very imbalanced.
-        
-        Args:
-            X: Feature DataFrame
-            y: Target Series
-            
-        Returns:
-            Augmented X, y
-        """
+        """SMOTE with configurable augmentation factor."""
         try:
             from imblearn.over_sampling import SMOTE
         except ImportError:
             logger.error("SMOTE requires imbalanced-learn: pip install imbalanced-learn")
             return X.copy(), y.copy()
         
-        # Only use SMOTE if dataset is imbalanced
         class_counts = y.value_counts()
-        minority_class = class_counts.idxmin()
         minority_count = class_counts.min()
         majority_count = class_counts.max()
         
-        if majority_count / minority_count < 2:  # Not severely imbalanced
-            logger.info("Dataset not severely imbalanced, skipping SMOTE")
-            return X.copy(), y.copy()
+        # Calculate target samples based on max_augmentation_factor
+        max_factor = self.augmentation_config.get('max_augmentation_factor', 2.0)
+        target_total = int(len(X) * max_factor)
         
-        logger.info(f"Applying SMOTE to balance classes...")
+        # SMOTE will balance classes, then we need to calculate sampling strategy
+        # For balanced classes: each class should have target_total / 2
+        target_per_class = target_total // 2
+        
+        logger.info(f"Applying SMOTE to augment dataset...")
+        logger.info(f"Original: {len(X)} samples, distribution: {class_counts.to_dict()}")
+        logger.info(f"Target: {target_total} samples ({target_per_class} per class)")
         
         smote = SMOTE(
-            sampling_strategy='auto',
+            sampling_strategy={0: target_per_class, 1: target_per_class},  # Balance both classes
             random_state=42,
-            k_neighbors=min(5, minority_count - 1)  # Adjust for small datasets
+            k_neighbors=min(5, minority_count - 1)
         )
         
         X_resampled, y_resampled = smote.fit_resample(X, y)
         
-        logger.info(f"SMOTE: {len(X)} -> {len(X_resampled)} samples")
-        logger.info(f"Class distribution: {pd.Series(y_resampled).value_counts().to_dict()}")
+        logger.info(f"✅ SMOTE: {len(X)} -> {len(X_resampled)} samples")
+        logger.info(f"   New distribution: {pd.Series(y_resampled).value_counts().to_dict()}")
         
         return pd.DataFrame(X_resampled, columns=X.columns), pd.Series(y_resampled)
-    
+
     def validate_augmentation(self, X_original: pd.DataFrame, X_augmented: pd.DataFrame, 
                             y_original: pd.Series, y_augmented: pd.Series) -> Dict[str, Any]:
         """

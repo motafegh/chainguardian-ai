@@ -26,6 +26,7 @@ from pathlib import Path
 from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
+from chainguardian.ml.core.path_resolver import path_resolver
 
 # ============================================================================
 # CORRECTED IMPORTS - Use chainguardian, not src.chainguardian
@@ -162,31 +163,23 @@ print(f"   Augmentation: {config.augmentation.get('strategy', 'none')}")
 # ============================================================================
 
 print(f"\n📥 Looking for dataset...")
-# Find data file relative to this script
-current_dir = Path(__file__).parent  # scripts/3_training/
-data_paths = [
-    current_dir.parent.parent / "data" / "ml_ready_v4.csv",  # From project root
-    current_dir.parent / "data" / "ml_ready_v4.csv",         # From scripts/
-    Path.cwd() / "data" / "ml_ready_v4.csv",                # From current working directory
-    Path("data/ml_ready_v4.csv"),                           # Relative to cwd
-]
+print("=" * 80)
+print(f"📂 PATHS (Running from: {Path.cwd()})")
+print(f"📂 Project Root: {path_resolver.project_root}")
+print("=" * 80)
 
-data_file = None
-for path in data_paths:
-    if path.exists():
-        data_file = path
-        print(f"✅ Found dataset at: {path}")
-        break
+# Use absolute path for dataset
+datafile = path_resolver.data_dir / "ml_ready_v4.csv"
 
-if data_file is None:
-    print("❌ Could not find ml_ready_v4.csv")
-    print("   Tried paths:")
-    for path in data_paths:
-        print(f"   - {path}")
+if not datafile.exists():
+    print(f"❌ Could not find ml_ready_v4.csv at {datafile}")
+    print(f"   Expected: {datafile.absolute()}")
     sys.exit(1)
 
-df = pd.read_csv(data_file)
-print(f"   Loaded: {len(df)} samples × {len(df.columns)} columns")
+print(f"✅ Found dataset at: {datafile}")
+df = pd.read_csv(datafile)
+print(f"✅ Loaded {len(df)} samples, {len(df.columns)} columns")
+
 
 # Define leakage features to REMOVE
 LEAKAGE_FEATURES = [
@@ -490,28 +483,28 @@ print(classification_report(y_test, test_predictions, target_names=['SAFE', 'VUL
 # 10. SAVE MODEL
 # ============================================================================
 
-print("\n" + "="*80)
+print("=" * 80)
 print("💾 SAVING MODEL")
-print("="*80)
+print("=" * 80)
 
-MODELS_DIR = Path("config/models")
-MODELS_DIR.mkdir(exist_ok=True)
+# Use absolute paths from path_resolver
+MODELS_DIR = path_resolver.models_dir
+print(f"📂 Models directory: {MODELS_DIR}")
 
 if use_ensemble:
     model_path = MODELS_DIR / "ensemble_model_v7.pkl"
     scaler_path = MODELS_DIR / "ensemble_scaler_v7.pkl"
     
-    # Save ensemble
+    # Ensemble has its own save method
     if hasattr(final_model, 'save'):
         final_model.save(str(model_path))
+        print(f"✅ Ensemble saved to: {model_path}")
     else:
         joblib.dump(final_model, model_path)
-    
-    print(f"✅ Ensemble saved to: {model_path}")
+        print(f"✅ Ensemble saved to: {model_path}")
 else:
     model_path = MODELS_DIR / "production_model_v7.pkl"
     scaler_path = MODELS_DIR / "production_scaler_v7.pkl"
-    
     joblib.dump(final_model, model_path)
     print(f"✅ Single model saved to: {model_path}")
 
@@ -521,26 +514,28 @@ print(f"✅ Scaler saved to: {scaler_path}")
 
 # Save metadata
 metadata = {
-    'feature_names': X.columns.tolist(),
-    'model_type': 'ensemble' if use_ensemble else 'single',
-    'performance_metrics': {
-        'test_auc': float(test_auc),
-        'test_accuracy': float(test_acc),
-        'test_brier': float(test_brier)
+    "feature_names": X.columns.tolist(),
+    "model_type": "ensemble" if use_ensemble else "single",
+    "performance_metrics": {
+        "test_auc": float(test_auc),
+        "test_accuracy": float(test_acc),
+        "test_brier": float(test_brier)
     },
-    'training_info': {
-        'version': 'v7_enhanced',
-        'date': datetime.now().isoformat(),
-        'dataset_size': len(X),
-        'ensemble_used': use_ensemble,
-        'hyperparameter_tuning': tuning_results is not None if TUNER_AVAILABLE else False
+    "training_info": {
+        "version": "v7_enhanced",
+        "date": datetime.now().isoformat(),
+        "dataset_size": len(X),
+        "ensemble_used": use_ensemble,
+        "hyperparameter_tuning": tuning_results is not None if TUNER_AVAILABLE else False
     }
 }
+
+if CONFIG_AVAILABLE:
+    metadata["config"] = config.to_dict() if hasattr(config, 'to_dict') else str(config)
 
 metadata_path = MODELS_DIR / "feature_metadata_v7.json"
 with open(metadata_path, 'w') as f:
     json.dump(metadata, f, indent=2)
-
 print(f"✅ Metadata saved to: {metadata_path}")
 
 # ============================================================================
@@ -548,30 +543,38 @@ print(f"✅ Metadata saved to: {metadata_path}")
 # ============================================================================
 
 if REGISTRY_AVAILABLE:
-    print("\n" + "="*80)
+    print("=" * 80)
     print("📚 MODEL REGISTRY INTEGRATION")
-    print("="*80)
+    print("=" * 80)
     
     try:
-        registry = ModelRegistry("config/models/registry")
-
+        # Use absolute path from config or default
+        registry_path = None
+        if CONFIG_AVAILABLE and hasattr(config, 'model_registry'):
+            registry_path_str = config.model_registry.get('registry_path')
+            if registry_path_str:
+                # Convert to absolute
+                registry_path = path_resolver.project_root / registry_path_str
+        
+        # Initialize registry (will use default if registry_path is None)
+        registry = ModelRegistry(str(registry_path) if registry_path else None)
         
         model_info = {
-            'model': final_model,
-            'scaler': scaler,
-            'feature_names': X.columns.tolist(),
-            'performance_metrics': metadata['performance_metrics'],
-            'training_info': metadata['training_info']
+            "model": final_model,
+            "scaler": scaler,
+            "feature_names": X.columns.tolist(),
+            "performance_metrics": metadata["performance_metrics"],
+            "training_info": metadata["training_info"]
         }
         
         if CONFIG_AVAILABLE:
-            model_info['config'] = config.to_dict() if hasattr(config, 'to_dict') else config.__dict__
+            model_info["config"] = config.to_dict() if hasattr(config, 'to_dict') else {}
         
         version = registry.register_model(model_info, description="Enhanced v7 model")
         print(f"✅ Model registered as version: {version}")
-        
     except Exception as e:
         print(f"⚠️  Model registry failed: {e}")
+
 
 # ============================================================================
 # 12. SUMMARY
@@ -602,7 +605,7 @@ else:
 print(f"   • Metadata: feature_metadata_v7.json")
 if REGISTRY_AVAILABLE:
     print(f"   • Registry entry: v{version if 'version' in locals() else 'N/A'}")
-
+print(f"   1. Test the model: python scripts/3_training/test_enhanced_v7.py")
 print(f"\n🚀 NEXT STEPS:")
 print(f"   1. Test the model: python scripts/3_training/test_enhanced_v7.py")
 print(f"   2. Update your application to use EnhancedHybridPredictor")
