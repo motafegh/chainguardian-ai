@@ -13,6 +13,7 @@ from typing import Dict, Any, Optional
 from dataclasses import dataclass, field, asdict
 from enum import Enum
 import logging
+from typing import Dict, Any, Optional, Union  # Add Union
 
 logger = logging.getLogger(__name__)
 
@@ -51,27 +52,56 @@ class HyperparameterConfig:
         if self.n_trials < 10:
             logger.warning(f"n_trials={self.n_trials} is low. Consider increasing for better optimization.")
         return True
-
+    
+@dataclass
+class UncertaintyConfig:
+    """Configuration for uncertainty quantification."""
+    enable_bootstrap: bool = False
+    n_bootstrap_samples: int = 100
+    confidence_level: float = 0.95
 @dataclass
 class EnsembleConfig:
     """Configuration for model ensemble."""
     enabled: bool = True
     voting_method: str = "soft"
-    calibration_method: CalibrationMethod = CalibrationMethod.SIGMOID
+    calibration_method: Union[CalibrationMethod, str] = CalibrationMethod.SIGMOID
     initial_weights: Dict[str, float] = field(default_factory=lambda: {
         'xgboost': 0.4,
         'random_forest': 0.3,
         'lightgbm': 0.2,
         'logistic_regression': 0.1
     })
+    uncertainty: UncertaintyConfig = field(default_factory=UncertaintyConfig)  # ← ADD THIS
     
-    def validate(self):
+    def __post_init__(self):
+        """Auto-convert string/dict to CalibrationMethod Enum."""
+        # Handle calibration_method conversion
+        if isinstance(self.calibration_method, str):
+            try:
+                self.calibration_method = CalibrationMethod(self.calibration_method.lower())
+            except ValueError:
+                logger.warning(f"Unknown calibration method '{self.calibration_method}', using SIGMOID")
+                self.calibration_method = CalibrationMethod.SIGMOID
+        elif isinstance(self.calibration_method, dict):
+            value = self.calibration_method.get('value', 'sigmoid')
+            try:
+                self.calibration_method = CalibrationMethod(value.lower())
+            except ValueError:
+                logger.warning(f"Unknown calibration method '{value}', using SIGMOID")
+                self.calibration_method = CalibrationMethod.SIGMOID
+        
+        # Handle uncertainty config (if loaded as dict from YAML)
+        if isinstance(self.uncertainty, dict):
+            self.uncertainty = UncertaintyConfig(**self.uncertainty)
+    
+    def validate(self) -> bool:
         """Validate ensemble configuration."""
         if sum(self.initial_weights.values()) != 1.0:
             logger.warning("Ensemble weights don't sum to 1.0. Normalizing...")
             total = sum(self.initial_weights.values())
-            self.initial_weights = {k: v/total for k, v in self.initial_weights.items()}
+            self.initial_weights = {k: v / total for k, v in self.initial_weights.items()}
         return True
+
 
 @dataclass
 class Config:
@@ -97,8 +127,37 @@ class Config:
         return True
     
     def to_dict(self):
-        """Convert configuration to dictionary."""
-        return asdict(self)
+        """Convert configuration to JSON-serializable dictionary."""
+        def make_serializable(obj):
+            """Recursively convert objects to JSON-serializable format."""
+            if isinstance(obj, (str, int, float, bool, type(None))):
+                return obj
+            elif isinstance(obj, (list, tuple)):
+                return [make_serializable(item) for item in obj]
+            elif isinstance(obj, dict):
+                return {key: make_serializable(value) for key, value in obj.items()}
+            elif hasattr(obj, '__dict__'):
+                # Handle dataclass or custom objects
+                result = {}
+                for key, value in obj.__dict__.items():
+                    if key.startswith('_'):
+                        continue  # Skip private attributes
+                    try:
+                        result[key] = make_serializable(value)
+                    except Exception:
+                        result[key] = str(value)  # Fallback to string
+                return result
+            elif isinstance(obj, Enum):
+                return obj.value
+            elif hasattr(obj, 'value'):
+                # Enum-like objects
+                return obj.value
+            else:
+                # Last resort: convert to string
+                return str(obj)
+        
+        return make_serializable(asdict(self))
+
     
     def save(self, path: str):
         """Save configuration to YAML file."""
@@ -205,8 +264,8 @@ class ConfigManager:
     def _setup_paths(self, config_path: str):
         """Setup relative paths based on config file location."""
         config_dir = Path(config_path).parent
-        os.chdir(config_dir)
-        logger.info(f"Working directory set to: {os.getcwd()}")
+        # os.chdir(config_dir)
+        # logger.info(f"Working directory set to: {os.getcwd()}")
     
     def get_config(self) -> Config:
         """Get current configuration."""

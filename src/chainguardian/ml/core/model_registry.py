@@ -24,7 +24,7 @@ class ModelRegistry:
     Implements semantic versioning and comprehensive metadata storage.
     """
     
-    def __init__(self, registry_path: str = "models/registry"):
+    def __init__(self, registry_path: str = "config/models/registry"):
         """
         Initialize model registry.
         
@@ -200,7 +200,7 @@ class ModelRegistry:
             raise ValueError(f"Model version {version} not found in registry")
         
         version_info = self.registry_index['versions'][version]
-        version_dir = Path(version_info['path'])
+        version_dir = self.registry_path / f"v{version}"
         
         # Load model assets
         model_path = version_dir / "model.pkl"

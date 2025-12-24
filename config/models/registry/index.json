@@ -43,12 +43,23 @@
         "test_accuracy": 0.9463087248322147,
         "test_brier": 0.04268795737399983
       }
+    },
+    "1.0.4": {
+      "path": "models/registry/v1.0.4",
+      "timestamp": "2025-12-23T22:53:40.094818",
+      "hash": "f569bca02ce798258e2c64eef71dac67",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829295
+      }
     }
   },
-  "latest_version": "1.0.3",
+  "latest_version": "1.0.4",
   "metadata": {
     "created": "2025-12-23T20:16:11.888750",
-    "total_models": 4,
-    "last_updated": "2025-12-23T21:25:54.086855"
+    "total_models": 5,
+    "last_updated": "2025-12-23T22:53:40.175872"
   }
 }

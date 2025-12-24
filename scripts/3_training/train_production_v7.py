@@ -81,57 +81,80 @@ print("="*80)
 
 if CONFIG_AVAILABLE:
     config_manager = ConfigManager()
-    # Try to load config from multiple locations
+    
+    # Try multiple config paths
     config_paths = [
+        project_root / "config" / "hybrid_config.yaml",
         "config/hybrid_config.yaml",
         "../config/hybrid_config.yaml",
-        project_root / "config" / "hybrid_config.yaml"
     ]
     
     config_loaded = False
     for config_path in config_paths:
-        if Path(config_path).exists():
-            config = config_manager.load_config(config_path)
+        config_path = Path(config_path)
+        if config_path.exists():
+            print(f"✅ Found config at: {config_path}")
+            config = config_manager.load_config(str(config_path))
             config_loaded = True
-            print(f"✅ Configuration loaded from: {config_path}")
             break
     
     if not config_loaded:
-        # Create minimal config
-        class MockConfig:
-            def __init__(self):
-                self.hyperparameter_tuning = type('HP', (), {'enable_optuna': False})()
-                self.ensemble = type('Ensemble', (), {'enabled': True, 'calibration_method': type('Calib', (), {'value': 'sigmoid'})()})()
-                self.augmentation = {'enabled': False, 'strategy': 'none'}
-                self.monitoring = {'enable_performance_logging': True}
-                self.weights = {'data_quality_profiles': {}}
-                self.thresholds = {'vulnerability_prediction': 0.2}
-                
-            def to_dict(self):
-                return self.__dict__
+        print("❌ Config file not found! Searched:")
+        for path in config_paths:
+            print(f"   - {Path(path).absolute()}")
+        print("\n⚠️  Using default config")
         
-        config = MockConfig()
-        print("⚠️ Using minimal configuration (config file not found)")
-else:
-    # Create minimal config
-    class MockConfig:
-        def __init__(self):
-            self.hyperparameter_tuning = type('HP', (), {'enable_optuna': False})()
-            self.ensemble = type('Ensemble', (), {'enabled': True, 'calibration_method': type('Calib', (), {'value': 'sigmoid'})()})()
-            self.augmentation = {'enabled': False, 'strategy': 'none'}
-            self.monitoring = {'enable_performance_logging': True}
-            self.weights = {'data_quality_profiles': {}}
-            self.thresholds = {'vulnerability_prediction': 0.2}
-            
-        def to_dict(self):
-            return self.__dict__
-    
-    config = MockConfig()
-    print("⚠️ Using minimal configuration (ConfigManager not available)")
+        # Create proper default config using dataclasses
+        from chainguardian.ml.core.config_manager import (
+            Config, 
+            EnsembleConfig, 
+            HyperparameterConfig,
+            CalibrationMethod
+        )
+        
+        config = Config(
+            hyperparameter_tuning=HyperparameterConfig(enable_optuna=False),
+            ensemble=EnsembleConfig(
+                enabled=True,
+                calibration_method=CalibrationMethod.SIGMOID  # Proper Enum!
+            ),
+            augmentation={'enabled': False, 'strategy': 'none'},
+            monitoring={'enable_performance_logging': True},
+            weights={'data_quality_profiles': {}},
+            thresholds={'vulnerability_prediction': 0.2}
+        )
 
+else:
+    # CONFIG_AVAILABLE is False - create minimal default config
+    print("⚠️  ConfigManager not available, using minimal defaults")
+    
+    from chainguardian.ml.core.config_manager import (
+        Config, 
+        EnsembleConfig, 
+        HyperparameterConfig,
+        CalibrationMethod,
+        UncertaintyConfig  
+    )
+    
+    config = Config(
+        hyperparameter_tuning=HyperparameterConfig(enable_optuna=False),
+        ensemble=EnsembleConfig(
+            enabled=True,
+            calibration_method=CalibrationMethod.SIGMOID,
+            uncertainty=UncertaintyConfig()
+        ),
+        augmentation={'enabled': False, 'strategy': 'none'},
+        monitoring={'enable_performance_logging': True},
+        weights={},
+        thresholds={}
+    )
+
+# Display loaded configuration
 print(f"\n📁 Configuration:")
+print(f"   Config type: {type(config).__name__}")
 print(f"   Hyperparameter tuning: {'Enabled' if config.hyperparameter_tuning.enable_optuna else 'Disabled'}")
 print(f"   Ensemble: {'Enabled' if config.ensemble.enabled else 'Disabled'}")
+print(f"   Calibration method: {config.ensemble.calibration_method.value}")  # Access Enum value
 print(f"   Augmentation: {config.augmentation.get('strategy', 'none')}")
 
 # ============================================================================
@@ -325,6 +348,7 @@ if TUNER_AVAILABLE and CONFIG_AVAILABLE and config.hyperparameter_tuning.enable_
 else:
     print("\n⚠️  Hyperparameter tuning disabled or not available")
 
+
 # ============================================================================
 # 7. HETEROGENEOUS ENSEMBLE TRAINING
 # ============================================================================
@@ -335,36 +359,19 @@ if ENSEMBLE_AVAILABLE and CONFIG_AVAILABLE and config.ensemble.enabled:
     print("="*80)
     
     try:
-        # Debug: Print what calibration_method actually is
-        print(f"   Debug - calibration_method type: {type(config.ensemble.calibration_method)}")
-        print(f"   Debug - calibration_method: {config.ensemble.calibration_method}")
-        # Fix calibration_method if it's a string or dict
-        calibration = config.ensemble.calibration_method
+        # ✅ Config is already properly typed by ConfigManager!
+        print(f"   Calibration method: {config.ensemble.calibration_method.value}")
+        print(f"   Type: {type(config.ensemble.calibration_method).__name__}")
         
-        # If it's a dictionary (from YAML), extract the value
-        if isinstance(calibration, dict) and 'value' in calibration:
-            calibration_value = calibration['value']
-            # Create a mock object with value attribute
-            class MockCalibration:
-                def __init__(self, val):
-                    self.value = val
-            config.ensemble.calibration_method = MockCalibration(calibration_value)
-            print(f"   Fixed calibration_method: {calibration_value}")
-        # If it's already a string, also fix it
-        elif isinstance(calibration, str):
-            class MockCalibration:
-                def __init__(self, val):
-                    self.value = val
-            config.ensemble.calibration_method = MockCalibration(calibration)
-            print(f"   Fixed calibration_method (string): {calibration}")
-        # Create ensemble
+        # Create ensemble (no manual fixing needed!)
         ensemble = HeterogeneousEnsemble(config, X.columns.tolist())
         
         # Train ensemble
+        print("   Training ensemble...")
         ensemble.fit(X_train_scaled, y_train)
         
         # Optimize weights on validation set
-        print("\n⚖️  Optimizing ensemble weights...")
+        print("⚖️  Optimizing ensemble weights...")
         optimized_weights = ensemble.optimize_weights(X_val_scaled, y_val)
         
         # Evaluate ensemble on validation set
@@ -487,7 +494,7 @@ print("\n" + "="*80)
 print("💾 SAVING MODEL")
 print("="*80)
 
-MODELS_DIR = Path("models")
+MODELS_DIR = Path("config/models")
 MODELS_DIR.mkdir(exist_ok=True)
 
 if use_ensemble:
@@ -546,7 +553,8 @@ if REGISTRY_AVAILABLE:
     print("="*80)
     
     try:
-        registry = ModelRegistry()
+        registry = ModelRegistry("config/models/registry")
+
         
         model_info = {
             'model': final_model,

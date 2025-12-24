@@ -19,6 +19,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 logger = logging.getLogger(__name__)
+# ============================================================================
+# MODULE-LEVEL FALLBACK CONFIGS (for pickle compatibility)
+# ============================================================================
 
 class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
     """
@@ -52,50 +55,44 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         logger.info("Heterogeneous Ensemble initialized")
 
     def _validate_and_fix_config(self):
-        """Ensure config has all required attributes."""
+        """Ensure config has all required attributes with proper defaults."""
         # Ensure ensemble config exists
         if not hasattr(self.config, 'ensemble'):
-            # Create minimal ensemble config
-            class MockEnsembleConfig:
-                enabled = True
-                initial_weights = {
+            logger.warning("No ensemble config found, creating defaults")
+            from chainguardian.ml.core.config_manager import EnsembleConfig, CalibrationMethod
+            self.config.ensemble = EnsembleConfig(
+                enabled=True,
+                calibration_method=CalibrationMethod.SIGMOID,
+                initial_weights={
                     'xgboost': 0.4,
                     'random_forest': 0.3,
                     'lightgbm': 0.2,
                     'logistic_regression': 0.1
                 }
-                calibration_method = type('Calib', (), {'value': 'sigmoid'})()
-                uncertainty = type('Uncertainty', (), {
-                    'enable_bootstrap': False,
-                    'n_bootstrap_samples': 100,
-                    'confidence_level': 0.95
-                })()
-            
-            self.config.ensemble = MockEnsembleConfig()
+            )
         
-        # Ensure calibration_method has value attribute
+        # Ensure calibration_method is Enum
         if hasattr(self.config.ensemble, 'calibration_method'):
-            calibration = self.config.ensemble.calibration_method
-            if isinstance(calibration, str):
-                # Convert string to object with value attribute
-                class CalibrationMethod:
-                    def __init__(self, value):
-                        self.value = value
-                self.config.ensemble.calibration_method = CalibrationMethod(calibration)
-        elif not hasattr(self.config.ensemble, 'calibration_method'):
-            # Add default calibration method
-            class CalibrationMethod:
-                value = 'sigmoid'
-            self.config.ensemble.calibration_method = CalibrationMethod()
+            if isinstance(self.config.ensemble.calibration_method, str):
+                from chainguardian.ml.core.config_manager import CalibrationMethod
+                try:
+                    self.config.ensemble.calibration_method = CalibrationMethod(
+                        self.config.ensemble.calibration_method.lower()
+                    )
+                except ValueError:
+                    logger.warning("Invalid calibration method, using SIGMOID")
+                    self.config.ensemble.calibration_method = CalibrationMethod.SIGMOID
         
-        # Ensure uncertainty config exists
+        # Ensure uncertainty config exists (use proper dataclass!)
         if not hasattr(self.config.ensemble, 'uncertainty'):
-            class UncertaintyConfig:
-                enable_bootstrap = False
-                n_bootstrap_samples = 100
-                confidence_level = 0.95
-            self.config.ensemble.uncertainty = UncertaintyConfig()
-    
+            from chainguardian.ml.core.config_manager import UncertaintyConfig
+            self.config.ensemble.uncertainty = UncertaintyConfig()  # ← Proper dataclass!
+            logger.info("Created default uncertainty config")
+        elif isinstance(self.config.ensemble.uncertainty, dict):
+            # If loaded as dict from YAML, convert to dataclass
+            from chainguardian.ml.core.config_manager import UncertaintyConfig
+            self.config.ensemble.uncertainty = UncertaintyConfig(**self.config.ensemble.uncertainty)
+
     def _initialize_models(self):
         """Initialize base models with default or provided parameters."""
         # XGBoost
@@ -235,13 +232,18 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
             if model_info['model'] is not None:
                 logger.info(f"  Calibrating {name}...")
                 
-                # Create calibrated model
+                # Use config's calibration method (now a proper Enum)
+                calibration_method = self.config.ensemble.calibration_method.value  # Enum → string
+
                 calibrated = CalibratedClassifierCV(
                     estimator=model_info['model'],
-                    method='sigmoid',  # Platt scaling
+                    method=calibration_method,  # ← Uses config value
                     cv=cv,
                     n_jobs=-1
                 )
+
+                logger.info(f"   Using calibration: {calibration_method}")
+
                 
                 # Fit the calibrator
                 calibrated.fit(X, y)

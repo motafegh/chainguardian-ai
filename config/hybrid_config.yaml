@@ -66,8 +66,8 @@ ensemble:
     lightgbm: 0.2
     logistic_regression: 0.1
   
-  calibration_method: 
-    value: "isotonic"               # Back to isotonic with more data
+  calibration_method: "isotonic"
+            # Back to isotonic with more data
   
   # Enhanced uncertainty quantification
   uncertainty:

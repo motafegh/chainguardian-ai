@@ -1,0 +1,65 @@
+{
+  "versions": {
+    "1.0.0": {
+      "path": "config/models/registry/v1.0.0",
+      "timestamp": "2025-12-23T23:16:24.496425",
+      "hash": "1ef691aface5022abeb4df715ee76a31",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829294
+      }
+    },
+    "1.0.1": {
+      "path": "config/models/registry/v1.0.1",
+      "timestamp": "2025-12-23T23:28:40.980079",
+      "hash": "478579ef32e2b42b95c2ca820d086eac",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829294
+      }
+    },
+    "1.0.2": {
+      "path": "config/models/registry/v1.0.2",
+      "timestamp": "2025-12-23T23:39:52.439906",
+      "hash": "d249b84e46545cec32cc280449c61e4a",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829295
+      }
+    },
+    "1.0.3": {
+      "path": "config/models/registry/v1.0.3",
+      "timestamp": "2025-12-23T23:56:00.838868",
+      "hash": "6ae455071e9cfdb448251393ccc3c45a",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485494,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.04268795737399983
+      }
+    },
+    "1.0.4": {
+      "path": "config/models/registry/v1.0.4",
+      "timestamp": "2025-12-24T01:14:04.480930",
+      "hash": "e0ab7b42a5d54c71a134e292da972ef3",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9876208897485493,
+        "test_accuracy": 0.9463087248322147,
+        "test_brier": 0.03775564644829295
+      }
+    }
+  },
+  "latest_version": "1.0.4",
+  "metadata": {
+    "created": "2025-12-23T23:16:24.493824",
+    "total_models": 5,
+    "last_updated": "2025-12-24T01:14:04.567784"
+  }
+}

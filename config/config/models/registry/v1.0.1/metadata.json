@@ -1,22 +1,22 @@
 {
-  "version": "1.0.3",
-  "timestamp": "2025-12-23T21:25:54.078059",
-  "hash": "07ae7a0c1a1193b97ac60909dd57fafc",
+  "version": "1.0.1",
+  "timestamp": "2025-12-23T23:28:40.980079",
+  "hash": "478579ef32e2b42b95c2ca820d086eac",
   "description": "Enhanced v7 model",
   "performance_metrics": {
-    "test_auc": 0.9876208897485494,
+    "test_auc": 0.9876208897485493,
     "test_accuracy": 0.9463087248322147,
-    "test_brier": 0.04268795737399983
+    "test_brier": 0.03775564644829294
   },
   "training_info": {
     "version": "v7_enhanced",
-    "date": "2025-12-23T21:25:54.074514",
+    "date": "2025-12-23T23:28:40.977289",
     "dataset_size": 745,
-    "ensemble_used": false,
+    "ensemble_used": true,
     "hyperparameter_tuning": true
   },
   "feature_count": 70,
-  "model_type": "CalibratedClassifierCV",
+  "model_type": "HeterogeneousEnsemble",
   "feature_names": [
     "has_reentrancy",
     "has_access_control_issues",
@@ -92,79 +92,104 @@
   "config": {
     "hyperparameter_tuning": {
       "enable_optuna": true,
-      "n_trials": 50,
-      "timeout_seconds": 3600,
-      "study_name": "chainguardian_optimization",
+      "n_trials": 200,
+      "timeout_seconds": 7200,
+      "study_name": "chainguardian_optimization_v2",
       "search_spaces": {
         "xgboost": {
           "n_estimators": [
             100,
-            300
+            500
           ],
           "max_depth": [
             3,
-            8
+            12
           ],
           "learning_rate": [
-            0.01,
-            0.2
+            0.005,
+            0.3
           ],
           "subsample": [
-            0.6,
+            0.5,
             1.0
           ],
           "colsample_bytree": [
-            0.6,
+            0.5,
             1.0
           ],
           "gamma": [
             0,
-            5
+            10
           ],
           "reg_alpha": [
             0,
-            10
+            20
           ],
           "reg_lambda": [
-            1,
-            10
+            0.1,
+            20
+          ],
+          "tree_method": [
+            "hist",
+            "gpu_hist"
+          ],
+          "predictor": [
+            "gpu_predictor"
           ]
         },
         "random_forest": {
           "n_estimators": [
             100,
-            300
+            500
           ],
           "max_depth": [
             5,
-            15
+            30
           ],
           "min_samples_split": [
             2,
-            10
+            20
           ],
           "min_samples_leaf": [
             1,
-            4
+            10
+          ],
+          "n_jobs": -1,
+          "max_features": [
+            0.3,
+            1.0
           ]
         },
         "lightgbm": {
           "n_estimators": [
             100,
-            300
+            500
           ],
           "num_leaves": [
             20,
-            100
+            200
           ],
           "learning_rate": [
-            0.01,
-            0.2
+            0.005,
+            0.3
           ],
           "feature_fraction": [
-            0.6,
+            0.5,
             1.0
-          ]
+          ],
+          "bagging_fraction": [
+            0.5,
+            1.0
+          ],
+          "bagging_freq": [
+            1,
+            10
+          ],
+          "device": [
+            "gpu"
+          ],
+          "gpu_platform_id": 0,
+          "gpu_device_id": 0
         }
       }
     },
@@ -172,7 +197,7 @@
       "enabled": true,
       "voting_method": "soft",
       "calibration_method": {
-        "value": "sigmoid"
+        "value": "isotonic"
       },
       "initial_weights": {
         "xgboost": 0.4,
@@ -181,97 +206,85 @@
         "logistic_regression": 0.1
       }
     },
-    "weights": {
-      "data_quality_profiles": {
-        "EXCELLENT": {
-          "ml": 0.3,
-          "semantic": 0.7,
-          "confidence_boost": 0.2
-        },
-        "GOOD": {
-          "ml": 0.4,
-          "semantic": 0.6,
-          "confidence_boost": 0.1
-        },
-        "FAIR": {
-          "ml": 0.6,
-          "semantic": 0.4,
-          "confidence_boost": 0.0
-        },
-        "POOR": {
-          "ml": 0.9,
-          "semantic": 0.1,
-          "confidence_boost": -0.1
-        },
-        "UNKNOWN": {
-          "ml": 0.5,
-          "semantic": 0.5,
-          "confidence_boost": -0.2
-        }
-      },
-      "semantic_risk": {
-        "cei_violation": 0.4,
-        "cei_score_low": 0.2,
-        "state_after_call": 0.3,
-        "unchecked_critical": 0.2,
-        "reentrancy_guard_bonus": -0.5
-      },
-      "confidence_calibration": {
-        "ml_certainty_alignment": 0.4,
-        "semantic_completeness": 0.25,
-        "contradiction_penalty": -0.2,
-        "data_quality_multiplier": 1.3,
-        "static_signal_boost": 0.15,
-        "moderate_ml_boost": 0.25
-      }
-    },
+    "weights": {},
     "augmentation": {
       "enabled": true,
-      "strategy": "smote",
-      "mixup_alpha": 0.2,
-      "gaussian_std": 0.05,
-      "max_augmentation_factor": 2.0
+      "strategy": "mixed",
+      "mixup_alpha": 0.4,
+      "gaussian_std": 0.1,
+      "smote_neighbors": 10,
+      "max_augmentation_factor": 4.0,
+      "progressive_augmentation": true,
+      "epochs": 3,
+      "quality_filter": true
     },
     "batch_processing": {
       "enabled": true,
-      "batch_size": 32,
-      "max_workers": 4,
-      "enable_vectorization": true
+      "batch_size": 512,
+      "max_workers": 8,
+      "enable_vectorization": true,
+      "use_gpu_batches": true,
+      "preload_data": true,
+      "cache_size_gb": 16,
+      "chunk_size": 10000
     },
     "model_registry": {
       "registry_path": "models/registry",
-      "keep_last_n_versions": 10,
+      "keep_last_n_versions": 20,
       "auto_versioning": true,
+      "enable_experiment_tracking": true,
       "metadata_schema": [
         "model_type",
         "performance_metrics",
         "training_date",
         "feature_list",
-        "hyperparameters"
-      ]
+        "hyperparameters",
+        "hardware_used",
+        "training_time",
+        "data_statistics"
+      ],
+      "gpu_metadata": {
+        "track_gpu_metrics": true,
+        "memory_usage": true,
+        "inference_speed": true
+      }
     },
     "monitoring": {
       "enable_performance_logging": true,
       "log_dir": "logs",
+      "realtime_metrics": true,
+      "enable_tensorboard": true,
       "metrics_to_track": [
         "accuracy",
         "auc",
+        "precision",
+        "recall",
+        "f1_score",
         "inference_latency",
+        "gpu_memory_usage",
+        "cpu_utilization",
         "data_quality_scores"
       ],
       "drift_detection": {
         "enabled": true,
-        "window_size": 1000,
-        "drift_threshold": 0.05,
-        "check_interval": 100
+        "window_size": 5000,
+        "drift_threshold": 0.03,
+        "check_interval": 1000,
+        "methods": [
+          "ks_test",
+          "mmd",
+          "classifier"
+        ]
       }
     },
     "thresholds": {
-      "vulnerability_prediction": 0.2,
-      "high_confidence": 0.85,
-      "low_confidence": 0.4,
-      "override_cei_violations": 3,
-      "override_perfect_cei_with_guard": true
+      "vulnerability_prediction": 0.15,
+      "high_confidence": 0.9,
+      "low_confidence": 0.3,
+      "override_cei_violations": 2,
+      "override_perfect_cei_with_guard": true,
+      "adaptive_thresholds": true,
+      "threshold_smoothing": 0.1
     }
   },
   "hyperparameters": {}

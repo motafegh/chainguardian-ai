@@ -75,11 +75,11 @@
   "performance_metrics": {
     "test_auc": 0.9876208897485493,
     "test_accuracy": 0.9463087248322147,
-    "test_brier": 0.03775564644829294
+    "test_brier": 0.03775564644829295
   },
   "training_info": {
     "version": "v7_enhanced",
-    "date": "2025-12-23T23:16:24.492081",
+    "date": "2025-12-24T01:14:04.468308",
     "dataset_size": 745,
     "ensemble_used": true,
     "hyperparameter_tuning": true
