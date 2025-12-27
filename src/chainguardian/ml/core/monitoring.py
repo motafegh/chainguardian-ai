@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from collections import deque
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Deque
+from typing import Dict, List, Optional, Any, Deque,Union
 import logging
 import warnings
 warnings.filterwarnings('ignore')
@@ -465,9 +465,12 @@ class MLMonitor:
         Returns:
             Path to exported data
         """
+        # ✅ FIX: Use a properly typed local variable
         if output_path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_path = self.log_dir / f"monitoring_export_{timestamp}.json"
+            export_path: Path = self.log_dir / f"monitoring_export_{timestamp}.json"
+        else:
+            export_path = Path(output_path)
         
         export_data = {
             'metadata': {
@@ -485,8 +488,9 @@ class MLMonitor:
             'performance_sample': list(self.performance_metrics)[-100:] if self.performance_metrics else []
         }
         
-        with open(output_path, 'w') as f:
+        # ✅ FIX: Use export_path instead of output_path
+        with open(export_path, 'w') as f:
             json.dump(export_data, f, indent=2)
         
-        logger.info(f"Monitoring data exported to {output_path}")
-        return str(output_path)
+        logger.info(f"Monitoring data exported to {export_path}")
+        return str(export_path)

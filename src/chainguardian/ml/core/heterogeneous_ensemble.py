@@ -14,11 +14,13 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.base import BaseEstimator, ClassifierMixin
 import joblib
 import logging
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional, Any  # ✅ Add Tuple
+from numpy.typing import NDArray  # ✅ Add this for better ndarray typing
 import warnings
-warnings.filterwarnings('ignore')
 
+warnings.filterwarnings('ignore')
 logger = logging.getLogger(__name__)
+
 # ============================================================================
 # MODULE-LEVEL FALLBACK CONFIGS (for pickle compatibility)
 # ============================================================================
@@ -42,9 +44,11 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         """
         self.config = config
         self.feature_names = feature_names
-        self.models = {}
-        self.calibrated_models = {}
-        self.is_fitted = False
+        
+        # ✅ FIX: Add explicit type hints
+        self.models: Dict[str, Dict[str, Any]] = {}
+        self.calibrated_models: Dict[str, Any] = {}
+        self.is_fitted: bool = False
         
         # FIX: Ensure config has required structure
         self._validate_and_fix_config()
@@ -53,6 +57,7 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         self._initialize_models()
         
         logger.info("Heterogeneous Ensemble initialized")
+
 
     def _validate_and_fix_config(self):
         """Ensure config has all required attributes with proper defaults."""
@@ -275,7 +280,7 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         
         logger.info(f"Created voting ensemble with {len(estimators)} models")
     
-    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+    def predict_proba(self, X: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:  # ✅ FIX: Returns tuple!
         """
         Predict probabilities with uncertainty estimation.
         
@@ -293,9 +298,10 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
         
         if self.config.ensemble.uncertainty.enable_bootstrap:
             uncertainty = self._estimate_uncertainty(X)
-            return probas, uncertainty
+            return probas, uncertainty  # ✅ Now matches return type
         else:
-            return probas, np.zeros((X.shape[0],))
+            return probas, np.zeros((X.shape[0],))  # ✅ Now matches return type
+
     
     def _estimate_uncertainty(self, X: np.ndarray) -> np.ndarray:
         """
@@ -332,7 +338,8 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
                 bootstrap_predictions[i] = np.mean(model_predictions, axis=0)
         
         # Calculate uncertainty as standard deviation
-        uncertainty = np.std(bootstrap_predictions, axis=0)
+        uncertainty: np.ndarray = np.std(bootstrap_predictions, axis=0)
+
         
         return uncertainty
     

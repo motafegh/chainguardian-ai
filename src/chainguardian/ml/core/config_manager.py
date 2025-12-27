@@ -1,4 +1,3 @@
-# (Paste the entire config_manager.py content here)
 """
 Configuration Manager for ChainGuardian AI
 ==========================================
@@ -9,14 +8,17 @@ Ensures type safety and provides default values for backward compatibility.
 import yaml
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional
-from dataclasses import dataclass, field, asdict
+from typing import Dict, Any, Optional, Union, cast, Type, TypeVar, get_origin, get_args
+from dataclasses import dataclass, field, asdict, is_dataclass, fields
 from enum import Enum
 import logging
-from typing import Dict, Any, Optional, Union  # Add Union
+
 from chainguardian.ml.core.path_resolver import path_resolver
 
 logger = logging.getLogger(__name__)
+
+T = TypeVar('T')
+
 
 class CalibrationMethod(Enum):
     """Supported calibration methods."""
@@ -24,12 +26,14 @@ class CalibrationMethod(Enum):
     ISOTONIC = "isotonic"
     NONE = "none"
 
+
 class AugmentationStrategy(Enum):
     """Supported data augmentation strategies."""
     MIXUP = "mixup"
     GAUSSIAN = "gaussian"
     SMOTE = "smote"
     NONE = "none"
+
 
 @dataclass
 class HyperparameterConfig:
@@ -39,8 +43,7 @@ class HyperparameterConfig:
     timeout_seconds: int = 3600
     study_name: str = "chainguardian_optimization"
     
-    # Search spaces with type hints
-    search_spaces: Dict[str, Dict] = field(default_factory=lambda: {
+    search_spaces: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
         'xgboost': {
             'n_estimators': [100, 300],
             'max_depth': [3, 8],
@@ -48,18 +51,21 @@ class HyperparameterConfig:
         }
     })
     
-    def validate(self):
+    def validate(self) -> bool:
         """Validate hyperparameter configuration."""
         if self.n_trials < 10:
             logger.warning(f"n_trials={self.n_trials} is low. Consider increasing for better optimization.")
         return True
-    
+
+
 @dataclass
 class UncertaintyConfig:
     """Configuration for uncertainty quantification."""
     enable_bootstrap: bool = False
     n_bootstrap_samples: int = 100
     confidence_level: float = 0.95
+
+
 @dataclass
 class EnsembleConfig:
     """Configuration for model ensemble."""
@@ -72,11 +78,10 @@ class EnsembleConfig:
         'lightgbm': 0.2,
         'logistic_regression': 0.1
     })
-    uncertainty: UncertaintyConfig = field(default_factory=UncertaintyConfig)  # ← ADD THIS
+    uncertainty: Union[UncertaintyConfig, Dict[str, Any]] = field(default_factory=UncertaintyConfig)
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Auto-convert string/dict to CalibrationMethod Enum."""
-        # Handle calibration_method conversion
         if isinstance(self.calibration_method, str):
             try:
                 self.calibration_method = CalibrationMethod(self.calibration_method.lower())
@@ -91,15 +96,14 @@ class EnsembleConfig:
                 logger.warning(f"Unknown calibration method '{value}', using SIGMOID")
                 self.calibration_method = CalibrationMethod.SIGMOID
         
-        # Handle uncertainty config (if loaded as dict from YAML)
         if isinstance(self.uncertainty, dict):
             self.uncertainty = UncertaintyConfig(**self.uncertainty)
     
     def validate(self) -> bool:
         """Validate ensemble configuration."""
-        if sum(self.initial_weights.values()) != 1.0:
+        total = sum(self.initial_weights.values())
+        if abs(total - 1.0) > 0.01:
             logger.warning("Ensemble weights don't sum to 1.0. Normalizing...")
-            total = sum(self.initial_weights.values())
             self.initial_weights = {k: v / total for k, v in self.initial_weights.items()}
         return True
 
@@ -109,27 +113,26 @@ class Config:
     """Main configuration dataclass."""
     hyperparameter_tuning: HyperparameterConfig = field(default_factory=HyperparameterConfig)
     ensemble: EnsembleConfig = field(default_factory=EnsembleConfig)
-    weights: Dict = field(default_factory=dict)
-    augmentation: Dict = field(default_factory=dict)
-    batch_processing: Dict = field(default_factory=dict)
-    model_registry: Dict = field(default_factory=dict)
-    monitoring: Dict = field(default_factory=dict)
-    thresholds: Dict = field(default_factory=dict)
+    weights: Dict[str, Any] = field(default_factory=dict)
+    augmentation: Dict[str, Any] = field(default_factory=dict)
+    batch_processing: Dict[str, Any] = field(default_factory=dict)
+    model_registry: Dict[str, Any] = field(default_factory=dict)
+    monitoring: Dict[str, Any] = field(default_factory=dict)
+    thresholds: Dict[str, Any] = field(default_factory=dict)
     
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post-initialization validation."""
         self.validate_all()
     
-    def validate_all(self):
+    def validate_all(self) -> bool:
         """Validate all configuration sections."""
         self.hyperparameter_tuning.validate()
         self.ensemble.validate()
-        # Add validation for other sections as needed
         return True
     
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to JSON-serializable dictionary."""
-        def make_serializable(obj):
+        def make_serializable(obj: Any) -> Any:
             """Recursively convert objects to JSON-serializable format."""
             if isinstance(obj, (str, int, float, bool, type(None))):
                 return obj
@@ -137,34 +140,40 @@ class Config:
                 return [make_serializable(item) for item in obj]
             elif isinstance(obj, dict):
                 return {key: make_serializable(value) for key, value in obj.items()}
+            elif isinstance(obj, Enum):
+                return obj.value
+            elif is_dataclass(obj):
+                result: Dict[str, Any] = {}
+                for field_obj in fields(obj):
+                    if field_obj.name.startswith('_'):
+                        continue
+                    try:
+                        result[field_obj.name] = make_serializable(getattr(obj, field_obj.name))
+                    except Exception:
+                        result[field_obj.name] = str(getattr(obj, field_obj.name))
+                return result
             elif hasattr(obj, '__dict__'):
-                # Handle dataclass or custom objects
                 result = {}
                 for key, value in obj.__dict__.items():
                     if key.startswith('_'):
-                        continue  # Skip private attributes
+                        continue
                     try:
                         result[key] = make_serializable(value)
                     except Exception:
-                        result[key] = str(value)  # Fallback to string
+                        result[key] = str(value)
                 return result
-            elif isinstance(obj, Enum):
-                return obj.value
-            elif hasattr(obj, 'value'):
-                # Enum-like objects
-                return obj.value
             else:
-                # Last resort: convert to string
                 return str(obj)
         
-        return make_serializable(asdict(self))
-
+        serialized = make_serializable(asdict(self))
+        return cast(Dict[str, Any], serialized)
     
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         """Save configuration to YAML file."""
         with open(path, 'w') as f:
             yaml.dump(self.to_dict(), f, default_flow_style=False)
         logger.info(f"Configuration saved to {path}")
+
 
 class ConfigManager:
     """
@@ -172,28 +181,28 @@ class ConfigManager:
     Singleton pattern ensures consistent configuration across the system.
     """
     
-    _instance = None
+    _instance: Optional['ConfigManager'] = None
+    _initialized: bool = False
     
-    def __new__(cls):
+    def __new__(cls) -> 'ConfigManager':
         """Singleton pattern."""
         if cls._instance is None:
             cls._instance = super(ConfigManager, cls).__new__(cls)
             cls._instance._initialized = False
         return cls._instance
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize configuration manager."""
         if self._initialized:
             return
         
-        # Default configuration paths
-        self.default_config_paths = [
+        self.default_config_paths: list[str] = [
             "config/hybrid_config.yaml",
             "../config/hybrid_config.yaml",
             "./hybrid_config.yaml"
         ]
         
-        self.config = None
+        self.config: Optional[Config] = None
         self._initialized = True
         logger.info("Configuration Manager initialized")
     
@@ -207,7 +216,8 @@ class ConfigManager:
         Returns:
             Config object
         """
-        # Try explicit path first (convert to absolute)
+        config_dict: Optional[Dict[str, Any]] = None
+        
         if config_path:
             config_path_obj = Path(config_path)
             if not config_path_obj.is_absolute():
@@ -216,24 +226,17 @@ class ConfigManager:
             if config_path_obj.exists():
                 config_dict = self._load_yaml(str(config_path_obj))
                 logger.info(f"✅ Loaded config from: {config_path_obj}")
-            else:
-                config_dict = None
         else:
-            # Try default paths (now using path_resolver)
-            config_dict = None
             default_config = path_resolver.get_config_file("hybrid_config.yaml")
-            
             if default_config.exists():
                 config_dict = self._load_yaml(str(default_config))
                 logger.info(f"✅ Loaded config from: {default_config}")
         
         if config_dict is None:
-            logger.warning("⚠️  No configuration file found. Using defaults.")
+            logger.warning("⚠️ No configuration file found. Using defaults.")
             config_dict = {}
         
-        # Convert nested dictionaries to dataclasses
         self.config = self._dict_to_dataclass(config_dict, Config)
-        
         logger.info("✅ Configuration loaded successfully")
         return self.config
     
@@ -241,56 +244,87 @@ class ConfigManager:
         """Load YAML file with error handling."""
         try:
             with open(path, 'r') as f:
-                return yaml.safe_load(f)
+                result = yaml.safe_load(f)
+                return cast(Dict[str, Any], result if result is not None else {})
         except Exception as e:
             logger.error(f"Failed to load config from {path}: {e}")
             raise
     
-    def _dict_to_dataclass(self, data: Dict, dataclass_type) -> Any:
-        """Recursively convert dictionary to dataclass."""
+    def _dict_to_dataclass(self, data: Any, dataclass_type: Type[T]) -> T:
+        """
+        Recursively convert dictionary to dataclass.
+        
+        Args:
+            data: Dictionary to convert
+            dataclass_type: Target dataclass type
+            
+        Returns:
+            Instance of dataclass_type
+        """
         if not isinstance(data, dict):
-            return data
+            return cast(T, data)
         
-        # Get field types from dataclass
-        field_types = {f.name: f.type for f in dataclass_type.__dataclass_fields__.values()}
+        if not is_dataclass(dataclass_type):
+            return cast(T, data)
         
-        # Create kwargs for dataclass
-        kwargs = {}
+        field_types: Dict[str, Any] = {
+            f.name: f.type for f in fields(dataclass_type)
+        }
+        
+        kwargs: Dict[str, Any] = {}
         for field_name, field_type in field_types.items():
             if field_name in data:
-                # Handle nested dataclasses
-                if hasattr(field_type, '__dataclass_fields__'):
-                    kwargs[field_name] = self._dict_to_dataclass(data[field_name], field_type)
+                origin = get_origin(field_type)
+                if origin is Union:
+                    union_args = get_args(field_type)
+                    for arg in union_args:
+                        if is_dataclass(arg):
+                            kwargs[field_name] = self._dict_to_dataclass(
+                                data[field_name], 
+                                cast(Type[Any], arg)
+                            )
+                            break
+                    else:
+                        kwargs[field_name] = data[field_name]
+                elif is_dataclass(field_type):
+                    kwargs[field_name] = self._dict_to_dataclass(
+                        data[field_name], 
+                        cast(Type[Any], field_type)
+                    )
                 else:
                     kwargs[field_name] = data[field_name]
         
         return dataclass_type(**kwargs)
     
-    def _setup_paths(self, config_path: str):
+    def _setup_paths(self, config_path: str) -> None:
         """Setup relative paths based on config file location."""
         logger.debug(f"Config loaded from: {config_path}")
         logger.debug(f"Project root: {path_resolver.project_root}")
-        
+    
     def get_config(self) -> Config:
         """Get current configuration."""
         if self.config is None:
             self.load_config()
+        
+        assert self.config is not None, "Config should be loaded by now"
         return self.config
     
-    def update_config(self, updates: Dict[str, Any]):
+    def update_config(self, updates: Dict[str, Any]) -> None:
         """Update configuration dynamically."""
         if self.config is None:
             self.load_config()
         
-        # Update configuration (simplified - in production, use deep update)
-        for key, value in updates.items():
-            if hasattr(self.config, key):
-                setattr(self.config, key, value)
-        
-        logger.info("Configuration updated")
+        if self.config is not None:
+            for key, value in updates.items():
+                if hasattr(self.config, key):
+                    setattr(self.config, key, value)
+            logger.info("Configuration updated")
+
 
 # Global configuration access
 config_manager = ConfigManager()
+
+
 def get_config() -> Config:
     """Global accessor for configuration."""
     return config_manager.get_config()

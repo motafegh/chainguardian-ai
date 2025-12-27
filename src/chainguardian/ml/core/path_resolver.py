@@ -9,24 +9,26 @@ from pathlib import Path
 from typing import Optional
 import os
 
+
 class PathResolver:
     """
     Resolve all project paths relative to project root.
     Handles Poetry, Docker, and multi-environment setups.
     """
     
-    _instance = None
+    _instance: Optional['PathResolver'] = None
     _project_root: Optional[Path] = None
+    _initialized: bool = False  # ✅ FIX: Declare the attribute
     
-    def __new__(cls):
+    def __new__(cls) -> 'PathResolver':
         """Singleton pattern for consistent path resolution."""
         if cls._instance is None:
             cls._instance = super(PathResolver, cls).__new__(cls)
-            cls._instance._initialized = False
+            cls._instance._initialized = False  # ✅ Now mypy knows the type
         return cls._instance
     
-    def __init__(self):
-        if self._initialized:
+    def __init__(self) -> None:
+        if self._initialized:  # ✅ Now mypy knows the type
             return
         
         # Detect project root (where pyproject.toml lives)
@@ -59,12 +61,17 @@ class PathResolver:
     @property
     def project_root(self) -> Path:
         """Get absolute path to project root."""
+        if self._project_root is None:
+            raise RuntimeError(
+                "PathResolver not properly initialized. "
+                "_project_root is None."
+            )
         return self._project_root
     
     @property
     def config_dir(self) -> Path:
         """config/ directory."""
-        return self._project_root / "config"
+        return self.project_root / "config"
     
     @property
     def models_dir(self) -> Path:
@@ -90,7 +97,7 @@ class PathResolver:
     @property
     def data_dir(self) -> Path:
         """data/ directory."""
-        return self._project_root / "data"
+        return self.project_root / "data"
     
     def get_config_file(self, filename: str = "hybrid_config.yaml") -> Path:
         """Get absolute path to config file."""
@@ -106,7 +113,7 @@ class PathResolver:
         Returns:
             Absolute Path object
         """
-        return self._project_root / relative_path
+        return self.project_root / relative_path
 
 
 # Global instance

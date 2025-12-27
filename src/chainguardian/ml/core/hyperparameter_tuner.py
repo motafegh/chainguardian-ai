@@ -39,10 +39,10 @@ class HyperparameterTuner:
         """
         self.config = config
         self.feature_names = feature_names
-        self.study = None
-        self.best_params = {}
-        self.best_score = -np.inf
-        
+        self.study: Optional[optuna.Study] = None  # Will be created in optimize()
+        self.best_params: Dict[str, Any] = {}
+        self.best_score: float = -np.inf
+            
         # Set up Optuna logging
         optuna.logging.set_verbosity(optuna.logging.WARNING)
     
@@ -102,7 +102,7 @@ class HyperparameterTuner:
                 trial.set_user_attr("mean_score", mean_score)
                 trial.set_user_attr("std_score", scores.std())
                 
-                return mean_score
+                return float(mean_score)
                 
             except Exception as e:
                 # Return poor score if model fails
@@ -244,7 +244,7 @@ class HyperparameterTuner:
             'trials_dataframe': self.study.trials_dataframe()
         }
     
-    def analyze_results(self) -> Dict:
+    def analyze_results(self) -> Dict[str, Any]:
         """
         Analyze optimization results and provide insights.
         
@@ -256,12 +256,19 @@ class HyperparameterTuner:
         
         trials_df = self.study.trials_dataframe()
         
+        # ✅ FIX: Handle None duration
+        duration_seconds = (
+            self.study.best_trial.duration.total_seconds()
+            if self.study.best_trial.duration is not None
+            else 0.0
+        )
+        
         analysis = {
             'best_trial': {
                 'number': self.study.best_trial.number,
                 'value': self.study.best_trial.value,
                 'params': self.study.best_trial.params,
-                'duration': self.study.best_trial.duration.total_seconds()
+                'duration': duration_seconds  # ✅ Now safe
             },
             'summary_stats': {
                 'total_trials': len(trials_df),
@@ -285,15 +292,29 @@ class HyperparameterTuner:
         logger.info(f"Parameter importance: {analysis['parameter_importance']}")
         
         return analysis
+
     
-    def _prepare_convergence_data(self) -> Dict:
+    def _prepare_convergence_data(self) -> Dict[str, List[Any]]:
         """Prepare data for convergence plotting."""
+        if self.study is None:
+            return {
+                'trial_numbers': [],
+                'scores': [],
+                'best_so_far': []
+            }
+        
         trials = self.study.trials
+        
+        # ✅ FIX: Filter out None values and provide default
         return {
             'trial_numbers': [t.number for t in trials],
-            'scores': [t.value for t in trials],
-            'best_so_far': [max([t.value for t in trials[:i+1]]) for i in range(len(trials))]
+            'scores': [t.value if t.value is not None else 0.0 for t in trials],
+            'best_so_far': [
+                max([t.value for t in trials[:i+1] if t.value is not None], default=0.0)
+                for i in range(len(trials))
+            ]
         }
+
     
     def get_best_model(self, X: np.ndarray, y: np.ndarray):
         """

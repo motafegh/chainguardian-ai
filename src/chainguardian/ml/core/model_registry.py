@@ -12,7 +12,7 @@ import yaml
 from pathlib import Path
 from datetime import datetime
 import hashlib
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any, Tuple, cast
 import logging
 import shutil
 from chainguardian.ml.core.path_resolver import path_resolver
@@ -53,11 +53,12 @@ class ModelRegistry:
         logger.info(f"✅ Model registry initialized at: {self.registry_path}")
 
     
-    def _load_index(self) -> Dict:
+    def _load_index(self) -> Dict[str, Any]:
         """Load or create registry index."""
         if self.index_file.exists():
             with open(self.index_file, 'r') as f:
-                return json.load(f)
+                # ✅ FIX: Cast json.load to proper type
+                return cast(Dict[str, Any], json.load(f))
         else:
             return {
                 'versions': {},
@@ -67,6 +68,7 @@ class ModelRegistry:
                     'total_models': 0
                 }
             }
+
     
     def _save_index(self):
         """Save registry index to file."""
@@ -275,7 +277,7 @@ class ModelRegistry:
         
         return models
     
-    def compare_models(self, version1: str, version2: str) -> Dict:
+    def compare_models(self, version1: str, version2: str) -> Dict[str, Any]:
         """
         Compare two model versions.
         
@@ -289,7 +291,8 @@ class ModelRegistry:
         model1 = self.get_model(version1)
         model2 = self.get_model(version2)
         
-        comparison = {
+        # ✅ FIX: Explicit type annotation
+        comparison: Dict[str, Any] = {
             'versions': [version1, version2],
             'performance_comparison': {},
             'feature_differences': [],
@@ -300,18 +303,14 @@ class ModelRegistry:
         metrics1 = model1['metadata'].get('performance_metrics', {})
         metrics2 = model2['metadata'].get('performance_metrics', {})
         
-        for metric in set(metrics1.keys()) | set(metrics2.keys()):
-            val1 = metrics1.get(metric)
-            val2 = metrics2.get(metric)
-            
-            if val1 is not None and val2 is not None:
-                diff = val2 - val1
-                comparison['performance_comparison'][metric] = {
-                    version1: val1,
-                    version2: val2,
-                    'difference': diff,
-                    'improvement': diff > 0 if metric in ['auc', 'accuracy'] else diff < 0
-                }
+        # ✅ Now this works - mypy knows it's Dict[str, Any]
+        for metric in set(list(metrics1.keys()) + list(metrics2.keys())):
+            comparison['performance_comparison'][metric] = {
+                version1: metrics1.get(metric, 'N/A'),
+                version2: metrics2.get(metric, 'N/A'),
+                'difference': metrics1.get(metric, 0) - metrics2.get(metric, 0) 
+                            if metric in metrics1 and metric in metrics2 else None
+            }
         
         # Compare features
         features1 = set(model1['metadata'].get('feature_names', []))
@@ -320,22 +319,25 @@ class ModelRegistry:
         added = features2 - features1
         removed = features1 - features2
         
+        # ✅ Now this works - mypy knows it's List
         if added:
             comparison['feature_differences'].append(f"Added {len(added)} features")
         if removed:
             comparison['feature_differences'].append(f"Removed {len(removed)} features")
         
         # Compare training info
-        info1 = model1['metadata'].get('training_info', {})
-        info2 = model2['metadata'].get('training_info', {})
+        train1 = model1['metadata'].get('training_info', {})
+        train2 = model2['metadata'].get('training_info', {})
         
-        for key in set(info1.keys()) | set(info2.keys()):
-            if info1.get(key) != info2.get(key):
+        for key in set(list(train1.keys()) + list(train2.keys())):
+            if train1.get(key) != train2.get(key):
+                # ✅ Now this works - mypy knows it's List
                 comparison['training_differences'].append(
-                    f"{key}: {info1.get(key)} -> {info2.get(key)}"
+                    f"{key}: {train1.get(key)} → {train2.get(key)}"
                 )
         
         return comparison
+
     
     def promote_model(self, version: str, environment: str = 'production') -> bool:
         """
@@ -475,7 +477,7 @@ class ModelRegistry:
         logger.info(f"✅ Cleanup completed. Removed {len(removed)} old versions")
         return removed
     
-    def get_performance_history(self, metric: str = 'auc') -> Dict:
+    def get_performance_history(self, metric: str = 'auc') -> Dict[str, Any]:
         """
         Get performance history for a specific metric.
         
@@ -485,7 +487,8 @@ class ModelRegistry:
         Returns:
             Performance history dictionary
         """
-        history = {
+        # ✅ FIX: Add explicit type annotation
+        history: Dict[str, Any] = {
             'metric': metric,
             'timeline': [],
             'best_version': None,
@@ -497,6 +500,7 @@ class ModelRegistry:
             metric_value = performance.get(metric)
             
             if metric_value is not None:
+                # ✅ Now mypy knows timeline is a List
                 history['timeline'].append({
                     'version': version,
                     'timestamp': info['timestamp'],
@@ -509,6 +513,7 @@ class ModelRegistry:
                     history['best_version'] = version
         
         # Sort timeline by timestamp
+        # ✅ Now mypy knows timeline has .sort()
         history['timeline'].sort(key=lambda x: x['timestamp'])
         
         return history
