@@ -1,0 +1,59 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments (don't copy your local venv!)
+venv/
+env/
+ENV/
+.venv
+
+# Git and version control
+.git/
+.gitignore
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment and secrets (CRITICAL!)
+.env
+.env.*
+*.key
+*.pem
+
+# Testing and CI
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+docs/
+*.md
+README.md
+
+# Data and logs (don't bundle training data!)
+data/
+logs/
+*.log
+
+# Models (handle separately, see note below)
+models/*.pkl
+models/*.joblib
+
+# Docker itself
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# OS files
+.DS_Store
+Thumbs.db

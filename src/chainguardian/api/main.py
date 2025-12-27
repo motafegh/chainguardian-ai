@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import routers
-from schainguardian.api.routers import health, predict
+from chainguardian.api.routers import health, predict
 
 # Create FastAPI app instance
 app = FastAPI(
