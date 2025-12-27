@@ -26,7 +26,7 @@ FROM python:3.11-slim AS runtime
 ENV CUDA_VISIBLE_DEVICES="" \
     USE_CUDA=0
 
-# Install system dependencies (including libgomp1 for LightGBM/XGBoost)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
@@ -54,11 +54,11 @@ COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/* && \
     rm -rf /wheels
 
-# Copy configuration files
+# Copy pyproject.toml
 COPY --chown=appuser:appuser pyproject.toml /app/
 
-# Copy ML models (CRITICAL!)
-COPY --chown=appuser:appuser config/models /app/models
+# Copy configuration files (CRITICAL - ADD THIS!)
+COPY --chown=appuser:appuser config/ /app/config/
 
 # Copy application code
 COPY --chown=appuser:appuser src/chainguardian /app/chainguardian
@@ -66,10 +66,10 @@ COPY --chown=appuser:appuser src/chainguardian /app/chainguardian
 # Switch to non-root user
 USER appuser
 
-# Expose port (Railway will override with $PORT)
+# Expose port
 EXPOSE 8000
 
-# Health check configuration
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:$\{PORT:-8000\}/health || exit 1
 
@@ -78,5 +78,5 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-# Start command with dynamic port binding for Railway
+# Start command with dynamic port binding
 CMD uvicorn chainguardian.api.main:app --host 0.0.0.0 --port ${PORT:-8000}

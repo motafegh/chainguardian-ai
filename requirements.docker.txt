@@ -25,3 +25,6 @@ redis==5.0.1
 
 # Monitoring (optional, add if needed)
 prometheus-fastapi-instrumentator==6.1.0
+
+# Configuration (MISSING - ADD THIS!)
+pyyaml==6.0.1
