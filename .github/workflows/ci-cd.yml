@@ -1,0 +1,183 @@
+name: ChainGuardian CI/CD
+
+# Trigger: When to run this pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+# Environment variables used across all jobs
+env:
+  PYTHON_VERSION: "3.11"
+  POETRY_VERSION: "1.7.1"
+
+jobs:
+  # ================================================================
+  # JOB 1: CODE QUALITY (No pytest needed)
+  # ================================================================
+  quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: 📦 Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      
+      - name: 💾 Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+      
+      - name: 📚 Install dependencies
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-root
+      
+      - name: 🔍 Lint with Ruff
+        run: |
+          poetry run ruff check src/chainguardian/ --output-format=github
+        continue-on-error: false
+        # Checks for:
+        # - Unused imports (your predict.py might have some)
+        # - Syntax errors
+        # - Code smells
+      
+      - name: 🔬 Type check with mypy
+        run: |
+          poetry run mypy src/chainguardian/api/ --ignore-missing-imports --no-error-summary
+        continue-on-error: true
+        # Set to 'true' initially - we'll fix type errors gradually
+        # Your model_loader.py and predict.py likely have some type issues
+
+  # ================================================================
+  # JOB 2: BUILD & TEST DOCKER IMAGE
+  # ================================================================
+  build:
+    name: Build Docker Image
+    needs: quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Build Docker image
+        run: |
+          docker build \
+            -t chainguardian-api:${{ github.sha }} \
+            -t chainguardian-api:latest \
+            -f Dockerfile \
+            .
+        # Builds YOUR Dockerfile with multi-stage build
+        # Tags with git commit SHA for traceability
+      
+      - name: 🧪 Test Docker image (basic smoke test)
+        run: |
+          # Start container in background
+          docker run -d \
+            -p 8000:8000 \
+            --name test-api \
+            -e DATABASE_URL=sqlite:///test.db \
+            -e REDIS_URL=redis://localhost:6379 \
+            chainguardian-api:latest
+          
+          echo "⏳ Waiting 45 seconds for model loading..."
+          sleep 45
+          
+          # Test 1: Health check
+          echo "Testing /health endpoint..."
+          curl -f http://localhost:8000/health || exit 1
+          
+          # Test 2: Root endpoint
+          echo "Testing / endpoint..."
+          curl -f http://localhost:8000/ || exit 1
+          
+          # Test 3: Check if models loaded (from startup logs)
+          docker logs test-api | grep "Predictor loaded" || exit 1
+          
+          echo "✅ All smoke tests passed!"
+          
+          # Cleanup
+          docker stop test-api
+          docker rm test-api
+      
+      - name: 📊 Check Docker image size
+        run: |
+          IMAGE_SIZE=$(docker images chainguardian-api:latest --format "{{.Size}}")
+          echo "📦 Docker image size: $IMAGE_SIZE"
+          # Your multi-stage build should be <1GB
+
+  # ================================================================
+  # JOB 3: DEPLOY TO RAILWAY (Only on main branch)
+  # ================================================================
+  deploy:
+    name: Deploy to Railway
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🚂 Install Railway CLI
+        run: |
+          npm install -g @railway/cli
+      
+      - name: 🚀 Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --service chainguardian-api
+          echo "✅ Deployed to Railway!"
+      
+      - name: ⏳ Wait for Railway deployment
+        run: |
+          echo "Waiting 60 seconds for Railway to start new container..."
+          sleep 60
+      
+      - name: 🔍 Smoke test production
+        run: |
+          # Replace with YOUR Railway URL (you'll set this after first deploy)
+          RAILWAY_URL="${{ secrets.RAILWAY_URL }}"
+          
+          # If RAILWAY_URL not set, skip smoke test
+          if [ -z "$RAILWAY_URL" ]; then
+            echo "⚠️ RAILWAY_URL secret not set, skipping production smoke test"
+            exit 0
+          fi
+          
+          echo "Testing production at: $RAILWAY_URL"
+          
+          # Test health endpoint
+          curl -f "$RAILWAY_URL/health" || exit 1
+          
+          echo "✅ Production deployment successful!"
+      
+      - name: 📝 Create deployment comment (on PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Deployment preview ready! Check Railway dashboard.'
+            })

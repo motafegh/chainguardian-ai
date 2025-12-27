@@ -19,6 +19,18 @@ dist/
 *.egg-info/
 .eggs/
 *.egg
+# Secrets
+.env
+.env.local
+railway.env
+
+# CI/CD
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Railway
+.railway/
 
 # Virtual environments
 venv/
