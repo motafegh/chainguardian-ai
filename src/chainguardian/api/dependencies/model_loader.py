@@ -1,24 +1,32 @@
-"""
-Model loader dependency for FastAPI.
-Loads predictor once at startup and caches it.
-"""
-from functools import lru_cache
-from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
+"""Model loader using PathResolver for environment-aware paths."""
+import logging
+from typing import Optional
 
+logger = logging.getLogger(__name__)
 
-@lru_cache()  # Cache the result - loads only once!
-def get_predictor() -> EnhancedHybridPredictorV2:
-    """
-    Get the ML predictor instance (cached singleton).
+_predictor: Optional[object] = None
+
+def get_predictor():
+    """Get or load the predictor instance (lazy loading)."""
+    global _predictor
+    if _predictor is None:
+        _predictor = load_predictor()
+    return _predictor
+
+def load_predictor():
+    """Load ML predictor using PathResolver."""
+    from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
+    from chainguardian.ml.core.path_resolver import path_resolver
     
-    This function is called by FastAPI's dependency injection system.
-    The @lru_cache decorator ensures the predictor loads only once,
-    then returns the cached instance on subsequent calls.
+    models_dir = path_resolver.models_dir
+    logger.info(f"🔍 Project root: {path_resolver.project_root}")
+    logger.info(f"📦 Models directory: {models_dir}")
     
-    Returns:
-        EnhancedHybridPredictorV2: Loaded predictor ready for inference
-    """
-    print("🔄 Loading predictor (this should only print once)...")
-    predictor = EnhancedHybridPredictorV2()
-    print(f"✅ Predictor loaded: {predictor.use_ensemble and 'ensemble' or 'single'} model")
+    predictor = EnhancedHybridPredictorV2(
+        models_dir=str(models_dir),
+        enable_shap=True,
+        enable_monitoring=True
+    )
+    
+    logger.info("✅ Predictor loaded successfully")
     return predictor
