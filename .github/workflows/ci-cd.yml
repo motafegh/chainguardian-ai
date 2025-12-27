@@ -11,7 +11,7 @@ env:
 
 jobs:
   # ================================================================
-  # JOB 1: CODE QUALITY
+  # JOB 1: CODE QUALITY (Minimal install - only ruff!)
   # ================================================================
   quality:
     name: Code Quality
@@ -21,36 +21,22 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
       
-      - name: 🐍 Set up Python
+      - name: �� Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       
-      - name: 📦 Install Poetry
+      - name: 🔍 Install ruff only (fast!)
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-      
-      - name: 💾 Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pypoetry
-            .venv
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-      
-      - name: 📚 Install dependencies
-        run: |
-          poetry config virtualenvs.in-project true
-          poetry install --no-root
+          pip install ruff==0.1.9
       
       - name: 🔍 Lint with Ruff
         run: |
-          poetry run ruff check src/chainguardian/
+          ruff check src/chainguardian/
         continue-on-error: false
 
   # ================================================================
-  # JOB 2: BUILD DOCKER IMAGE
+  # JOB 2: BUILD DOCKER IMAGE (Docker handles dependencies)
   # ================================================================
   build:
     name: Build & Test Docker
@@ -124,7 +110,6 @@ jobs:
         run: |
           if [ -z "$RAILWAY_TOKEN" ]; then
             echo "⚠️ RAILWAY_TOKEN not set, skipping deployment"
-            echo "Add RAILWAY_TOKEN to GitHub Secrets to enable auto-deployment"
             exit 0
           fi
           
@@ -139,10 +124,10 @@ jobs:
           RAILWAY_URL="${{ secrets.RAILWAY_URL }}"
           
           if [ -z "$RAILWAY_URL" ]; then
-            echo "⚠️ RAILWAY_URL not set, skipping production smoke test"
+            echo "⚠️ RAILWAY_URL not set, skipping smoke test"
             exit 0
           fi
           
-          echo "Testing production: $RAILWAY_URL"
+          echo "Testing: $RAILWAY_URL"
           curl -f "$RAILWAY_URL/health" || exit 1
-          echo "✅ Production is healthy!"
+          echo "✅ Production healthy!"
