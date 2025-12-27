@@ -26,7 +26,6 @@ Author: Ali - ChainGuardian AI Project
 Day: 1
 """
 
-from typing import Dict  # Type hints for function signatures
 from dataclasses import dataclass  # Cleaner than manual __init__
 import logging  # Production logging
 from slither import Slither  # Static analysis tool

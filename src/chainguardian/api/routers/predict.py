@@ -1,7 +1,7 @@
 """
 Prediction endpoints - SIMPLIFIED to use existing predictor output.
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 import time
 import tempfile
 from pathlib import Path

@@ -13,25 +13,22 @@ ENHANCEMENTS:
 """
 
 import numpy as np
-import pandas as pd
 import joblib
 import json
-import yaml
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any, Union, Generator
+from typing import Dict, List, Tuple
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 from functools import lru_cache
-
+import sys
 # Import our new modules
 from chainguardian.ml.core.config_manager import get_config
-from chainguardian.ml.core.monitoring import MLMonitor
 print(f"🔍 DEBUG: Starting import of hybrid_predictor_enhanced_v2 from {__file__}")
 
-import sys
+
 print(f"🔍 DEBUG: Module in sys.modules: {'hybrid_predictor_enhanced_v2' in sys.modules}")
 # SHAP for explainability
 try:
@@ -197,7 +194,7 @@ class EnhancedHybridPredictorV2:
         # ✅ STEP 9: Warmup
         self._warmup_prediction()
 
-        logger.info(f"✅ EnhancedHybridPredictorV2 initialized")
+        logger.info("✅ EnhancedHybridPredictorV2 initialized")
         logger.info(f"   Using {'ensemble' if self.use_ensemble else 'single'} model")
         logger.info(f"   Features: {len(self.feature_names)}")
 
@@ -413,7 +410,6 @@ class EnhancedHybridPredictorV2:
         else:
             # Single model prediction
             ml_proba = self.ml_model.predict_proba(X_scaled)[0, 1]
-            ml_prediction = 1 if ml_proba > 0.5 else 0
             ml_uncertainty = 0.0
         
         # 4. Calculate semantic risk
@@ -508,7 +504,7 @@ class EnhancedHybridPredictorV2:
             ml_uncertainties = confidence_intervals[:, 1] - confidence_intervals[:, 0]
         else:
             ml_probas = self.ml_model.predict_proba(X_batch)[:, 1]
-            predictions = (ml_probas > 0.5).astype(int)
+            (ml_probas > 0.5).astype(int)
             ml_uncertainties = np.zeros(len(batch))
         
         # ✅ Pre-compute semantic scores and reasons for ALL samples (avoid recalculation)
@@ -599,7 +595,7 @@ class EnhancedHybridPredictorV2:
                     result = future.result()
                     results.append(result)
                 except Exception as e:
-                    features = future_to_features[future]
+                    future_to_features[future]
                     logger.error(f"Failed to predict for features: {e}")
                     # Return error result
                     results.append({
@@ -731,7 +727,7 @@ class EnhancedHybridPredictorV2:
             has_guard = features.get('has_reentrancy_guard', False)
             if has_guard and num_external > 0:
                 static_risk *= (1 + semantic_weights.get('reentrancy_guard_bonus', -0.5))
-                reasons.append(f"✅ Reentrancy guard detected (-50% risk)")
+                reasons.append("✅ Reentrancy guard detected (-50% risk)")
             
             risk = min(static_risk, 0.5)
             
@@ -751,7 +747,7 @@ class EnhancedHybridPredictorV2:
                 reasons.append(f"⚠️ Low CEI score: {cei_score:.2f} (+{score_risk:.0%} risk)")
                 metadata['components_used'].append('cei_score')
             elif cei_score == 1.0:
-                reasons.append(f"✅ Perfect CEI compliance")
+                reasons.append("✅ Perfect CEI compliance")
             
             state_after = features.get('state_after_call_count', 0)
             if state_after > 0:
@@ -772,7 +768,7 @@ class EnhancedHybridPredictorV2:
             
             if has_guard and num_external > 0:
                 risk *= (1 + semantic_weights.get('reentrancy_guard_bonus', -0.5))
-                reasons.append(f"✅ Reentrancy guard detected (-50% risk)")
+                reasons.append("✅ Reentrancy guard detected (-50% risk)")
                 metadata['components_used'].append('reentrancy_guard')
         
         return min(risk, 1.0), reasons, metadata
@@ -986,7 +982,7 @@ class EnhancedHybridPredictor(EnhancedHybridPredictorV2):
         Original predict method for backward compatibility.
         """
         # Map old parameters to new method
-        llm_ready = kwargs.get('llm_ready', False)
+        kwargs.get('llm_ready', False)
         explain = kwargs.get('explain', True)
         return_details = kwargs.get('return_details', True)
         

@@ -6,7 +6,6 @@ Ensures type safety and provides default values for backward compatibility.
 """
 
 import yaml
-import os
 from pathlib import Path
 from typing import Dict, Any, Optional, Union, cast, Type, TypeVar, get_origin, get_args
 from dataclasses import dataclass, field, asdict, is_dataclass, fields

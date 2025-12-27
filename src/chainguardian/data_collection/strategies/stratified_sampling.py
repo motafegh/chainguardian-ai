@@ -49,7 +49,7 @@ class StratifiedSampler:
         """
         Execute stratified sampling with duplicate detection
         """
-        logger.info(f"")
+        logger.info("")
         logger.info(f"{'='*70}")
         logger.info(f"Executing stratified sampling (target={self.target_size})...")
         logger.info(f"{'='*70}")
@@ -62,7 +62,7 @@ class StratifiedSampler:
             population = stratum_data['population']
             sample_size = stratum_data['sample_size']
             
-            logger.info(f"")
+            logger.info("")
             logger.info(f"Stratum: {stratum_name}")
             logger.info(f"  Population: {len(population)}")
             logger.info(f"  Target sample: {sample_size}")
@@ -101,7 +101,7 @@ class StratifiedSampler:
                     'metadata': addr if isinstance(addr, dict) else {}
                 })
         
-        logger.info(f"")
+        logger.info("")
         logger.info(f"{'='*70}")
         logger.info(f"✓ Stratified sampling complete: {len(final_sample)} contracts")
         

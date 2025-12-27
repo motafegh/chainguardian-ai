@@ -2,11 +2,10 @@
 Graph Feature Extractor - CFG, Call Graph, DFG Analysis
 Extracts 25 graph-theoretic features from smart contracts.
 """
-from typing import Dict, Set
+from typing import Dict
 import networkx as nx
 from slither import Slither
-from slither.core.declarations import Contract, Function
-from slither.core.cfg.node import NodeType
+from slither.core.declarations import Contract
 import logging
 
 logger = logging.getLogger(__name__)
@@ -118,7 +117,7 @@ class GraphFeatureExtractor:
                 # Complex loops: nested loops (cycle within cycle)
                 if len(cycles) > 1:
                     has_complex = True
-            except:
+            except (AttributeError, TypeError, KeyError, ValueError):
                 pass
             
             # Calculate max depth (longest path)
@@ -130,7 +129,7 @@ class GraphFeatureExtractor:
                     lengths = nx.single_source_shortest_path_length(G, entry)
                     func_max_depth = max(lengths.values()) if lengths else 0
                     max_depth = max(max_depth, func_max_depth)
-            except:
+            except (AttributeError, TypeError, KeyError, ValueError):
                 pass
             
             # Cyclomatic complexity for this function
@@ -210,17 +209,17 @@ class GraphFeatureExtractor:
                         lengths = nx.single_source_shortest_path_length(G, pub_func.name)
                         if lengths:
                             max_depth = max(max_depth, max(lengths.values()))
-                    except:
+                    except (AttributeError, TypeError, KeyError, ValueError):
                         pass
                 features['cg_max_call_depth'] = max_depth
-        except:
+        except (AttributeError, TypeError, KeyError, ValueError):
             pass
         
         # Detect cyclic calls (recursion)
         try:
             cycles = list(nx.simple_cycles(G))
             features['cg_has_cyclic_calls'] = len(cycles) > 0
-        except:
+        except (AttributeError, TypeError, KeyError, ValueError):
             pass
         
         # Leaf functions (no outgoing calls)

@@ -134,7 +134,7 @@ class CoinGeckoCollector(BaseCollector):
                         if len(contracts) in [5, 10, 25, 50]:
                             self.logger.info(f"   🎯 Milestone: {len(contracts)} valid addresses found!")
             
-            self.logger.info(f"✓ Completed CoinGecko collection")
+            self.logger.info("✓ Completed CoinGecko collection")
             self.log_collection_complete(len(contracts))
             return contracts
             
@@ -148,5 +148,5 @@ class CoinGeckoCollector(BaseCollector):
             response = requests.get(f"{self.BASE_URL}/coins/{coin_id}", timeout=10)
             response.raise_for_status()
             return response.json()
-        except:
+        except (requests.RequestException, ValueError, KeyError):
             return None

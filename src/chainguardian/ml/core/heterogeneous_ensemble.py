@@ -7,7 +7,6 @@ Implements Platt scaling (sigmoid) for better probability calibration on small d
 """
 
 import numpy as np
-import pandas as pd
 from sklearn.ensemble import VotingClassifier
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.model_selection import StratifiedKFold
@@ -15,7 +14,6 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 import joblib
 import logging
 from typing import Dict, List, Tuple, Optional, Any  # ✅ Add Tuple
-from numpy.typing import NDArray  # ✅ Add this for better ndarray typing
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -431,7 +429,7 @@ class HeterogeneousEnsemble(BaseEstimator, ClassifierMixin):
             try:
                 auc = roc_auc_score(y_val, weighted_pred)
                 return -auc  # Minimize negative AUC
-            except:
+            except (ValueError, IndexError):
                 return 1.0  # Bad score if AUC calculation fails
         
         # Initial weights

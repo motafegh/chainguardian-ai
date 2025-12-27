@@ -21,7 +21,7 @@ Author: Ali - ChainGuardian AI Project
 
 from slither import Slither
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 import logging
 
 
@@ -284,7 +284,7 @@ class ASTFeatureExtractor:
             features['num_dependencies'] = len(
                 self.slither.crytic_compile.compilation_units
             )
-        except:
+        except (AttributeError, TypeError):
             features['num_dependencies'] = 0
 
 
@@ -293,7 +293,7 @@ class ASTFeatureExtractor:
         for func in contract.functions_declared:
             try:
                 library_calls += len(func.library_calls)
-            except:
+            except (AttributeError, TypeError):
                 pass
         features['num_library_calls'] = library_calls
 

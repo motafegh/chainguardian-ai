@@ -534,7 +534,7 @@ class EtherscanScraper:
         ThreadPoolExecutor with 5 workers, achieving 5x speedup while
         respecting Etherscan's rate limits through thread-safe locking."
         """
-        logger.info(f"")
+        logger.info("")
         logger.info(f"{'='*70}")
         logger.info(f"Starting parallel batch scrape: {len(addresses)} contracts")
         logger.info(f"Using {max_workers} parallel workers")
@@ -543,7 +543,7 @@ class EtherscanScraper:
         estimated_time = len(addresses) * self.RATE_LIMIT_DELAY / max_workers
         logger.info(f"Estimated scraping time: ~{estimated_time:.0f}s")
         logger.info(f"{'='*70}")
-        logger.info(f"")
+        logger.info("")
         
         saved_files = []
         failed_addresses = []
@@ -608,7 +608,7 @@ class EtherscanScraper:
                         )
         
         # Final summary
-        logger.info(f"")
+        logger.info("")
         logger.info(f"{'='*70}")
         
         success_count = len(saved_files)
@@ -630,7 +630,7 @@ class EtherscanScraper:
         
         logger.info(f"Files saved to: {output_dir}")
         logger.info(f"{'='*70}")
-        logger.info(f"")
+        logger.info("")
         
         return saved_files
     
@@ -694,6 +694,6 @@ if __name__ == "__main__":
     
     collector.print_stats()
     
-    print(f"✅ Test complete!")
+    print("✅ Test complete!")
     print(f"📁 Saved {len(saved)} contracts to: test_collection/")
-    print(f"📊 Check metadata in: test_collection/metadata/\n")
+    print("📊 Check metadata in: test_collection/metadata/\n")

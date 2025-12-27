@@ -10,7 +10,6 @@ Implements augmentation strategies suitable for tabular ML features:
 
 import numpy as np
 import pandas as pd
-from sklearn.utils import resample
 from typing import Tuple, Optional, Dict, Any
 import logging
 
@@ -174,7 +173,7 @@ class SmartContractAugmenter:
         
         class_counts = y.value_counts()
         minority_count = class_counts.min()
-        majority_count = class_counts.max()
+        class_counts.max()
         
         # Calculate target samples based on max_augmentation_factor
         max_factor = self.augmentation_config.get('max_augmentation_factor', 2.0)
@@ -184,7 +183,7 @@ class SmartContractAugmenter:
         # For balanced classes: each class should have target_total / 2
         target_per_class = target_total // 2
         
-        logger.info(f"Applying SMOTE to augment dataset...")
+        logger.info("Applying SMOTE to augment dataset...")
         logger.info(f"Original: {len(X)} samples, distribution: {class_counts.to_dict()}")
         logger.info(f"Target: {target_total} samples ({target_per_class} per class)")
         

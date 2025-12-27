@@ -7,7 +7,6 @@ Prevents path conflicts when running from different directories.
 
 from pathlib import Path
 from typing import Optional
-import os
 
 
 class PathResolver:

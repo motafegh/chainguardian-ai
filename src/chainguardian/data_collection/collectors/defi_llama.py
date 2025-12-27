@@ -42,7 +42,7 @@ class DeFiLlamaCollector(BaseCollector):
             # ================================================================
             # STEP 1: FETCH ALL PROTOCOLS
             # ================================================================
-            self.logger.info(f"Querying DeFiLlama for all protocols...")
+            self.logger.info("Querying DeFiLlama for all protocols...")
             response = requests.get(f"{self.BASE_URL}/protocols", timeout=30)
             response.raise_for_status()
             all_protocols = response.json()
@@ -149,7 +149,7 @@ class DeFiLlamaCollector(BaseCollector):
                         if len(contracts) in [10, 25, 50, 100, 200, 300]:
                             self.logger.info(f"   🎯 Milestone: {len(contracts)} valid addresses found!")
             
-            self.logger.info(f"✓ Completed DeFiLlama collection")
+            self.logger.info("✓ Completed DeFiLlama collection")
             self.log_collection_complete(len(contracts))
             return contracts
             
@@ -163,5 +163,5 @@ class DeFiLlamaCollector(BaseCollector):
             response = requests.get(f"{self.BASE_URL}/protocol/{slug}", timeout=10)
             response.raise_for_status()
             return response.json()
-        except:
+        except (requests.RequestException, ValueError, KeyError):
             return None

@@ -7,11 +7,11 @@ Tracks model performance, detects data drift, and provides alerts.
 
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from collections import deque
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Deque,Union
+from typing import Dict, Optional, Any, Deque
 import logging
 import warnings
 warnings.filterwarnings('ignore')
@@ -354,7 +354,7 @@ class MLMonitor:
         accuracy_degradation = baseline_accuracy - recent_accuracy
         
         if accuracy_degradation > 0.1:  # More than 10% degradation
-            logger.warning(f"⚠️ PERFORMANCE DEGRADATION DETECTED!")
+            logger.warning("⚠️ PERFORMANCE DEGRADATION DETECTED!")
             logger.warning(f"   Baseline accuracy: {baseline_accuracy:.4f}")
             logger.warning(f"   Recent accuracy: {recent_accuracy:.4f}")
             logger.warning(f"   Degradation: {accuracy_degradation:.4f}")

@@ -3,12 +3,11 @@ Semantic Security Pattern Analyzer
 Detects safety patterns and anti-patterns using Slither's analysis
 """
 
-from typing import Dict, Any, Set, List
+from typing import Dict, Any
 from slither.core.declarations import Function, Contract
-from slither.core.cfg.node import Node, NodeType
+from slither.core.cfg.node import Node
 from slither.slithir.operations import (
-    HighLevelCall, LowLevelCall, Transfer, Send,
-    Assignment, Binary, Index
+    HighLevelCall, LowLevelCall, Transfer, Send
 )
 import logging
 
@@ -158,14 +157,12 @@ class SemanticAnalyzer:
                 continue
             
             seen_state_mod = False
-            seen_call = False
             
             for node in func.nodes:
                 if self._modifies_state(node):
                     seen_state_mod = True
                 
                 if self._is_external_call(node):
-                    seen_call = True
                     if seen_state_mod:
                         safe_count += 1
                     break

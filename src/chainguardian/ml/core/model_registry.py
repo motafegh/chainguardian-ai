@@ -8,11 +8,10 @@ Provides reproducible model deployment and rollback capabilities.
 
 import json
 import joblib
-import yaml
 from pathlib import Path
 from datetime import datetime
 import hashlib
-from typing import Dict, List, Optional, Any, Tuple, cast
+from typing import Dict, List, Optional, Any, cast
 import logging
 import shutil
 from chainguardian.ml.core.path_resolver import path_resolver
@@ -214,7 +213,7 @@ class ModelRegistry:
         if version not in self.registry_index['versions']:
             raise ValueError(f"Model version {version} not found in registry")
         
-        version_info = self.registry_index['versions'][version]
+        self.registry_index['versions'][version]
         version_dir = self.registry_path / f"v{version}"
         
         # Load model assets

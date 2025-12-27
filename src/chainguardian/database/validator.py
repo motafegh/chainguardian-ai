@@ -6,7 +6,7 @@ Data Validation Layer
 Prevents garbage data from corrupting your dataset
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List
 import logging
 
 logger = logging.getLogger(__name__)

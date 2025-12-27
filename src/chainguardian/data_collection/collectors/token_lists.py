@@ -65,7 +65,7 @@ class TokenListCollector(BaseCollector):
         seen_addresses = set()
         
         for source, url in self.LISTS.items():
-            self.logger.info(f"")
+            self.logger.info("")
             self.logger.info(f"Fetching {source.upper()} token list...")
             
             try:
@@ -118,7 +118,7 @@ class TokenListCollector(BaseCollector):
                 self.logger.error(f"Error processing {source}: {e}")
                 continue
         
-        self.logger.info(f"")
+        self.logger.info("")
         self.logger.info(f"✓ Total unique tokens collected: {len(all_contracts)}")
         self.log_collection_complete(len(all_contracts))
         
@@ -169,10 +169,10 @@ def test_token_lists():
     contracts = collector.collect()
     
     print(f"\n{'='*70}")
-    print(f"Test Results:")
+    print("Test Results:")
     print(f"{'='*70}")
     print(f"Total contracts collected: {len(contracts)}")
-    print(f"\nFirst 5 contracts:")
+    print("\nFirst 5 contracts:")
     for i, contract in enumerate(contracts[:5], 1):
         print(f"{i}. {contract['name']} ({contract['metadata']['symbol']})")
         print(f"   Address: {contract['address']}")
@@ -207,10 +207,10 @@ if __name__ == "__main__":
     contracts = collector.collect()
     
     print(f"\n{'='*70}")
-    print(f"Test Results:")
+    print("Test Results:")
     print(f"{'='*70}")
     print(f"Total contracts collected: {len(contracts)}")
-    print(f"\nFirst 5 contracts:")
+    print("\nFirst 5 contracts:")
     for i, contract in enumerate(contracts[:5], 1):
         print(f"{i}. {contract['name']} ({contract['metadata']['symbol']})")
         print(f"   Address: {contract['address']}")

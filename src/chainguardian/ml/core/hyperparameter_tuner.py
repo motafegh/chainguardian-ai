@@ -8,16 +8,12 @@ Uses nested cross-validation to prevent overfitting.
 
 import optuna
 import numpy as np
-import pandas as pd
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.metrics import roc_auc_score, make_scorer
 import xgboost as xgb
 from sklearn.ensemble import RandomForestClassifier
 import lightgbm as lgb
-from sklearn.linear_model import LogisticRegression
 import logging
-from typing import Dict, List, Tuple, Any, Optional
-import joblib
+from typing import Dict, List, Any, Optional
 import warnings
 warnings.filterwarnings('ignore')
 

@@ -13,9 +13,9 @@ Why ORM vs raw SQL:
 """
 
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import (
-    Column, Integer, String, Text, Boolean, Float, 
+    Integer, String, Text, Boolean, Float, 
     DateTime, ForeignKey, UniqueConstraint, Index
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship

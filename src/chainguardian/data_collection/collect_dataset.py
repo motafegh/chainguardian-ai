@@ -159,7 +159,7 @@ class DatasetCollectionPipeline:
         addresses = [s['address'] for s in sample]
         
         logger.info(f"Scraping {len(addresses)} contracts from Etherscan...")
-        logger.info(f"Using 5 parallel workers")
+        logger.info("Using 5 parallel workers")
         estimated_time = len(addresses) * 0.21 / 5
         logger.info(f"Estimated time: ~{estimated_time:.0f}s")
         logger.info("")
@@ -227,7 +227,7 @@ class DatasetCollectionPipeline:
         
         logger.info(f"Sequential estimate: ~{sequential_time}s ({sequential_time/60:.1f} min)")
         logger.info(f"Parallel ({parallel_workers} workers): ~{parallel_time}s ({parallel_time/60:.1f} min)")
-        logger.info(f"Using parallel feature extraction...")
+        logger.info("Using parallel feature extraction...")
         logger.info("="*70)
         logger.info("")
         
@@ -338,21 +338,21 @@ class DatasetCollectionPipeline:
         logger.info(f"✅ Metadata report saved: {metadata_path}")
         
         # Print summary
-        logger.info(f"")
+        logger.info("")
         logger.info(f"{'='*70}")
         logger.info("COLLECTION SUMMARY")
         logger.info(f"{'='*70}")
         logger.info(f"Target size: {report['target_size']}")
         logger.info(f"Actual size: {report['actual_size']}")
-        logger.info(f"")
-        logger.info(f"Strata breakdown:")
+        logger.info("")
+        logger.info("Strata breakdown:")
         for stratum_name, stats in report['strata'].items():
             logger.info(
                 f"  {stratum_name}: {stats['sampled']} sampled "
                 f"from {stats['population_size']} population"
             )
         logger.info(f"{'='*70}")
-        logger.info(f"")
+        logger.info("")
 
 
 if __name__ == "__main__":

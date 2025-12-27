@@ -13,7 +13,7 @@ Date: December 22, 2024
 
 import pandas as pd
 import numpy as np
-from typing import List, Dict
+from typing import List
 from sklearn.preprocessing import PolynomialFeatures
 import logging
 
@@ -291,7 +291,7 @@ class FeatureEngineer:
         final_features = len(df.columns)
         added = final_features - initial_features
         
-        logger.info(f"\n✅ Feature Engineering Complete:")
+        logger.info("\n✅ Feature Engineering Complete:")
         logger.info(f"   Initial features: {initial_features}")
         logger.info(f"   Final features:   {final_features}")
         logger.info(f"   Added:            {added}")

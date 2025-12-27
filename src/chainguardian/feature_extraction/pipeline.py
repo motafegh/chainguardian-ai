@@ -325,7 +325,7 @@ class FeaturePipeline:
         Uses direct solc-select call for reliability.
         """
         try:
-            result = subprocess.run(
+            subprocess.run(
                 ["solc-select", "use", version],
                 capture_output=True,
                 text=True,
@@ -855,14 +855,14 @@ class FeaturePipeline:
                 else:
                     zero_feature_clean += 1
         
-        print(f"\n📊 Overall Results:")
+        print("\n📊 Overall Results:")
         print(f"   Total: {total}")
         print(f"   ✅ Features: {successes} ({successes/total*100:.1f}%)")
         print(f"   ⚪ Clean: {zero_feature_clean} ({zero_feature_clean/total*100:.1f}%)")
         print(f"   ❌ Failed: {sum(failures.values())} ({sum(failures.values())/total*100:.1f}%)")
         
         if failures:
-            print(f"\n🔍 Failure Breakdown:")
+            print("\n🔍 Failure Breakdown:")
             status_map = {
                 "IMPORT_ERROR": ("EXPECTED ✓", "External libraries (@openzeppelin, etc.)"),
                 "VERSION_MISMATCH": ("INVESTIGATE ⚠️", "Check pragma handling"),
@@ -879,7 +879,7 @@ class FeaturePipeline:
                 print(f"      Status: {status}")
                 print(f"      Fix: {description}")
         
-        print(f"\n" + "="*70)
+        print("\n" + "="*70)
         print("🎯 RECOMMENDATIONS")
         print("="*70)
         
@@ -894,7 +894,7 @@ class FeaturePipeline:
             rate = (usable / total_usable * 100) if total_usable > 0 else 0
             
             print(f"\n✅ EXPECTED FAILURES: {expected} contracts")
-            print(f"   Cannot be analyzed without infrastructure changes")
+            print("   Cannot be analyzed without infrastructure changes")
             print(f"   Usable contracts: {usable}/{total_usable} ({rate:.0f}%)")
         
         if successes > 0:
@@ -905,7 +905,7 @@ class FeaturePipeline:
         
         if failures.get('VERSION_MISMATCH', 0) > 10:
             print(f"\n⚠️  WARNING: {failures['VERSION_MISMATCH']} VERSION_MISMATCH errors")
-            print(f"   Check error_message column in CSV for details")
+            print("   Check error_message column in CSV for details")
         
         print("="*70 + "\n")
     

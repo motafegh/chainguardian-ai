@@ -7,14 +7,12 @@ It wraps all database operations so pipeline.py doesn't need to know SQL
 UPDATED: Now includes 8 semantic security features (CEI analysis, guards, etc.)
 """
 
-import psycopg2
 from psycopg2.extras import RealDictCursor
-from typing import Dict, Optional, List
+from typing import Dict
 import logging
 from contextlib import contextmanager
 import pandas as pd
 from psycopg2.pool import SimpleConnectionPool
-from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
