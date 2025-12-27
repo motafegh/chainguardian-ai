@@ -26,7 +26,7 @@ FROM python:3.11-slim AS runtime
 ENV CUDA_VISIBLE_DEVICES="" \
     USE_CUDA=0
 
-# FIX: Add libgomp1 for LightGBM/XGBoost parallel processing
+# Install system dependencies (including libgomp1 for LightGBM/XGBoost)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
@@ -34,37 +34,49 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Slither for smart contract analysis
 RUN pip install --no-cache-dir slither-analyzer==0.10.0
 
+# Install solc-select and Solidity compiler
 RUN pip install --no-cache-dir solc-select && \
     solc-select install 0.8.0 && \
     solc-select use 0.8.0
 
+# Create non-root user and required directories
 RUN useradd -m -u 1000 appuser && \
-    mkdir -p /app /app/logs && \
+    mkdir -p /app /app/logs /app/models /app/config && \
     chown -R appuser:appuser /app
 
 WORKDIR /app
 
+# Copy and install Python dependencies from builder stage
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/* && \
     rm -rf /wheels
 
-USER appuser
-
-# Copy pyproject.toml (PathResolver needs this)
+# Copy configuration files
 COPY --chown=appuser:appuser pyproject.toml /app/
+
+# Copy ML models (CRITICAL!)
+COPY --chown=appuser:appuser config/models /app/models
 
 # Copy application code
 COPY --chown=appuser:appuser src/chainguardian /app/chainguardian
 
+# Switch to non-root user
+USER appuser
+
+# Expose port (Railway will override with $PORT)
 EXPOSE 8000
 
+# Health check configuration
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:$\{PORT:-8000\}/health || exit 1
 
+# Environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-CMD ["uvicorn", "chainguardian.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start command with dynamic port binding for Railway
+CMD uvicorn chainguardian.api.main:app --host 0.0.0.0 --port ${PORT:-8000}

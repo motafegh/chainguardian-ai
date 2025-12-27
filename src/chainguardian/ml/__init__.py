@@ -17,8 +17,6 @@ from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridP
 
 __version__ = "2.0.0"
 __all__ = [
-    "HybridPredictor",
-    "EnhancedHybridPredictor",
     "EnhancedHybridPredictorV2",
     "ConfigManager",
     "get_config",

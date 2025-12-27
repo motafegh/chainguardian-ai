@@ -1,0 +1,9 @@
+[lint]
+select = ["E", "F", "W"]
+ignore = ["E402"]
+exclude = [".git", ".venv", "__pycache__", "build", "dist"]
+line-length = 100
+
+[format]
+quote-style = "double"
+indent-style = "space"

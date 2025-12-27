@@ -1,35 +1,33 @@
-# Python cache and bytecode
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+*.egg-info/
+dist/
+build/
+*.egg
 
-# Virtual environments (don't copy your local venv!)
+# Virtual environments
+.venv/
 venv/
-env/
 ENV/
-.venv
+env/
 
-# Git and version control
-.git/
-.gitignore
-.github/
-
-# IDE and editor files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# Environment and secrets (CRITICAL!)
-.env
-.env.*
-*.key
-*.pem
-
-# Testing and CI
-tests/
+# Testing
 .pytest_cache/
 .coverage
 htmlcov/
@@ -38,22 +36,37 @@ htmlcov/
 # Documentation
 docs/
 *.md
-README.md
+LICENSE
 
-# Data and logs (don't bundle training data!)
-data/
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Data (if large datasets exist)
+data/raw/
+data/processed/
+*.csv
+*.parquet
+
+# Logs
 logs/
 *.log
 
-# Models (handle separately, see note below)
-models/*.pkl
-models/*.joblib
+# Notebooks
+notebooks/
+*.ipynb
 
-# Docker itself
+# Docker
 Dockerfile
-.dockerignore
 docker-compose.yml
+.dockerignore
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
+
+# Keep these (needed in Docker):
+!requirements.docker.txt
+!config/models/
+!src/
+!pyproject.toml
