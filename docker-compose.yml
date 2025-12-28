@@ -1,10 +1,12 @@
-# docker-compose.yml
-# NO version field (obsolete in modern Docker Compose)
+version: '3.8'
 
 services:
   api:
     image: chainguardian-api:latest
     container_name: chainguardian-api
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:
@@ -12,6 +14,8 @@ services:
       REDIS_URL: redis://redis:6379/0
       API_ENV: development
       LOG_LEVEL: INFO
+      OLLAMA_HOST: http://ollama:11434
+      ENABLE_METRICS: "true"
       
     volumes:
       - ./config/models:/app/models:ro
@@ -22,6 +26,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      ollama:
+        condition: service_healthy
     
     networks:
       - chainguardian-network
@@ -34,7 +40,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
 
   postgres:
     image: postgres:16-alpine
@@ -61,7 +66,6 @@ services:
     
     restart: unless-stopped
 
-
   redis:
     image: redis:7-alpine
     container_name: chainguardian-redis
@@ -84,17 +88,52 @@ services:
       timeout: 5s
       retries: 5
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: chainguardian-ollama
+    ports:
+      - "11434:11434"
+    
+    environment:
+      OLLAMA_KEEP_ALIVE: "24h"
+      OLLAMA_NUM_PARALLEL: "2"
+      OLLAMA_MAX_LOADED_MODELS: "2"
+    
+    volumes:
+      - ollama-data:/root/.ollama
+      - /dev/shm:/dev/shm  # For better performance
+    
+    networks:
+      - chainguardian-network
+    
+    restart: unless-stopped
+    
+    # GPU support (uncomment if you have NVIDIA GPU)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s  # Extra time for model downloads
 
   prometheus:
     image: prom/prometheus:latest
     container_name: chainguardian-prometheus
-    # NO PORT EXPOSURE - access via Docker network only
-    # ports:
-    #   - "9090:9090"  # COMMENTED OUT to avoid WSL2 port conflict
+    ports:
+      - "9090:9090"  # UNCOMMENTED for monitoring
     
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+      - ./config/prometheus/rules.yml:/etc/prometheus/rules.yml:ro
     
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -114,24 +153,23 @@ services:
       timeout: 10s
       retries: 3
 
-
   grafana:
     image: grafana/grafana:latest
     container_name: chainguardian-grafana
-    # NO PORT EXPOSURE - access via Docker network only
-    # ports:
-    #   - "3000:3000"  # COMMENTED OUT to avoid WSL2 port conflict
+    ports:
+      - "3000:3000"  # UNCOMMENTED for dashboard access
     
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin123
       GF_SERVER_ROOT_URL: http://localhost:3000
-      GF_INSTALL_PLUGINS: ""
+      GF_INSTALL_PLUGINS: "grafana-piechart-panel,grafana-worldmap-panel"
+      GF_FEATURE_TOGGLES_ENABLE: "publicDashboards"
     
     volumes:
       - grafana-data:/var/lib/grafana
-      # Optional: Pre-provision dashboards
-      # - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
     
     depends_on:
       prometheus:
@@ -148,14 +186,17 @@ services:
       timeout: 10s
       retries: 3
 
-
 networks:
   chainguardian-network:
     driver: bridge
-
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
 
 volumes:
   postgres-data:
   redis-data:
+  ollama-data:
   prometheus-data:
   grafana-data:

@@ -19,13 +19,16 @@ Author: Ali - ChainGuardian AI Project
 """
 
 
-from slither import Slither
 from pathlib import Path
 from typing import Dict, Tuple
 import logging
 
 
 logger = logging.getLogger(__name__)
+
+
+# NOTE: Slither is imported LAZILY inside __init__ to make this module testable
+# without Slither installed. This allows fast unit tests with mocks.
 
 
 
@@ -59,6 +62,10 @@ class ASTFeatureExtractor:
             self.slither = slither_obj
             logger.debug(f"Using pre-compiled Slither for {contract_path.name}")
         else:
+            # LAZY IMPORT: Only import Slither when actually compiling
+            # This allows tests to import this module without Slither installed
+            from slither import Slither
+            
             logger.warning(
                 f"Compiling {contract_path.name} in AST extractor - "
                 f"consider passing slither_obj to avoid re-compilation"

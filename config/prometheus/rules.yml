@@ -1,0 +1,42 @@
+groups:
+  - name: chainguardian-alerts
+    rules:
+      # High error rate
+      - alert: HighErrorRate
+        expr: rate(chainguardian_predictions_total{status="failure"}[5m]) / rate(chainguardian_predictions_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+      
+      # High latency
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, rate(chainguardian_prediction_latency_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High prediction latency detected"
+          description: "95th percentile latency is {{ $value }} seconds"
+      
+      # LLM cost alert
+      - alert: LLMCostExceeded
+        expr: chainguardian_llm_cost_estimated > 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "LLM cost exceeded $10"
+          description: "Current estimated LLM cost is ${{ $value }}"
+      
+      # Rate limiting alerts
+      - alert: RateLimitViolations
+        expr: rate(chainguardian_rate_limit_exceeded_total[10m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High rate limit violations detected"
+          description: "{{ $value }} violations per minute"

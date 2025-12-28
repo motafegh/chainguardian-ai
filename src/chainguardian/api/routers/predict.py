@@ -18,6 +18,14 @@ from chainguardian.api.schemas.response import (
     AnalysisSummary
 )
 from chainguardian.api.dependencies.model_loader import get_predictor
+from chainguardian.monitoring.metrics import (
+    predictions_total,
+    feature_extraction_latency,
+    model_confidence,
+    vulnerabilities_detected,
+    prediction_latency,
+    active_predictions
+)
 from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
 from chainguardian.feature_extraction.pipeline import FeaturePipeline
 
@@ -45,6 +53,9 @@ async def analyze_contract(
     
     Contract code → Feature extraction → ML prediction → Report
     """
+    # Track active prediction
+    active_predictions.inc()
+    
     start_time = time.time()
     
     try:
@@ -77,6 +88,9 @@ async def analyze_contract(
             
             extraction_time_ms = int((time.time() - start_time) * 1000)
             
+            # Track feature extraction latency in seconds
+            feature_extraction_latency.observe(extraction_time_ms / 1000)
+            
             # Check for extraction failures
             if features.get('failure_reason'):
                 raise ValueError(f"Feature extraction failed: {features['failure_reason']}")
@@ -92,11 +106,16 @@ async def analyze_contract(
             
             prediction_time_ms = int((time.time() - prediction_start) * 1000)
             
-            # STEP 4: Convert YOUR predictor output to API response
-            # No conversion needed - your predictor already has everything!
+            # Track prediction latency
+            prediction_latency.observe(prediction_time_ms / 1000)
             
+            # STEP 4: Convert YOUR predictor output to API response
             is_safe = (ml_result["prediction_label"] == "SAFE")
             confidence = ml_result["calibrated_confidence"]
+            
+            # Track model confidence with prediction class label
+            prediction_class = "vulnerable" if not is_safe else "safe"
+            model_confidence.labels(prediction_class=prediction_class).observe(confidence)
             
             # Convert semantic_reasons to VulnerabilitySummary format
             vulnerabilities = []
@@ -112,6 +131,12 @@ async def analyze_contract(
                         description=reason  # Use YOUR description directly!
                     )
                 )
+                
+                # Track vulnerabilities detected
+                vulnerabilities_detected.labels(
+                    vulnerability_type="general",
+                    severity=severity
+                ).inc()
             
             # Create analysis summary from YOUR features
             summary = AnalysisSummary(
@@ -126,6 +151,13 @@ async def analyze_contract(
                     else "high"
                 )
             )
+            
+            # Track successful prediction
+            predictions_total.labels(
+                endpoint="/analyze",
+                model_version="v1.0.7",
+                status="success"
+            ).inc()
             
             # Build response
             response = ContractAnalysisResponse(
@@ -151,12 +183,27 @@ async def analyze_contract(
             temp_path.unlink(missing_ok=True)
         
     except ValueError as e:
+        # Track failed prediction
+        predictions_total.labels(
+            endpoint="/analyze",
+            model_version="v1.0.7",
+            status="failure"
+        ).inc()
         raise HTTPException(status_code=400, detail={"error": str(e)})
     except Exception as e:
+        # Track failed prediction
+        predictions_total.labels(
+            endpoint="/analyze",
+            model_version="v1.0.7",
+            status="failure"
+        ).inc()
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail={"error": str(e)})
+    finally:
+        # Decrement active predictions
+        active_predictions.dec()
 
 
 @router.post("/predict-from-features", response_model=DirectPredictionResponse)
@@ -165,6 +212,9 @@ async def predict_from_features(
     predictor: EnhancedHybridPredictorV2 = Depends(get_predictor)
 ):
     """Direct prediction from pre-extracted features."""
+    # Track active prediction
+    active_predictions.inc()
+    
     start_time = time.time()
     
     try:
@@ -177,10 +227,26 @@ async def predict_from_features(
         
         prediction_time_ms = int((time.time() - start_time) * 1000)
         
+        # Track prediction latency
+        prediction_latency.observe(prediction_time_ms / 1000)
+        
+        # Track model confidence
+        is_safe = ml_result["prediction_label"] == "SAFE"
+        confidence = ml_result["calibrated_confidence"]
+        prediction_class = "vulnerable" if not is_safe else "safe"
+        model_confidence.labels(prediction_class=prediction_class).observe(confidence)
+        
+        # Track successful prediction
+        predictions_total.labels(
+            endpoint="/predict-from-features",
+            model_version="v1.0.7",
+            status="success"
+        ).inc()
+        
         # YOUR predictor already returns everything we need!
         response = DirectPredictionResponse(
             prediction=ml_result["prediction_label"],
-            confidence=round(ml_result["calibrated_confidence"], 4),
+            confidence=round(confidence, 4),
             probabilities={
                 "safe": round(1.0 - ml_result["ml_score"] if ml_result["prediction"] == 1 else ml_result["ml_score"], 4),
                 "vulnerable": round(ml_result["ml_score"] if ml_result["prediction"] == 1 else 1.0 - ml_result["ml_score"], 4)
@@ -195,10 +261,19 @@ async def predict_from_features(
         return response
         
     except Exception as e:
+        # Track failed prediction
+        predictions_total.labels(
+            endpoint="/predict-from-features",
+            model_version="v1.0.7",
+            status="failure"
+        ).inc()
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail={"error": str(e)})
+    finally:
+        # Decrement active predictions
+        active_predictions.dec()
 
 
 @router.get("/models/info")
