@@ -5,20 +5,23 @@ from enum import Enum
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException
 import time
-import json
 import httpx
+import tempfile
+from pathlib import Path
+import re
+from functools import lru_cache
 
 from pydantic import BaseModel, Field
 from chainguardian.api.dependencies.model_loader import get_predictor
 from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
+from chainguardian.feature_extraction.pipeline import FeaturePipeline
 from chainguardian.monitoring.llm_metrics import (
     llm_requests_total,
     llm_tokens_total,
     llm_latency_seconds,
     llm_cost_estimated,
     active_llm_requests,
-    estimate_llm_cost,
-    rate_limit_exceeded_total
+    estimate_llm_cost
 )
 
 router = APIRouter(prefix="/api/v1", tags=["reports"])
@@ -36,7 +39,7 @@ class TechnicalDepth(str, Enum):
     """Technical depth levels."""
     BEGINNER = "beginner"  # Simple, non-technical
     INTERMEDIATE = "intermediate"  # Some technical details
-    ADVANCED = "advanced"  Full technical details
+    ADVANCED = "advanced",  # Full technical details
     EXPERT = "expert"  # Includes code snippets and deep analysis
 
 
@@ -160,6 +163,64 @@ class ReportResponse(BaseModel):
         }
 
 
+# Cache pipeline (same as in predict.py)
+@lru_cache()
+def get_pipeline() -> FeaturePipeline:
+    """Get feature extraction pipeline (cached)."""
+    print("🔄 Loading feature extraction pipeline for reports...")
+    pipeline = FeaturePipeline()
+    print("✅ Pipeline loaded")
+    return pipeline
+
+
+def extract_features_from_code(contract_code: str, contract_name: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Extract features from contract code (reusable function).
+    
+    Args:
+        contract_code: Solidity source code
+        contract_name: Optional contract name
+    
+    Returns:
+        Dictionary of extracted features
+    """
+    # Save contract code to temp file
+    with tempfile.NamedTemporaryFile(
+        mode='w', suffix='.sol', delete=False, encoding='utf-8'
+    ) as temp_file:
+        temp_file.write(contract_code)
+        temp_path = Path(temp_file.name)
+    
+    try:
+        # Get feature extraction pipeline
+        pipeline = get_pipeline()
+        
+        # Auto-detect contract name if not provided
+        if not contract_name:
+            matches = re.findall(
+                r'\bcontract\s+([a-zA-Z_][a-zA-Z0-9_]*)', 
+                contract_code
+            )
+            contract_name = matches[0] if matches else "UnknownContract"
+        
+        # Extract features
+        features = pipeline.analyze_contract(
+            contract_path=temp_path,
+            contract_name=contract_name,
+            metadata={"source": "report_generation"}
+        )
+        
+        # Check for extraction failures
+        if features.get('failure_reason'):
+            raise ValueError(f"Feature extraction failed: {features['failure_reason']}")
+        
+        return features
+        
+    finally:
+        # Clean up temp file
+        temp_path.unlink(missing_ok=True)
+
+
 class OllamaClient:
     """Client for communicating with Ollama API."""
     
@@ -220,43 +281,107 @@ async def generate_report(
     start_time = time.time()
     
     try:
-        # Step 1: Analyze contract with ML model
+        # Step 1: Extract features from contract code (FIXED!)
+        feature_extraction_start = time.time()
+        
+        try:
+            features = extract_features_from_code(
+                contract_code=request.contract_code,
+                contract_name=request.contract_name
+            )
+        except ValueError as e:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Feature extraction failed: {str(e)}"
+            )
+        
+        feature_extraction_time = time.time() - feature_extraction_start
+        
+        # Step 2: Analyze contract with ML model using REAL features
         prediction_result = predictor.predict_single(
-            features={"dummy": 1.0},  # Will be replaced with actual features
+            features=features,  # Now using actual extracted features
             return_details=True
         )
         
-        # Step 2: Prepare prompt for LLM
+        # Step 3: Prepare prompt for LLM with enhanced context
         system_prompt = f"""You are a senior smart contract security auditor.
-            Generate a security report with {request.depth.value} technical depth.
-            Format the report in {request.format.value} format.
-            """
-            
-        user_prompt = f"""
-            Contract Name: {request.contract_name or "Unknown"}
-            Contract Address: {request.contract_address or "Not provided"}
-
-            Contract Code:
-
-            {request.contract_code[:2000]}  # Limit to first 2000 chars
-
-
-            ML Analysis Results:
-            - Safety Status: {prediction_result.get('prediction_label', 'UNKNOWN')}
-            - Confidence: {prediction_result.get('calibrated_confidence', 0) * 100:.1f}%
-            - Detected Issues: {len(prediction_result.get('semantic_reasons', []))}
-
-            Please generate a comprehensive security audit report with the following sections:
-            1. Executive Summary
-            2. Vulnerability Analysis
-            3. Risk Assessment
-            4. Recommendations
-            5. Technical Details
-
-            Make sure the report is {request.depth.value}-friendly.
+        Generate a security report with {request.depth.value} technical depth.
+        Format the report in {request.format.value} format.
         """
         
-        # Step 3: Generate report with Ollama
+        # Build detailed user prompt with extracted features
+        user_prompt = f"""
+        Contract Analysis Request:
+        -------------------------
+        Contract Name: {request.contract_name or "Auto-detected"}
+        Contract Address: {request.contract_address or "Not provided"}
+        Technical Depth: {request.depth.value}
+        Format: {request.format.value}
+        Include Recommendations: {request.include_recommendations}
+        Include Code Snippets: {request.include_code_snippets}
+
+        Contract Code (first 2000 characters):
+        {request.contract_code[:2000]}
+
+        ML Analysis Results:
+        -------------------
+        - Safety Status: {prediction_result.get('prediction_label', 'UNKNOWN')}
+        - Confidence: {prediction_result.get('calibrated_confidence', 0) * 100:.1f}%
+        - Risk Score: {1.0 - prediction_result.get('calibrated_confidence', 0):.2%}
+        - Detected Issues: {len(prediction_result.get('semantic_reasons', []))}
+
+        Extracted Features:
+        ------------------
+        - Number of Functions: {features.get('num_functions', 0)}
+        - Lines of Code: {features.get('lines_of_code', 0)}
+        - Cyclomatic Complexity: {features.get('max_cyclomatic_complexity', 0)}
+        - External Calls: {features.get('num_external_calls', 0)}
+        - Reentrancy Issues: {features.get('has_reentrancy', 0)}
+
+        Detected Vulnerabilities:
+        ------------------------
+        {chr(10).join(f"- {reason}" for reason in prediction_result.get('semantic_reasons', ['None detected']))}
+
+        Report Generation Instructions:
+        -----------------------------
+        Please generate a comprehensive security audit report with the following sections:
+
+        1. EXECUTIVE SUMMARY
+        - Overall assessment
+        - Risk level (High/Medium/Low)
+        - Key findings at a glance
+
+        2. CONTRACT OVERVIEW
+        - Basic information
+        - Technical specifications
+
+        3. VULNERABILITY ANALYSIS
+        - Detailed analysis of detected issues
+        - {"Include code snippets highlighting vulnerable patterns" if request.include_code_snippets else "Focus on conceptual issues"}
+        - Severity assessment for each finding
+
+        4. RISK ASSESSMENT
+        - Impact analysis
+        - Likelihood of exploitation
+        - Business implications
+
+        5. RECOMMENDATIONS{" (Skip if not requested)" if not request.include_recommendations else ""}
+        - Specific fixes for each vulnerability
+        - Best practices implementation
+        - Testing and verification steps
+
+        6. TECHNICAL APPENDIX
+        - {"Include detailed technical explanations" if request.depth in [TechnicalDepth.ADVANCED, TechnicalDepth.EXPERT] else "Keep technical details minimal"}
+        - {"Include code examples and remediation patterns" if request.depth == TechnicalDepth.EXPERT else ""}
+
+        Important Notes:
+        - Target audience: {request.depth.value} level
+        - Format: {request.format.value}
+        - Be concise but comprehensive
+        - Use markdown formatting if applicable
+        """
+        
+        # Step 4: Generate report with Ollama
         llm_start_time = time.time()
         
         llm_requests_total.labels(
@@ -275,7 +400,7 @@ async def generate_report(
             llm_latency = time.time() - llm_start_time
             llm_latency_seconds.labels(model=request.llm_model).observe(llm_latency)
             
-            # Step 4: Track metrics
+            # Step 5: Track metrics
             input_tokens = len(user_prompt.split())  # Approximate
             output_tokens = len(llm_response.get("response", "").split())
             
@@ -303,8 +428,8 @@ async def generate_report(
                 status="success"
             ).inc()
             
-            # Step 5: Prepare response
-            report_id = f"rep_{int(time.time())}_{hash(request.contract_code[:50]) % 10000}"
+            # Step 6: Prepare response
+            report_id = f"rep_{int(time.time())}_{hash(request.contract_code[:50]) % 10000:04d}"
             
             response = ReportResponse(
                 report_id=report_id,
@@ -354,5 +479,44 @@ async def get_available_formats():
     return {
         "formats": [fmt.value for fmt in ReportFormat],
         "depths": [depth.value for depth in TechnicalDepth],
-        "available_models": ["llama3.1", "mistral", "codellama", "phi3"]
+        "available_models": ["llama3.1", "mistral", "codellama", "phi3"],
+        "example_request": {
+            "contract_code": "pragma solidity ^0.8.0; contract Example { uint256 public value; }",
+            "format": "markdown",
+            "depth": "intermediate",
+            "include_recommendations": True,
+            "llm_model": "llama3.1"
+        }
     }
+
+
+@router.get("/reports/features-sample")
+async def get_features_sample():
+    """
+    Test endpoint to see extracted features without LLM generation.
+    Useful for debugging feature extraction.
+    """
+    contract_code = "pragma solidity ^0.8.0; contract Sample { uint256 public x; function set(uint256 _x) public { x = _x; } }"
+    
+    try:
+        features = extract_features_from_code(
+            contract_code=contract_code,
+            contract_name="Sample"
+        )
+        
+        return {
+            "success": True,
+            "features": features,
+            "feature_count": len(features),
+            "contract_name": "Sample",
+            "sample_features": {k: v for k, v in list(features.items())[:10]},  # First 10 features
+            "feature_categories": {
+                "vulnerability_flags": sum(1 for k in features.keys() if k.startswith('has_')),
+                "severity_counts": sum(1 for k in features.keys() if 'severity' in k),
+                "ast_features": sum(1 for k in features.keys() if k in ['num_functions', 'lines_of_code', 'max_cyclomatic_complexity']),
+                "graph_features": sum(1 for k in features.keys() if k.startswith(('cfg_', 'cg_', 'dfg_'))),
+                "semantic_features": sum(1 for k in features.keys() if k.startswith(('cei_', 'has_reentrancy_guard'))),
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

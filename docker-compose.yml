@@ -128,7 +128,7 @@ services:
     image: prom/prometheus:latest
     container_name: chainguardian-prometheus
     ports:
-      - "9090:9090"  # UNCOMMENTED for monitoring
+      - "9092:9090"  # UNCOMMENTED for monitoring
     
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro

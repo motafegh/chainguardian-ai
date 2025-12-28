@@ -48,6 +48,12 @@ model_confidence = Histogram(
     buckets=(0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, 0.99, 1.0)
 )
 
+# Gauge: Active predictions (concurrent)
+active_predictions = Gauge(
+    name='chainguardian_active_predictions',
+    documentation='Number of active predictions currently being processed',
+)
+
 
 # ==============================================================================
 # VULNERABILITY METRICS
@@ -200,3 +206,11 @@ def set_model_info(version: str, auc_score: float, trained_date: str):
         auc_score=str(auc_score),
         trained_date=trained_date
     ).set(1)  # Set to 1 (just an indicator, not a meaningful value)
+
+
+# ==============================================================================
+# NEW METRICS ADDED FOR LLM INTEGRATION
+# ==============================================================================
+
+# Note: LLM-specific metrics are in llm_metrics.py
+# This file contains only ML/API metrics
