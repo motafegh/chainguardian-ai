@@ -119,20 +119,21 @@ app.include_router(predict.router)
 app.include_router(reports.router)  # New reports endpoints
 
 # Add Prometheus instrumentation
-instrumentator = Instrumentator(
-    should_group_status_codes=False,
-    excluded_handlers=[".*admin.*", "/metrics"],
-    should_ignore_untemplated=True,
-    should_respect_env_var=True,
-    env_var_name="ENABLE_METRICS",
-    excluded_status_codes=[401, 403, 404, 405],
-    # Add custom labels
-    body_handlers=[],
-    inprogress_labels=True,
-    latency_lowr_buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0],
-)
+# instrumentator = Instrumentator(
+#     should_group_status_codes=False,
+#     excluded_handlers=[".*admin.*", "/metrics"],
+#     should_ignore_untemplated=True,
+#     should_respect_env_var=True,
+#     env_var_name="ENABLE_METRICS",
+#     # Add custom labels
+#     body_handlers=[],
+#     inprogress_labels=True,
+#     latency_lowr_buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0],
+# )
+# instrumentator.instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+# Add Prometheus instrumentation (minimal config for compatibility)
+instrumentator = Instrumentator()
 instrumentator.instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
-
 # Global exception handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):

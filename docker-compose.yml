@@ -118,17 +118,17 @@ services:
               capabilities: [gpu]
     
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:11434 || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 120s  # Extra time for model downloads
+      retries: 5
+      start_period: 60s
 
   prometheus:
     image: prom/prometheus:latest
     container_name: chainguardian-prometheus
     ports:
-      - "9092:9090"  # UNCOMMENTED for monitoring
+      - "9273:9090"  # UNCOMMENTED for monitoring
     
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
@@ -163,7 +163,7 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin123
       GF_SERVER_ROOT_URL: http://localhost:3000
-      GF_INSTALL_PLUGINS: "grafana-piechart-panel,grafana-worldmap-panel"
+      #GF_INSTALL_PLUGINS: "grafana-piechart-panel,grafana-worldmap-panel"
       GF_FEATURE_TOGGLES_ENABLE: "publicDashboards"
     
     volumes:
