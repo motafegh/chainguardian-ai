@@ -5,14 +5,22 @@ Database Manager - handles all PostgreSQL operations
 It wraps all database operations so pipeline.py doesn't need to know SQL
 
 UPDATED: Now includes 8 semantic security features (CEI analysis, guards, etc.)
+
+SECURITY FEATURES:
+- Connection pooling for performance (10-100x faster)
+- Environment variables for sensitive credentials
+- SSL/TLS support for encrypted connections
+- Parameterized queries (prevents SQL injection)
+- Transaction management (auto-commit/rollback)
 """
 
 from psycopg2.extras import RealDictCursor
-from typing import Dict
+from typing import Dict, Optional
 import logging
 from contextlib import contextmanager
 import pandas as pd
 from psycopg2.pool import SimpleConnectionPool
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -34,22 +42,94 @@ class DatabaseManager:
     PERFORMANCE: 10-100x faster for high-throughput operations
     """
     
-    def __init__(self, 
-                 host: str = "localhost",
-                 port: int = 5432,
-                 database: str = "chainguardian",
-                 user: str = "chainguardian_user",
-                 password: str = "2220128",
+    def __init__(self,
+                 host: str = None,
+                 port: int = None,
+                 database: str = None,
+                 user: str = None,
+                 password: str = None,
                  min_connections: int = 1,
-                 max_connections: int = 20):
-        
+                 max_connections: int = 20,
+                 sslmode: str = None,
+                 sslrootcert: str = None):
+        """
+        Initialize database connection with security best practices.
+
+        🎓 SECURITY BEST PRACTICES:
+        1. Never hardcode passwords in source code
+        2. Use environment variables for all credentials
+        3. Enable SSL/TLS for production databases
+        4. Use connection pooling for performance
+
+        Args:
+            host: Database host (defaults to CHAINGUARDIAN_DB_HOST env var or 'localhost')
+            port: Database port (defaults to CHAINGUARDIAN_DB_PORT env var or 5432)
+            database: Database name (defaults to CHAINGUARDIAN_DB_NAME env var or 'chainguardian')
+            user: Database user (defaults to CHAINGUARDIAN_DB_USER env var or 'chainguardian_user')
+            password: Database password (defaults to CHAINGUARDIAN_DB_PASSWORD env var)
+            min_connections: Minimum pool size (default: 1)
+            max_connections: Maximum pool size (default: 20)
+            sslmode: SSL mode ('disable', 'require', 'verify-ca', 'verify-full')
+            sslrootcert: Path to SSL root certificate
+
+        Environment Variables:
+            CHAINGUARDIAN_DB_HOST: Database host
+            CHAINGUARDIAN_DB_PORT: Database port
+            CHAINGUARDIAN_DB_NAME: Database name
+            CHAINGUARDIAN_DB_USER: Database username
+            CHAINGUARDIAN_DB_PASSWORD: Database password (REQUIRED for production)
+            CHAINGUARDIAN_DB_SSLMODE: SSL mode
+            CHAINGUARDIAN_DB_SSLROOTCERT: SSL certificate path
+
+        Example:
+            # Development (local)
+            db = DatabaseManager()
+
+            # Production (with SSL)
+            export CHAINGUARDIAN_DB_PASSWORD="secure_password"
+            export CHAINGUARDIAN_DB_SSLMODE="require"
+            db = DatabaseManager()
+        """
+
+        # ========================================================================
+        # SECURITY FIX: Use environment variables instead of hardcoded values
+        # ========================================================================
         self.config = {
-            'host': host,
-            'port': port,
-            'database': database,
-            'user': user,
-            'password': password
+            'host': host or os.getenv('CHAINGUARDIAN_DB_HOST', 'localhost'),
+            'port': port or int(os.getenv('CHAINGUARDIAN_DB_PORT', '5432')),
+            'database': database or os.getenv('CHAINGUARDIAN_DB_NAME', 'chainguardian'),
+            'user': user or os.getenv('CHAINGUARDIAN_DB_USER', 'chainguardian_user'),
+            'password': password or os.getenv('CHAINGUARDIAN_DB_PASSWORD', '2220128')  # ⚠️ Default only for dev
         }
+
+        # ========================================================================
+        # SECURITY FIX: Add SSL/TLS support for encrypted connections
+        # ========================================================================
+        # 🎓 SSL/TLS encrypts data between your app and database
+        # Similar to HTTPS for web traffic - prevents eavesdropping
+        ssl_config = {}
+
+        sslmode = sslmode or os.getenv('CHAINGUARDIAN_DB_SSLMODE')
+        if sslmode:
+            ssl_config['sslmode'] = sslmode
+            logger.info(f"🔒 SSL enabled: mode={sslmode}")
+
+        sslrootcert = sslrootcert or os.getenv('CHAINGUARDIAN_DB_SSLROOTCERT')
+        if sslrootcert:
+            ssl_config['sslrootcert'] = sslrootcert
+            logger.info(f"🔒 SSL certificate: {sslrootcert}")
+
+        # Merge SSL config
+        self.config.update(ssl_config)
+
+        # ========================================================================
+        # WARNING: Check if using default password
+        # ========================================================================
+        if self.config['password'] == '2220128':
+            logger.warning(
+                "⚠️  SECURITY WARNING: Using default password! "
+                "Set CHAINGUARDIAN_DB_PASSWORD environment variable for production."
+            )
         
         # 🎓 CONNECTION POOLING (production-ready)
         self.pool = SimpleConnectionPool(
@@ -65,32 +145,65 @@ class DatabaseManager:
         conn.close()
     
     def _get_connection(self):
-        """Get connection from pool instead of creating new one."""
+        """
+        Get connection from pool instead of creating new one.
+
+        🎓 PERFORMANCE OPTIMIZATION:
+        Creating new database connection: ~50-200ms
+        Reusing from pool: ~1ms
+
+        Similar to reusing HTTP connections (keep-alive)
+        """
         return self.pool.getconn()
-    
+
     def _return_connection(self, conn):
-        """Return connection to pool."""
+        """
+        Return connection to pool for reuse.
+
+        🎓 Always return connections or you'll exhaust the pool!
+        Like closing file handles - if you don't, you'll run out
+        """
         self.pool.putconn(conn)
     
     @contextmanager
     def _get_cursor(self, dict_cursor: bool = False):
         """
-        Context manager with connection pooling.
-        
-        🎓 Automatically returns connection to pool when done
+        Context manager with connection pooling and transaction management.
+
+        🎓 ACID TRANSACTIONS:
+        - Atomicity: All queries succeed or all fail (no partial writes)
+        - Consistency: Database constraints always enforced
+        - Isolation: Concurrent transactions don't interfere
+        - Durability: Committed data survives crashes
+
+        This is like Solidity's transaction model:
+        - Either entire transaction succeeds (commit)
+        - Or entire transaction fails (rollback/revert)
+
+        Args:
+            dict_cursor: If True, return rows as dictionaries instead of tuples
+
+        Example:
+            with self._get_cursor() as cursor:
+                cursor.execute("INSERT INTO contracts ...")
+                cursor.execute("INSERT INTO features ...")
+                # Both succeed or both rollback
         """
         conn = self._get_connection()
         cursor_factory = RealDictCursor if dict_cursor else None
         cursor = conn.cursor(cursor_factory=cursor_factory)
-        
+
         try:
             yield cursor
+            # ✅ SUCCESS: Commit transaction
             conn.commit()
         except Exception as e:
+            # ❌ FAILURE: Rollback transaction (undo all changes)
             conn.rollback()
             logger.error(f"Database error: {e}")
             raise
         finally:
+            # 🧹 CLEANUP: Always close cursor and return connection
             cursor.close()
             self._return_connection(conn)  # 🎯 KEY: Return to pool
     
@@ -118,23 +231,33 @@ class DatabaseManager:
             # ============================================================
             # 🎓 Extract contract metadata from features_dict
             
-            # Extract address from file_path if not provided
-            # Filenames like: BetProtocolToken_0xcf3c8be2.sol
+            # ========================================================================
+            # SMART ADDRESS EXTRACTION from filename
+            # ========================================================================
+            # 🎓 Many datasets store contracts with address in filename:
+            # Example: BetProtocolToken_0xcf3c8be2.sol
+            #
+            # Why? Because same contract code can be deployed multiple times
+            # at different addresses (like deploying same ERC20 token twice)
+            #
+            # We extract the address to track which deployment we analyzed
             address = features_dict.get('address')
             if not address:
                 file_path = features_dict.get('file_path', '')
-                # Try to extract 0x pattern from filename
+                # Try to extract 0x pattern from filename using regex
                 import re
                 match = re.search(r'_0x[a-fA-F0-9]+', file_path)
                 if match:
                     # Extract just the 0x part
                     address = match.group(0)[1:]  # Remove leading underscore
                     # Pad to full address (42 chars) if needed
+                    # Full Ethereum address: 0x + 40 hex chars = 42 total
                     if len(address) < 42:
                         address = address + '0' * (42 - len(address))
                 else:
                     # No address pattern found
                     # 🎓 For SmartBugs/OpenZeppelin contracts, this is expected
+                    # These are source-only datasets without deployment info
                     # Address will be NULL in database (which is fine!)
                     address = None
             
@@ -147,12 +270,23 @@ class DatabaseManager:
                 'file_path': features_dict.get('file_path')
             }
             
+            # ========================================================================
+            # SQL INJECTION PROTECTION
+            # ========================================================================
+            # 🎓 NEVER use f-strings or string concatenation for SQL!
+            # BAD:  cursor.execute(f"INSERT INTO contracts VALUES ('{name}')")
+            # GOOD: cursor.execute("INSERT ... VALUES (%(name)s)", {'name': name})
+            #
+            # Why? Prevents SQL injection attacks:
+            # If name = "x'); DROP TABLE contracts; --"
+            # Bad code would execute: DROP TABLE contracts!
+            # Good code treats entire string as data, not SQL commands
             cursor.execute("""
                 INSERT INTO contracts (name, address, source_code, compiler_version, data_source, file_path)
                 VALUES (%(name)s, %(address)s, %(source_code)s, %(compiler_version)s, %(data_source)s, %(file_path)s)
                 RETURNING id;
             """, contract_data)
-            
+
             # Get the contract ID that was just inserted
             # 🎓 Like getting transaction receipt to see deployed contract address
             contract_id = cursor.fetchone()[0]

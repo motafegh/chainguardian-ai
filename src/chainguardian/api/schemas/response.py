@@ -4,7 +4,7 @@ Response schemas for ChainGuardian AI API.
 Defines output format for both endpoints.
 """
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -104,8 +104,8 @@ class ContractAnalysisResponse(BaseModel):
         description="SHAP explanations (if requested)"
     )
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "is_safe": True,
                 "risk_score": 0.05,
@@ -127,6 +127,7 @@ class ContractAnalysisResponse(BaseModel):
                 "timestamp": "2025-12-24T19:36:00.000Z"
             }
         }
+    )
 
 
 class DirectPredictionResponse(BaseModel):
@@ -171,8 +172,8 @@ class DirectPredictionResponse(BaseModel):
     
     explanations: Optional[Dict[str, Any]] = None
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "prediction": "safe",
                 "confidence": 0.98,
@@ -183,3 +184,4 @@ class DirectPredictionResponse(BaseModel):
                 "timestamp": "2025-12-24T19:36:00.000Z"
             }
         }
+    )

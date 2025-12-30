@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 from functools import lru_cache
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from chainguardian.api.dependencies.model_loader import get_predictor
 from chainguardian.ml.models.hybrid_predictor_enhanced_v2 import EnhancedHybridPredictorV2
 from chainguardian.feature_extraction.pipeline import FeaturePipeline
@@ -87,8 +87,8 @@ class GenerateReportRequest(BaseModel):
         description="LLM model to use for report generation"
     )
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "contract_code": "pragma solidity ^0.8.0;\ncontract Example {\n    function withdraw() public {\n        // vulnerable code\n    }\n}",
                 "contract_name": "VulnerableContract",
@@ -100,6 +100,7 @@ class GenerateReportRequest(BaseModel):
                 "llm_model": "llama3.1"
             }
         }
+    )
 
 
 class ReportResponse(BaseModel):
@@ -146,8 +147,8 @@ class ReportResponse(BaseModel):
         default_factory=lambda: time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     )
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "report_id": "rep_1234567890",
                 "content": "# Security Audit Report\n\n## Contract: VulnerableContract\n\n### Findings...",
@@ -161,6 +162,7 @@ class ReportResponse(BaseModel):
                 "timestamp": "2025-12-29T10:30:00Z"
             }
         }
+    )
 
 
 # Cache pipeline (same as in predict.py)

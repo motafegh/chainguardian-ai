@@ -4,7 +4,7 @@ Request schemas for ChainGuardian AI API.
 Defines input validation for both endpoints.
 """
 from typing import Optional, Dict
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 import re
 
 
@@ -57,29 +57,31 @@ class ContractAnalysisRequest(BaseModel):
         description="Include SHAP explanations (adds ~2s latency)"
     )
     
-    @validator('contract_code')
-    def validate_solidity_code(cls, v):
+    @field_validator('contract_code')
+    @classmethod
+    def validate_solidity_code(cls, v: str) -> str:
         """Validate that it looks like Solidity code."""
         v = v.strip()
-        
+
         # Must contain either pragma or contract keyword
         if 'pragma' not in v.lower() and 'contract' not in v.lower():
             raise ValueError(
                 "Invalid Solidity code: must contain 'pragma' or 'contract' keyword"
             )
-        
+
         # Size limit to prevent abuse
         if len(v) > 100_000:  # 100KB
             raise ValueError("Contract code too large (max 100KB)")
-        
+
         # Must have at least some structure
         if v.count('{') != v.count('}'):
             raise ValueError("Unbalanced braces in contract code")
-        
+
         return v
     
-    @validator('contract_name')
-    def validate_contract_name(cls, v):
+    @field_validator('contract_name')
+    @classmethod
+    def validate_contract_name(cls, v: Optional[str]) -> Optional[str]:
         """Validate contract name format."""
         if v is not None:
             # Must be valid Solidity identifier
@@ -89,8 +91,8 @@ class ContractAnalysisRequest(BaseModel):
                 )
         return v
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "contract_code": "pragma solidity ^0.8.0;\n\ncontract Example {\n    uint256 public value;\n}",
                 "contract_name": "Example",
@@ -99,6 +101,7 @@ class ContractAnalysisRequest(BaseModel):
                 "include_explanations": False
             }
         }
+    )
 
 
 class DirectPredictionRequest(BaseModel):
@@ -131,27 +134,28 @@ class DirectPredictionRequest(BaseModel):
         description="Include SHAP explanations"
     )
     
-    @validator('features')
-    def validate_features(cls, v):
+    @field_validator('features')
+    @classmethod
+    def validate_features(cls, v: Dict[str, float]) -> Dict[str, float]:
         """Validate features dictionary."""
         if not v:
             raise ValueError("features dict cannot be empty")
-        
+
         # All values must be numeric
         for key, value in v.items():
             if not isinstance(value, (int, float)):
                 raise ValueError(
                     f"Feature '{key}' must be numeric, got {type(value).__name__}"
                 )
-            
+
             # Check for NaN/Inf
             if value != value or abs(value) == float('inf'):
                 raise ValueError(f"Feature '{key}' contains NaN or Inf")
-        
+
         return v
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "features": {
                     "num_functions": 15.0,
@@ -162,3 +166,4 @@ class DirectPredictionRequest(BaseModel):
                 "include_explanations": False
             }
         }
+    )
