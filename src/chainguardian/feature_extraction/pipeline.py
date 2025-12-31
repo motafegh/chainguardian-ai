@@ -501,6 +501,11 @@ class FeaturePipeline:
         logger.info(f"📊 Analyzing {contract_name} in {self.mode} mode...")
 
         try:
+            # Ensure absolute path for compilation
+            if not isinstance(contract_path, Path):
+                contract_path = Path(contract_path)
+            contract_path = contract_path.resolve()
+
             # STEP 1: Compile contract
             slither = self._compile_contract(contract_path)
 

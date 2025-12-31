@@ -36,12 +36,12 @@ def discover_contracts(base_dir: Path) -> Dict[str, List[Tuple[Path, str]]]:
     """
     logger.info(f"Discovering contracts in {base_dir}")
 
+    # Use data/ folder datasets (97% success rate vs 0% in blockchain/)
     datasets = {
-        'SolidiFI-benchmark': base_dir / 'SolidiFI-benchmark',
-        'contracts': base_dir / 'contracts',
-        'solidity-by-example': base_dir / 'solidity-by-example.github.io',
-        'damn-vulnerable-defi': base_dir / 'damn-vulnerable-defi',
-        'compound-protocol': base_dir / 'compound-protocol',
+        'smartbugs_curated': base_dir / 'smartbugs_curated',
+        'production': base_dir / 'production',
+        'vulnerable_complex': base_dir / 'vulnerable_complex',
+        'safe_contracts': base_dir / 'safe_contracts',
     }
 
     discovered = {}
@@ -124,8 +124,8 @@ def build_database(
     pipeline = FeaturePipeline(mode=mode)
     db = DatabaseManager()
 
-    # Discover contracts
-    base_dir = Path('blockchain')
+    # Discover contracts (using data/ folder - 97% success rate)
+    base_dir = Path('data')
     datasets = discover_contracts(base_dir)
 
     # Statistics

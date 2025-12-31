@@ -107,14 +107,15 @@ class ContractAnalysisRequest(BaseModel):
 class DirectPredictionRequest(BaseModel):
     """
     ADVANCED ENDPOINT: Direct prediction from pre-extracted features.
-    
+
     For ML researchers, A/B testing, or users with custom feature extraction.
-    Expects exactly 70 features that your model was trained on.
+    Expects features matching the loaded model's feature_names (typically 152+ base features + engineered features).
+    The exact count depends on the model version and feature engineering pipeline.
     """
     
     features: Dict[str, float] = Field(
         ...,
-        description="Dictionary of 70 pre-extracted contract features",
+        description="Dictionary of pre-extracted contract features (count matches loaded model)",
         example={
             "num_functions": 15.0,
             "cyclomatic_complexity": 8.5,
