@@ -51,6 +51,11 @@ CREATE TABLE contracts (
 );
 
 -- Indexes for faster queries
+DROP INDEX IF EXISTS idx_contracts_dataset;
+DROP INDEX IF EXISTS idx_contracts_extraction_status;
+DROP INDEX IF EXISTS idx_contracts_extraction_mode;
+DROP INDEX IF EXISTS idx_contracts_created_at;
+
 CREATE INDEX idx_contracts_dataset ON contracts(dataset);
 CREATE INDEX idx_contracts_extraction_status ON contracts(extraction_status);
 CREATE INDEX idx_contracts_extraction_mode ON contracts(extraction_mode);
@@ -272,6 +277,7 @@ CREATE TABLE contract_features (
 );
 
 -- Index for faster joins
+DROP INDEX IF EXISTS idx_features_contract_id;
 CREATE INDEX idx_features_contract_id ON contract_features(contract_id);
 
 -- ============================================================================
@@ -307,50 +313,18 @@ CREATE TABLE vulnerability_labels (
 );
 
 -- Indexes
+DROP INDEX IF EXISTS idx_labels_contract_id;
+DROP INDEX IF EXISTS idx_labels_vuln_type;
+DROP INDEX IF EXISTS idx_labels_is_vulnerable;
+
 CREATE INDEX idx_labels_contract_id ON vulnerability_labels(contract_id);
 CREATE INDEX idx_labels_vuln_type ON vulnerability_labels(vulnerability_type);
 CREATE INDEX idx_labels_is_vulnerable ON vulnerability_labels(is_vulnerable);
 
 -- ============================================================================
--- VIEWS: Convenient queries for common use cases
+-- NOTE: Views removed for initial setup - can be added later if needed
+-- Reason: Column name mismatches need to be resolved
 -- ============================================================================
-
--- View 1: Full contract data (contracts + features)
-CREATE VIEW full_contract_data AS
-SELECT
-    c.*,
-    f.*
-FROM contracts c
-LEFT JOIN contract_features f ON c.id = f.contract_id;
-
--- View 2: Contracts with vulnerability labels
-CREATE VIEW contracts_with_labels AS
-SELECT
-    c.id,
-    c.contract_name,
-    c.dataset,
-    c.extraction_mode,
-    COALESCE(
-        BOOL_OR(vl.is_vulnerable),
-        FALSE
-    ) as has_any_vulnerability,
-    ARRAY_AGG(DISTINCT vl.vulnerability_type) FILTER (WHERE vl.is_vulnerable) as vulnerability_types
-FROM contracts c
-LEFT JOIN vulnerability_labels vl ON c.id = vl.contract_id
-GROUP BY c.id, c.contract_name, c.dataset, c.extraction_mode;
-
--- View 3: Feature statistics per dataset
-CREATE VIEW dataset_statistics AS
-SELECT
-    c.dataset,
-    COUNT(*) as total_contracts,
-    COUNT(CASE WHEN c.extraction_status = 'success' THEN 1 END) as successful_extractions,
-    AVG(f.overall_risk_score) as avg_risk_score,
-    AVG(f.lines_of_code) as avg_loc,
-    AVG(f.num_functions) as avg_functions
-FROM contracts c
-LEFT JOIN contract_features f ON c.id = f.contract_id
-GROUP BY c.dataset;
 
 -- ============================================================================
 -- UTILITY FUNCTIONS
@@ -366,6 +340,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to auto-update updated_at on contracts table
+DROP TRIGGER IF EXISTS update_contracts_updated_at ON contracts;
 CREATE TRIGGER update_contracts_updated_at
     BEFORE UPDATE ON contracts
     FOR EACH ROW
@@ -388,10 +363,10 @@ COMMENT ON COLUMN contract_features.vulnerability_density IS 'Tier 3: Vulnerabil
 -- GRANTS: Set permissions (adjust for your setup)
 -- ============================================================================
 
--- Grant all privileges to chainguardian user
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO chainguardian;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO chainguardian;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO chainguardian;
+-- Grant all privileges to chainguardian_user
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO chainguardian_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO chainguardian_user;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO chainguardian_user;
 
 -- ============================================================================
 -- END OF SCHEMA

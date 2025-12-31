@@ -561,7 +561,121 @@ class DatabaseManager:
                 logger.debug(f"Saved ground truth label for contract {contract_id}")
             
             return contract_id
-    
+
+    def save_contract_and_features_v2(self, features_dict: Dict) -> int:
+        """
+        Save contract and features to NEW V2 schema (contract_features table).
+
+        This is a dynamic version that adapts to the 152-feature schema.
+        It automatically maps features from features_dict to database columns.
+
+        Args:
+            features_dict: Dictionary with contract info and all 152 features
+                Required: contract_name, file_path
+                Optional: dataset, extraction_mode, extraction_status, etc.
+                Features: All 152 features from tier-based extraction
+
+        Returns:
+            contract_id: Database ID of saved contract
+        """
+        with self._get_cursor() as cursor:
+            # ============================================================
+            # STEP 1: INSERT CONTRACT (into contracts table)
+            # ============================================================
+            contract_data = {
+                'contract_name': features_dict.get('contract_name', 'Unknown'),
+                'file_path': features_dict.get('file_path', ''),
+                'address': features_dict.get('address'),
+                'source_code': features_dict.get('source_code'),
+                'compiler_version': features_dict.get('compiler_version'),
+                'extraction_status': features_dict.get('extraction_status', 'success'),
+                'extraction_mode': features_dict.get('extraction_mode', 'comprehensive'),
+                'failure_reason': features_dict.get('failure_reason'),
+                'dataset': features_dict.get('dataset'),
+                'data_source': features_dict.get('data_source', 'manual'),
+            }
+
+            cursor.execute("""
+                INSERT INTO contracts (
+                    contract_name, file_path, address, source_code, compiler_version,
+                    extraction_status, extraction_mode, failure_reason, dataset, data_source
+                )
+                VALUES (
+                    %(contract_name)s, %(file_path)s, %(address)s, %(source_code)s, %(compiler_version)s,
+                    %(extraction_status)s, %(extraction_mode)s, %(failure_reason)s, %(dataset)s, %(data_source)s
+                )
+                RETURNING id;
+            """, contract_data)
+
+            contract_id = cursor.fetchone()[0]
+            logger.debug(f"Saved contract V2: {contract_data['contract_name']} (id={contract_id})")
+
+            # ============================================================
+            # STEP 2: GET AVAILABLE COLUMNS IN contract_features table
+            # ============================================================
+            cursor.execute("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name = 'contract_features'
+                AND table_schema = 'public'
+                AND column_name NOT IN ('id', 'contract_id')
+                ORDER BY ordinal_position;
+            """)
+
+            available_columns = [row[0] for row in cursor.fetchall()]
+
+            # ============================================================
+            # STEP 3: BUILD DYNAMIC INSERT for contract_features
+            # ============================================================
+            # Start with contract_id
+            feature_data = {'contract_id': contract_id}
+
+            # Add all features that exist in both features_dict and database schema
+            for col in available_columns:
+                if col in features_dict:
+                    feature_data[col] = features_dict[col]
+
+            # Build INSERT statement dynamically
+            columns = list(feature_data.keys())
+            placeholders = [f'%({col})s' for col in columns]
+
+            insert_sql = f"""
+                INSERT INTO contract_features ({', '.join(columns)})
+                VALUES ({', '.join(placeholders)})
+            """
+
+            cursor.execute(insert_sql, feature_data)
+            logger.debug(f"Saved {len(feature_data)-1} features for contract {contract_id}")
+
+            # ============================================================
+            # STEP 4: SAVE VULNERABILITY LABELS (if provided)
+            # ============================================================
+            if features_dict.get('ground_truth_label') or features_dict.get('ground_truth_vuln_type'):
+                label_data = {
+                    'contract_id': contract_id,
+                    'vulnerability_type': features_dict.get('ground_truth_vuln_type', 'unknown'),
+                    'is_vulnerable': features_dict.get('ground_truth_label', False),
+                    'label_source': features_dict.get('data_source', 'slither'),
+                    'severity': features_dict.get('severity'),
+                    'description': features_dict.get('description'),
+                }
+
+                cursor.execute("""
+                    INSERT INTO vulnerability_labels (
+                        contract_id, vulnerability_type, is_vulnerable,
+                        label_source, severity, description
+                    )
+                    VALUES (
+                        %(contract_id)s, %(vulnerability_type)s, %(is_vulnerable)s,
+                        %(label_source)s, %(severity)s, %(description)s
+                    )
+                    ON CONFLICT (contract_id, vulnerability_type, label_source) DO NOTHING;
+                """, label_data)
+
+                logger.debug(f"Saved vulnerability label for contract {contract_id}")
+
+            return contract_id
+
     def get_all_features(self) -> pd.DataFrame:
         """
         Get all contracts with their features as DataFrame.
@@ -697,7 +811,59 @@ class DatabaseManager:
             df = pd.DataFrame(rows)
             logger.info(f"Loaded {len(df)} contracts with {len(df.columns)} features from database")
             return df
-    
+
+    def get_all_features_v2(self) -> pd.DataFrame:
+        """
+        Get all contracts with their features from V2 schema (contract_features table).
+
+        This uses dynamic column querying to support the full 152-feature schema.
+
+        Returns:
+            DataFrame with all contracts and their 152 features
+        """
+        with self._get_cursor(dict_cursor=False) as cursor:
+            # Build dynamic SELECT statement by querying schema
+            cursor.execute("""
+                SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name = 'contract_features'
+                AND table_schema = 'public'
+                AND column_name NOT IN ('id')
+                ORDER BY ordinal_position;
+            """)
+
+            feature_columns = [row[0] for row in cursor.fetchall()]
+
+            # Build SELECT list with table prefixes to avoid ambiguity
+            feature_select = ', '.join([f'f.{col}' for col in feature_columns if col != 'contract_id'])
+
+            # Query all contracts and features
+            query = f"""
+                SELECT
+                    c.id as contract_id,
+                    c.contract_name,
+                    c.file_path,
+                    c.dataset,
+                    c.data_source,
+                    c.extraction_mode,
+                    c.extraction_status,
+                    {feature_select}
+                FROM contracts c
+                LEFT JOIN contract_features f ON c.id = f.contract_id
+                WHERE c.extraction_status = 'success'
+                ORDER BY c.id;
+            """
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            # Get column names from cursor description
+            columns = [desc[0] for desc in cursor.description]
+
+            df = pd.DataFrame(rows, columns=columns)
+            logger.info(f"Loaded {len(df)} contracts with {len(df.columns)} total columns from V2 schema")
+            return df
+
     def get_contract_count(self) -> int:
         """Get total number of contracts in database."""
         with self._get_cursor() as cursor:

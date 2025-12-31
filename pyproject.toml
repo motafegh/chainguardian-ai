@@ -71,6 +71,8 @@ prometheus-fastapi-instrumentator = "^7.1.0"
 python-json-logger = "^4.0.0"
 evidently = "^0.7.18"
 plotly = ">=5.10.0,<6"
+loguru = "^0.7.3"
+ollama = "^0.6.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"

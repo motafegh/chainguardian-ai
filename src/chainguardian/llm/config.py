@@ -148,6 +148,7 @@ class LLMConfig(BaseSettings):
         case_sensitive = False  # LLM_simple_model and LLM_SIMPLE_MODEL both work
         env_file = ".env"  # Load from .env file if present
         env_file_encoding = "utf-8"
+        extra = "ignore"
 
 
 # ==================== Singleton Instance ====================

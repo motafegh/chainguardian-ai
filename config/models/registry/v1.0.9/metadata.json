@@ -1,4 +1,22 @@
 {
+  "version": "1.0.9",
+  "timestamp": "2025-12-31T14:54:34.774216",
+  "hash": "742951172c4108ad8710025ef92323a5",
+  "description": "Enhanced v7 model",
+  "performance_metrics": {
+    "test_auc": 0.9788898926559677,
+    "test_accuracy": 0.9484536082474226,
+    "test_brier": 0.039706294019344904
+  },
+  "training_info": {
+    "version": "v7_enhanced",
+    "date": "2025-12-31T14:54:34.770932",
+    "dataset_size": 1936,
+    "ensemble_used": true,
+    "hyperparameter_tuning": true
+  },
+  "feature_count": 82,
+  "model_type": "HeterogeneousEnsemble",
   "feature_names": [
     "num_functions",
     "num_state_vars",
@@ -83,19 +101,6 @@
     "if_node_count",
     "return_node_count"
   ],
-  "model_type": "ensemble",
-  "performance_metrics": {
-    "test_auc": 0.9788898926559677,
-    "test_accuracy": 0.9484536082474226,
-    "test_brier": 0.039706294019344904
-  },
-  "training_info": {
-    "version": "v7_enhanced",
-    "date": "2025-12-31T15:15:20.765226",
-    "dataset_size": 1936,
-    "ensemble_used": true,
-    "hyperparameter_tuning": true
-  },
   "config": {
     "hyperparameter_tuning": {
       "enable_optuna": true,
@@ -300,5 +305,6 @@
       "adaptive_thresholds": true,
       "threshold_smoothing": 0.1
     }
-  }
+  },
+  "hyperparameters": {}
 }

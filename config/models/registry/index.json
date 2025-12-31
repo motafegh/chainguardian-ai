@@ -86,12 +86,67 @@
         "test_accuracy": 0.9832214765100671,
         "test_brier": 0.014609806108369549
       }
+    },
+    "1.0.8": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.8",
+      "timestamp": "2025-12-31T14:52:15.054359",
+      "hash": "2281dfdfe6e07e74389c00f7cb6e1f8b",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9822908916994367,
+        "test_accuracy": 0.9484536082474226,
+        "test_brier": 0.0412742511781789
+      }
+    },
+    "1.0.9": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.9",
+      "timestamp": "2025-12-31T14:54:34.774216",
+      "hash": "742951172c4108ad8710025ef92323a5",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9788898926559677,
+        "test_accuracy": 0.9484536082474226,
+        "test_brier": 0.039706294019344904
+      }
+    },
+    "1.0.10": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.10",
+      "timestamp": "2025-12-31T15:00:14.031401",
+      "hash": "0f405d3dec78168e78268f78298bbbf4",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9788898926559677,
+        "test_accuracy": 0.9484536082474226,
+        "test_brier": 0.039706294019344904
+      }
+    },
+    "1.0.11": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.11",
+      "timestamp": "2025-12-31T15:04:50.591203",
+      "hash": "e2738a259cb88d0494e29f302e763ebf",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9788898926559677,
+        "test_accuracy": 0.9484536082474226,
+        "test_brier": 0.039706294019344904
+      }
+    },
+    "1.0.12": {
+      "path": "/home/motafeq/projects/chainguardian-ai/config/models/registry/v1.0.12",
+      "timestamp": "2025-12-31T15:15:20.768447",
+      "hash": "0010bb146f574d72f607935f7494e301",
+      "description": "Enhanced v7 model",
+      "performance": {
+        "test_auc": 0.9788898926559677,
+        "test_accuracy": 0.9484536082474226,
+        "test_brier": 0.039706294019344904
+      }
     }
   },
-  "latest_version": "1.0.7",
+  "latest_version": "1.0.12",
   "metadata": {
     "created": "2025-12-23T20:16:11.888750",
-    "total_models": 8,
-    "last_updated": "2025-12-24T13:16:35.006251"
+    "total_models": 13,
+    "last_updated": "2025-12-31T15:15:20.862949"
   }
 }

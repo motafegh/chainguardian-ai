@@ -51,9 +51,37 @@ def export_training_data(output_path: str = 'data/ml_training_v5_152features.csv
     total_contracts = db.get_contract_count()
     logger.info(f"Total contracts in database: {total_contracts}")
 
-    # Export to CSV
+    # Export to CSV (using V2 schema with 152 features)
     logger.info(f"Exporting to: {output_path}")
-    df = db.get_all_features()
+    df = db.get_all_features_v2()
+
+    # Add ground truth labels based on dataset
+    logger.info("Adding ground truth labels based on dataset...")
+
+    def determine_vulnerability(row):
+        """Determine if contract is vulnerable based on dataset."""
+        dataset = str(row['dataset']).lower() if pd.notna(row['dataset']) else ''
+
+        # Vulnerable datasets
+        if 'vulnerable' in dataset or 'smartbugs' in dataset:
+            return True
+        # Safe datasets
+        elif 'safe' in dataset:
+            return False
+        # Production - assume safe unless proven otherwise
+        elif 'production' in dataset:
+            return False
+        # Unknown - default to safe (conservative)
+        else:
+            return False
+
+    df['ground_truth_vulnerable'] = df.apply(determine_vulnerability, axis=1)
+
+    # Log label distribution
+    vulnerable_count = df['ground_truth_vulnerable'].sum()
+    safe_count = len(df) - vulnerable_count
+    logger.info(f"  Vulnerable contracts: {vulnerable_count} ({vulnerable_count/len(df)*100:.1f}%)")
+    logger.info(f"  Safe contracts: {safe_count} ({safe_count/len(df)*100:.1f}%)")
 
     # Save to CSV
     df.to_csv(output_path, index=False)

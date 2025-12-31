@@ -531,9 +531,9 @@ class FeaturePipeline:
             if metadata:
                 features.update(metadata)
 
-            # STEP 6: Save to database
+            # STEP 6: Save to database (using V2 schema with 152-feature support)
             logger.debug("Saving features to database...")
-            self.db.save_contract_and_features(features)
+            self.db.save_contract_and_features_v2(features)
 
             logger.info(f"✓ {contract_name}: Extracted {len(features)} features successfully")
             return features

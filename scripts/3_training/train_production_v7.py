@@ -168,34 +168,46 @@ print(f"📂 PATHS (Running from: {Path.cwd()})")
 print(f"📂 Project Root: {path_resolver.project_root}")
 print("=" * 80)
 
-# Use absolute path for dataset
-datafile = path_resolver.data_dir / "ml_ready_v4.csv"
+# Use absolute path for dataset - NEW 152-feature tier-based system
+datafile = path_resolver.data_dir / "ml_training_v5_152features.csv"
 
 if not datafile.exists():
-    print(f"❌ Could not find ml_ready_v4.csv at {datafile}")
+    print(f"❌ Could not find ml_training_v5_152features.csv at {datafile}")
     print(f"   Expected: {datafile.absolute()}")
     sys.exit(1)
 
 print(f"✅ Found dataset at: {datafile}")
 df = pd.read_csv(datafile)
 print(f"✅ Loaded {len(df)} samples, {len(df.columns)} columns")
+print(f"   Using 152-feature tier-based system (Tier 1+2+3)")
 
 
-# Define leakage features to REMOVE
+# Define metadata and leakage features to REMOVE
+# Metadata columns (not features)
+METADATA_COLS = [
+    'contract_id', 'contract_name', 'file_path', 'dataset', 'data_source',
+    'extraction_mode', 'extraction_status'
+]
+
+# Potential leakage features (directly indicate vulnerabilities)
+# These are patterns that Slither detects, which might leak ground truth
 LEAKAGE_FEATURES = [
-    'id', 'contract_name', 'data_source',
+    'has_reentrancy', 'has_tx_origin', 'has_unchecked_call', 'has_delegatecall',
+    'has_timestamp_dependence', 'has_access_control_issue', 'has_arithmetic_issue',
+    'has_unchecked_low_level_call', 'has_dangerous_strict_equality', 'has_locked_ether',
+    'has_state_variable_shadowing', 'has_uninitialized_storage',
+    'has_naming_convention_violation', 'has_unused_state_variable', 'has_costly_loop',
+    'has_external_function', 'has_deprecated_construct', 'has_incorrect_equality',
+    'has_boolean_constant_misuse', 'has_divide_before_multiply', 'has_weak_randomness',
+    'has_assembly_usage', 'has_low_level_calls',
     'high_severity_count', 'medium_severity_count', 'low_severity_count',
-    'total_detector_hits', 'security_detectors_triggered', 'unique_vulnerability_types',
-    'risk_score_simple', 'risk_score_weighted',
-    'high_confidence_detectors', 'medium_confidence_detectors', 'low_confidence_detectors',
-    'has_delegatecall_loop', 'has_msg_value_loop', 'has_incorrect_solc_version',
-    'has_outdated_compiler', 'num_dependencies', 'num_unused_functions',
-    'detectors_per_function', 'detectors_per_loc',
-    'cei_violations', 'cei_pattern_score',
+    'total_detectors_fired', 'high_confidence_count', 'medium_confidence_count',
+    'low_confidence_count', 'unique_detector_types',
+    'security_risk_score', 'code_quality_score', 'overall_risk_score', 'is_high_risk',
 ]
 
 # Separate features
-exclude_cols = ['ground_truth_vulnerable'] + LEAKAGE_FEATURES
+exclude_cols = ['ground_truth_vulnerable'] + METADATA_COLS + LEAKAGE_FEATURES
 available_features = [col for col in df.columns if col not in exclude_cols and col in df.columns]
 
 X = df[available_features]
