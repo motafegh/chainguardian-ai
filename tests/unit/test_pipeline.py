@@ -79,7 +79,8 @@ contract Test {
 
         # Verify lock exists for thread safety
         assert hasattr(pipeline, '_lock')
-        assert isinstance(pipeline._lock, threading.Lock)
+        # Lock is a factory function, so check the type name instead
+        assert type(pipeline._lock).__name__ == 'lock'
 
     finally:
         # Cleanup
@@ -672,7 +673,8 @@ def test_lock_prevents_concurrent_compilation():
 
     # Verify lock attribute exists
     assert hasattr(pipeline, '_lock'), "Pipeline should have _lock attribute"
-    assert isinstance(pipeline._lock, threading.Lock), "_lock should be a Lock object"
+    # Lock is a factory function, so check the type name instead
+    assert type(pipeline._lock).__name__ == 'lock', "_lock should be a Lock object"
 
     # Verify lock is used in analyze_contract (by checking it's not None)
     # The actual thread safety is tested in production, not in unit tests

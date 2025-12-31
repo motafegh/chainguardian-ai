@@ -280,3 +280,20 @@ reports/draft/
 !data/collection_metadata.json
 !data/production_dataset_verification.json
 
+
+# ============================================================================
+# PROJECT ORGANIZATION (Added 2025-12-31)
+# ============================================================================
+# Build logs (moved to logs/builds/)
+database_build*.log
+build.log
+
+# Build statistics backups (moved to backups/)
+backups/
+
+# Keep only latest build stats in root
+database_build_stats_*.json
+!database_build_stats_20251231_000135.json
+
+# Test results (moved to tests/fixtures/)
+test_results_*.csv

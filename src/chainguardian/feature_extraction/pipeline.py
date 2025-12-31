@@ -1,42 +1,51 @@
 """
-Unified Feature Extraction Pipeline - PRODUCTION VERSION WITH SEMANTIC ANALYSIS
-================================================================================
+Unified Feature Extraction Pipeline - REFACTORED WITH TIER-BASED ARCHITECTURE
+===============================================================================
 
-Thread-safe multi-version Solidity compilation with comprehensive error handling.
+Thread-safe multi-version Solidity compilation with tier-based feature extraction.
 
 KEY FEATURES:
-- Handles caret (^), range (>=...<), and exact pragmas correctly
-- Thread-safe parallel processing with compiler version locking
-- Multi-file contract support with proper import resolution
-- Comprehensive error categorization with full error messages
-- 85+ Solidity compiler versions supported
-- **NEW**: Semantic security pattern detection (CEI, reentrancy guards)
+- Tier-based modular architecture (Tier 1-4)
+- Mode-based extraction (comprehensive/maximum/optimized)
+- Auto-discovery of Slither detectors (future-proof)
+- Direct Slither API usage (no redundancy)
+- Single-pass extraction per tier
+- Thread-safe parallel processing
 
-FEATURE EXTRACTION PIPELINE (7 STEPS):
-1. Multi-file contract detection
-2. Solidity version detection & compiler switching
-3. Slither compilation & detector registration
-4. Vulnerability feature extraction (23 flags + 3 severity + 9 stats + 4 risk)
-5. AST feature extraction (17 code structure features)
-6. Graph feature extraction (25 CFG/CG/DFG features)
-7. **NEW**: Semantic security pattern analysis (8 semantic features)
+TIER ARCHITECTURE:
+- Tier 1: Core Features (56) - Detectors + API + Complexity + LOC + Risk
+- Tier 2: Semantic + Graph (33) - CEI + CFG + Call Graph + Data Flow
+- Tier 3: Advanced (68) - SlithIR + Extended API + Aggregations
+- Tier 4: Individual Detectors (69) - One boolean per detector
 
-TOTAL: 89 features (was 81)
+EXTRACTION MODES:
+- comprehensive: Tiers 1+2+3 (157 features, 8-10 sec)
+- maximum: Tiers 1+2+3+4 (226 features, 14-16 sec)
+- optimized: Tier 1+2 (89 features, 6-8 sec)
+
+TOTAL: Up to 226 features (mode-dependent)
 """
 
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Any, Optional
 import pandas as pd
 import logging
 import re
 import subprocess
 from threading import Lock
 from slither import Slither
-import slither.detectors.all_detectors as detector_module
 
-from chainguardian.feature_extraction.contract_analyzer import SlitherAnalyzer
-from chainguardian.feature_extraction.ast_analyzer import ASTFeatureExtractor
-from chainguardian.feature_extraction.semantic_analyzer import extract_semantic_features
+# Import new tier modules
+from .tier1_core import extract_tier1_features
+from .tier2_semantic_graph import extract_tier2_features
+from .tier3_advanced import extract_tier3_features, compute_tier3_aggregations
+from .tier4_detectors import extract_tier4_features
+from .utils import resolve_contract, categorize_error
+from .feature_spec import (
+    get_default_feature_dict,
+    get_features_for_mode,
+    MODE_TIER_MAPPING
+)
 
 logger = logging.getLogger(__name__)
 
@@ -44,45 +53,50 @@ logger = logging.getLogger(__name__)
 class FeaturePipeline:
     """
     End-to-end pipeline: Contract → Feature Vector → ML-ready format
-    
+
     Thread-safe for parallel feature extraction across multiple contracts.
-    Caches installed Solidity versions for performance.
-    
-    Features extracted (89 total):
-    - 23 vulnerability flags (reentrancy, access control, etc.)
-    - 3 severity counts (high, medium, low)
-    - 17 AST features (complexity, LOC, etc.)
-    - 9 detector statistics (confidence, types, etc.)
-    - 4 risk scores (simple, weighted, category)
-    - 25 graph features (CFG, call graph, data flow)
-    - 8 semantic features (CEI violations, reentrancy guards, etc.)
+    Tier-based architecture for modular, efficient extraction.
+
+    Args:
+        mode: Extraction mode ('comprehensive', 'maximum', 'optimized')
+            - comprehensive: 157 features (Tiers 1+2+3)
+            - maximum: 226 features (Tiers 1+2+3+4)
+            - optimized: 89 features (Tiers 1+2)
     """
-    
-    def __init__(self):
-        """Initialize pipeline with version cache and thread safety."""
+
+    def __init__(self, mode: str = "comprehensive"):
+        """Initialize pipeline with mode selection and version cache."""
         from chainguardian.database.manager import DatabaseManager
-        
-        self.features = None  # Keep for backwards compatibility
-        self.db = DatabaseManager()  # Database connection
-        logger.info("✅ Database connection ready")
-        
+
+        # Validate mode
+        if mode not in MODE_TIER_MAPPING:
+            logger.warning(f"Invalid mode '{mode}', defaulting to 'comprehensive'")
+            mode = "comprehensive"
+
+        self.mode = mode
+        self.enabled_tiers = MODE_TIER_MAPPING[mode]
+
+        self.db = DatabaseManager()
+        logger.info(f"✅ Database connection ready")
+        logger.info(f"🎯 Extraction mode: {mode} ({len(get_features_for_mode(mode))} features)")
+
         self._lock = Lock()  # Protects version switching + compilation
-        
-        # Cache installed versions (call once, use many times)
+
+        # Cache installed versions
         self._installed_versions = self._get_installed_versions()
         logger.info(f"✓ Found {len(self._installed_versions)} installed Solidity versions")
-        
+
         if len(self._installed_versions) == 0:
             logger.error(
                 "⚠️  NO Solidity versions detected!\n"
                 "   Install with: poetry run solc-select install 0.8.20"
             )
-    
+
     def _get_installed_versions(self) -> set:
         """
         Get list of installed Solidity compiler versions.
         Uses direct solc-select call for reliability.
-        
+
         Returns:
             Set of version strings (e.g., {'0.4.26', '0.5.17', '0.8.20'})
         """
@@ -94,841 +108,538 @@ class FeaturePipeline:
                 check=True,
                 timeout=10
             )
-            
+
             versions = set()
             for line in result.stdout.split('\n'):
                 if line.strip():
-                    # Extract version (first token before space/paren)
-                    version = line.split()[0]
-                    if version and version[0].isdigit():
-                        versions.add(version)
-            
+                    # Parse version from output (e.g., "0.8.20 (current)" or "0.4.26")
+                    match = re.search(r'(\d+\.\d+\.\d+)', line)
+                    if match:
+                        versions.add(match.group(1))
+
             return versions
-        
-        except Exception as e:
-            logger.error(f"Failed to get installed versions: {e}")
+
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError) as e:
+            logger.error(f"Failed to get installed Solidity versions: {e}")
             return set()
-    
-    def _detect_solidity_version(self, contract_path: Path) -> Tuple[str, bool]:
+
+    def _detect_solidity_version(self, contract_path: Path) -> Optional[str]:
         """
-        Extract Solidity version from pragma.
-        
-        HANDLES ALL PRAGMA TYPES:
-        - pragma solidity 0.8.3;            → (0.8.3, False) exact
-        - pragma solidity ^0.8.0;           → (0.8.0, True) caret
-        - pragma solidity >=0.6.0 <0.8.0;   → (0.7.6, False) range (uses highest)
-        - pragma solidity =0.8.17;          → (0.8.17, False) exact
-        
+        Detect required Solidity version from pragma statement.
+
+        Handles:
+        - Exact: pragma solidity 0.8.0;
+        - Caret: pragma solidity ^0.8.0;
+        - Range: pragma solidity >=0.4.22 <0.9.0;
+
         Args:
-            contract_path: Path to Solidity file
-            
+            contract_path: Path to .sol file
+
         Returns:
-            (version_to_use, has_caret) tuple
+            Required version string (e.g., '0.8.20') or None if not found
         """
         try:
-            content = contract_path.read_text(encoding="utf-8")
-            
-            # Find pragma line
-            pragma_match = re.search(r'pragma\s+solidity\s+([^;]+);', content)
-            if not pragma_match:
-                logger.warning(f"No pragma in {contract_path.name}")
-                return "0.8.20", False
-            
-            pragma_text = pragma_match.group(1).strip()
-            
-            # ================================================================
-            # CASE 1: CARET PRAGMA (^0.8.0)
-            # ================================================================
-            if '^' in pragma_text:
-                version_match = re.search(r'([\d.]+)', pragma_text)
+            source_code = contract_path.read_text(encoding='utf-8')
+
+            # Find pragma solidity statement (get first occurrence)
+            pragma_pattern = r'pragma\s+solidity\s+([^;]+);'
+            match = re.search(pragma_pattern, source_code, re.IGNORECASE | re.MULTILINE)
+
+            if not match:
+                logger.warning(f"No pragma found in {contract_path.name}")
+                return None
+
+            pragma_value = match.group(1).strip()
+            logger.debug(f"Found pragma: pragma solidity {pragma_value};")
+
+            # Parse pragma
+            if pragma_value.startswith('^'):
+                # Caret: ^0.8.0 -> use 0.8.x
+                base_version = pragma_value[1:].strip()
+                # Extract version number (with or without patch)
+                version_match = re.match(r'(\d+\.\d+\.\d+)', base_version)
                 if version_match:
-                    version = version_match.group(1)
-                    logger.debug(f"Caret pragma: ^{version}")
-                    return version, True
-            
-            # ================================================================
-            # CASE 2: RANGE PRAGMA (>=0.6.0 <0.8.0)
-            # ================================================================
-            elif '>=' in pragma_text or '<' in pragma_text:
-                versions = re.findall(r'([\d.]+)', pragma_text)
-                if not versions:
-                    logger.warning(f"No versions in range pragma: {pragma_text}")
-                    return "0.8.20", False
-                
-                # Find highest compatible version in installed versions
-                try:
-                    min_version = versions[0]
-                    max_version = versions[1] if len(versions) > 1 else None
-                    
-                    min_parts = tuple(map(int, min_version.split('.')))
-                    compatible = []
-                    
-                    for v in self._installed_versions:
-                        v_parts = tuple(map(int, v.split('.')))
-                        
-                        # Check if >= min_version
-                        if v_parts < min_parts:
-                            continue
-                        
-                        # Check if < max_version (if specified)
-                        if max_version:
-                            max_parts = tuple(map(int, max_version.split('.')))
-                            if v_parts >= max_parts:
-                                continue
-                        
-                        compatible.append(v)
-                    
-                    if compatible:
-                        best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
-                        logger.debug(f"Range pragma {pragma_text} → using {best}")
-                        return best, False
-                    else:
-                        logger.warning(f"No compatible versions for {pragma_text}")
-                        return min_version, False
-                
-                except Exception as e:
-                    logger.error(f"Failed to parse range pragma: {e}")
-                    return versions[0], False
-            
-            # ================================================================
-            # CASE 3: EXACT VERSION (0.8.3 or =0.8.17)
-            # ================================================================
-            else:
-                version_match = re.search(r'([\d.]+)', pragma_text)
+                    return self._find_best_version(version_match.group(1), caret=True)
+                # Try without patch version (e.g., ^0.8)
+                version_match = re.match(r'(\d+\.\d+)', base_version)
                 if version_match:
-                    version = version_match.group(1)
-                    logger.debug(f"Exact version: {version}")
-                    return version, False
-            
-            # Fallback
-            logger.warning(f"Could not parse pragma: {pragma_text}")
-            return "0.8.20", False
-        
-        except Exception as e:
-            logger.error(f"Version detection failed for {contract_path}: {e}")
-            return "0.8.20", False
-    
-    def _find_best_version(self, required_version: str, has_caret: bool) -> str:
-        """
-        Find best installed version to use.
-        
-        Args:
-            required_version: Version from pragma (e.g., "0.8.0")
-            has_caret: Whether pragma had caret (^)
-            
-        Returns:
-            Best version to use
-        """
-        try:
-            major, minor, patch = map(int, required_version.split('.'))
-        except ValueError:
-            logger.warning(f"Invalid version format: {required_version}")
-            return "0.8.20"
-        
-        if not has_caret:
-            # No caret - use exact version if installed
-            if required_version in self._installed_versions:
-                return required_version
-            
-            # Not installed - find close match in same minor version
-            compatible = [
-                v for v in self._installed_versions
-                if v.startswith(f"{major}.{minor}.")
-            ]
-            
-            if compatible:
-                best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
-                logger.info(f"Version {required_version} not installed, using {best}")
-                return best
-            
-            logger.warning(f"No compatible version for {required_version}")
-            return "0.8.20"
-        
-        else:
-            # HAS CARET - find highest compatible version
-            compatible = [
-                v for v in self._installed_versions
-                if self._is_caret_compatible(v, major, minor, patch)
-            ]
-            
-            if compatible:
-                best = max(compatible, key=lambda v: tuple(map(int, v.split('.'))))
-                logger.info(f"Caret ^{required_version} → using {best}")
-                return best
-            
-            if required_version in self._installed_versions:
-                logger.warning(f"No higher versions for ^{required_version}")
-                return required_version
-            
-            logger.warning(f"No compatible version for ^{required_version}")
-            return "0.8.20"
-    
-    def _is_caret_compatible(self, version: str, req_major: int, req_minor: int, req_patch: int) -> bool:
-        """
-        Check if version is compatible with caret pragma.
-        
-        Caret rules (see semver.org):
-        - ^1.2.3 means >=1.2.3 <2.0.0 (next major)
-        - ^0.2.3 means >=0.2.3 <0.3.0 (next minor when major=0)
-        - ^0.0.3 means >=0.0.3 <0.0.4 (next patch when major=0 and minor=0)
-        
-        Args:
-            version: Version to check (e.g., "0.8.26")
-            req_major, req_minor, req_patch: Required version components
-            
-        Returns:
-            True if compatible
-        """
-        try:
-            v_major, v_minor, v_patch = map(int, version.split('.'))
-        except ValueError:
-            return False
-        
-        # Must be same major version
-        if v_major != req_major:
-            return False
-        
-        # ================================================================
-        # CASE 1: 0.0.x (major=0, minor=0)
-        # ^0.0.3 means >=0.0.3 <0.0.4 (only same patch allowed)
-        # ================================================================
-        if req_major == 0 and req_minor == 0:
-            return v_minor == 0 and v_patch == req_patch
-        
-        # ================================================================
-        # CASE 2: 0.x.y (major=0, minor>0)
-        # ^0.4.15 means >=0.4.15 <0.5.0 (next minor)
-        # ================================================================
-        if req_major == 0:
-            # Must be same minor version
-            if v_minor != req_minor:
-                return False
-            # Must be >= required patch
-            return v_patch >= req_patch
-        
-        # ================================================================
-        # CASE 3: x.y.z (major>0)
-        # ^1.2.3 means >=1.2.3 <2.0.0 (next major)
-        # ================================================================
-        # Allow any minor >= required minor
-        if v_minor < req_minor:
-            return False
-        # If same minor, check patch
-        if v_minor == req_minor and v_patch < req_patch:
-            return False
-        
-        return True
-    
-    def _set_solc_version(self, version: str) -> bool:
-        """
-        Switch to specific Solidity compiler version.
-        Uses direct solc-select call for reliability.
-        """
-        try:
-            subprocess.run(
-                ["solc-select", "use", version],
-                capture_output=True,
-                text=True,
-                check=True,
-                timeout=10
-            )
-            logger.debug(f"✓ Switched to Solidity {version}")
-            return True
-        except Exception as e:
-            logger.error(f"Failed to switch to Solidity {version}: {e}")
-            return False
-    
-    def analyze_contract(self, contract_path: Path, contract_name: str, metadata: Dict = None) -> Dict:
-        """
-        Extract ALL features from a single contract.
-        
-        🎓 COMPREHENSIVE VERSION: Extracts 89 features across 7 analysis stages
-        
-        THREAD-SAFE: Version switching + compilation are atomic.
-        
-        Args:
-            contract_path: Path to .sol file OR directory with .sol files
-            contract_name: Name of main contract to analyze
-            metadata: Optional metadata to include (address, data_source, etc.)
-            
-        Returns:
-            Dict with 89+ features:
-            - 2 metadata (contract_name, file_path)
-            - 23 vulnerability flags (has_reentrancy, etc.)
-            - 3 severity counts (high, medium, low)
-            - 9 detector statistics (confidence, types, etc.)
-            - 4 risk scores (simple, weighted, category)
-            - 17 AST features (complexity, LOC, etc.)
-            - 25 graph features (CFG, call graph, data flow)
-            - 8 semantic features (CEI violations, reentrancy guards)
-            - 2 error tracking (failure_reason, error_message)
-        """
-        logger.info(f"Analyzing {contract_name}")
-        
-        combined_features = {
-            'contract_name': contract_name,
-            'file_path': str(contract_path),
-        }
-        
-        # Add metadata early (before saving)
-        if metadata:
-            combined_features.update(metadata)
-        
-        try:
-            # ================================================================
-            # STEP 0: HANDLE MULTI-FILE CONTRACTS
-            # ================================================================
-            analysis_target = contract_path
-            main_contract_file = None
-            
-            if contract_path.is_dir():
-                logger.debug(f"{contract_name}: Multi-file contract detected")
-                
-                # Find main contract file
-                main_candidates = list(contract_path.glob(f"{contract_name}.sol"))
-                if not main_candidates:
-                    main_candidates = [
-                        f for f in contract_path.glob("*.sol")
-                        if contract_name.lower() in f.stem.lower()
-                    ]
-                
-                if not main_candidates:
-                    main_candidates = list(contract_path.glob("*.sol"))
-                
-                if not main_candidates:
-                    raise FileNotFoundError(f"No .sol files in {contract_path}")
-                
-                main_contract_file = main_candidates[0]
-                
-                # CRITICAL: Use absolute path to main file (not directory!)
-                # Slither resolves imports relative to this file
-                analysis_target = main_contract_file.resolve()
-                
-                logger.debug(
-                    f"{contract_name}: Using {main_contract_file.name} "
-                    f"({len(list(contract_path.glob('*.sol')))} files total)"
-                )
+                    return self._find_best_version(version_match.group(1) + '.0', caret=True)
+
+            elif '>=' in pragma_value:
+                # Range: >=0.4.22 <0.9.0 or >=0.4.22
+                lower_match = re.search(r'>=\s*(\d+\.\d+\.\d+)', pragma_value)
+                upper_match = re.search(r'<\s*(\d+\.\d+\.\d+)', pragma_value)
+
+                if lower_match:
+                    lower_ver = lower_match.group(1)
+                    upper_ver = upper_match.group(1) if upper_match else None
+                    return self._find_best_version_in_range(lower_ver, upper_ver)
+
+                # Also try without patch version
+                lower_match = re.search(r'>=\s*(\d+\.\d+)', pragma_value)
+                upper_match = re.search(r'<\s*(\d+\.\d+)', pragma_value)
+
+                if lower_match:
+                    lower_ver = lower_match.group(1) + '.0'
+                    upper_ver = upper_match.group(1) + '.0' if upper_match else None
+                    return self._find_best_version_in_range(lower_ver, upper_ver)
+
             else:
-                main_contract_file = contract_path
-                analysis_target = contract_path.resolve()
-            
-            # ================================================================
-            # STEP 1: DETECT VERSION + HANDLE PRAGMAS
-            # ================================================================
-            detected_version, has_caret = self._detect_solidity_version(main_contract_file)
-            
-            # ================================================================
-            # STEP 2: FIND BEST INSTALLED VERSION
-            # ================================================================
-            required_version = self._find_best_version(detected_version, has_caret)
-            
-            # ================================================================
-            # CRITICAL: LOCK AROUND VERSION SWITCH + COMPILATION
-            # ================================================================
-            with self._lock:
-                if not self._set_solc_version(required_version):
-                    raise EnvironmentError(
-                        f"Solidity {required_version} not installed. "
-                        f"Run: poetry run solc-select install {required_version}"
-                    )
-                
-                # Compile with correct version
+                # Exact or simple version: 0.8.0 or 0.8.20
+                version_match = re.match(r'(\d+\.\d+\.\d+)', pragma_value)
+                if version_match:
+                    return self._find_best_version(version_match.group(1), caret=False)
+                # Try without patch version (e.g., "0.8")
+                version_match = re.match(r'(\d+\.\d+)', pragma_value)
+                if version_match:
+                    return self._find_best_version(version_match.group(1) + '.0', caret=True)
+
+            logger.warning(f"Could not parse pragma value: {pragma_value}")
+            return None
+
+        except Exception as e:
+            logger.error(f"Failed to detect version for {contract_path.name}: {e}")
+            return None
+
+    def _find_best_version_in_range(self, lower_version: str, upper_version: Optional[str] = None) -> Optional[str]:
+        """
+        Find best installed version within a range.
+
+        Args:
+            lower_version: Minimum version (inclusive, e.g., '0.4.22')
+            upper_version: Maximum version (exclusive, e.g., '0.6.0') or None for no upper limit
+
+        Returns:
+            Best matching installed version or None
+        """
+        try:
+            lower_parts = lower_version.split('.')
+            if len(lower_parts) < 3:
+                return None
+
+            lower_maj, lower_min, lower_patch = int(lower_parts[0]), int(lower_parts[1]), int(lower_parts[2])
+
+            upper_maj, upper_min, upper_patch = None, None, None
+            if upper_version:
+                upper_parts = upper_version.split('.')
+                if len(upper_parts) >= 3:
+                    upper_maj, upper_min, upper_patch = int(upper_parts[0]), int(upper_parts[1]), int(upper_parts[2])
+
+            # Find matching versions
+            candidates = []
+            for installed in self._installed_versions:
+                inst_parts = installed.split('.')
+                if len(inst_parts) < 3:
+                    continue
+
                 try:
-                    slither = Slither(
-                        str(analysis_target),
-                        solc="solc",
-                        solc_disable_warnings=True,
-                        solc_args="--optimize"
-                    )
-                
-                except Exception as compile_error:
-                    # Store full error (NO TRUNCATION!)
-                    full_error = str(compile_error)
-                    error_str = full_error.lower()
-                    
-                    # Categorize errors (preserve full message)
-                    if any(kw in error_str for kw in [
-                        '@openzeppelin', '@chainlink', 'node_modules',
-                        'hardhat/console', 'file import callback not supported'
-                    ]):
-                        logger.warning(f"{contract_name}: Missing external libraries")
-                        raise ImportError(f"External library imports: {full_error}")
-                    
-                    elif 'file not found' in error_str or 'source file not found' in error_str:
-                        logger.warning(f"{contract_name}: File not found")
-                        raise ImportError(f"File not found: {full_error}")
-                    
-                    elif any(kw in error_str for kw in [
-                        'requires different compiler',
-                        'source file requires different',
-                        'version mismatch',
-                        'does not satisfy the version pragma'
-                    ]):
-                        logger.warning(f"{contract_name}: Version mismatch")
-                        raise ValueError(f"Version mismatch: {full_error}")
-                    
-                    elif any(kw in error_str for kw in [
-                        'invalid option to --combined-json',
-                        'unrecognised option',
-                        'unknown option'
-                    ]):
-                        logger.warning(f"{contract_name}: Slither incompatible")
-                        raise RuntimeError(f"Slither incompatibility: {full_error}")
-                    
-                    else:
-                        logger.error(f"{contract_name}: Compilation error")
-                        raise SyntaxError(f"Compilation error: {full_error}")
-            
-            # Lock released
-            
-            # ================================================================
-            # STEP 3: REGISTER DETECTORS
-            # ================================================================
-            detector_classes = [
-                getattr(detector_module, name)
-                for name in dir(detector_module)
-                if name[0].isupper()
-            ]
-            
-            for detector_class in detector_classes:
-                slither.register_detector(detector_class)
-            
-            logger.debug(f"✓ Registered {len(slither.detectors)} detectors")
-            
-            # ================================================================
-            # STEP 4: EXTRACT VULNERABILITY FEATURES (39 features)
-            # ================================================================
-            vuln_analyzer = SlitherAnalyzer(slither)
-            vuln_features = vuln_analyzer.extract_features(contract_name)
-            
-            combined_features.update({
-                # ============================================================
-                # ORIGINAL VULNERABILITY FLAGS (4)
-                # ============================================================
-                'has_reentrancy': vuln_features.has_reentrancy,
-                'has_access_control_issues': vuln_features.has_access_control_issues,
-                'has_timestamp_dependency': vuln_features.has_timestamp_dependency,
-                'has_unchecked_call': vuln_features.has_unchecked_call,
-                
-                # ============================================================
-                # ADDITIONAL VULNERABILITY FLAGS (19)
-                # ============================================================
-                'has_reentrancy_unlimited': vuln_features.has_reentrancy_unlimited,
-                'has_reentrancy_benign': vuln_features.has_reentrancy_benign,
-                'has_reentrancy_events': vuln_features.has_reentrancy_events,
-                'has_unchecked_transfer': vuln_features.has_unchecked_transfer,
-                'has_controlled_delegatecall': vuln_features.has_controlled_delegatecall,
-                'has_delegatecall_loop': vuln_features.has_delegatecall_loop,
-                'has_uninitialized_state': vuln_features.has_uninitialized_state,
-                'has_uninitialized_storage': vuln_features.has_uninitialized_storage,
-                'has_uninitialized_local': vuln_features.has_uninitialized_local,
-                'has_tx_origin': vuln_features.has_tx_origin,
-                'has_inline_assembly': vuln_features.has_inline_assembly,
-                'has_locked_ether': vuln_features.has_locked_ether,
-                'has_msg_value_loop': vuln_features.has_msg_value_loop,
-                'has_shadowing_state': vuln_features.has_shadowing_state,
-                'has_shadowing_builtin': vuln_features.has_shadowing_builtin,
-                'has_shadowing_abstract': vuln_features.has_shadowing_abstract,
-                'has_unused_state_vars': vuln_features.has_unused_state_vars,
-                'has_unused_return_values': vuln_features.has_unused_return_values,
-                'has_incorrect_solc_version': vuln_features.has_incorrect_solc_version,
-                'has_floating_pragma': vuln_features.has_floating_pragma,
-                'has_outdated_compiler': vuln_features.has_outdated_compiler,
-                
-                # ============================================================
-                # SEVERITY COUNTS (3)
-                # ============================================================
-                'high_severity_count': vuln_features.high_severity_count,
-                'medium_severity_count': vuln_features.medium_severity_count,
-                'low_severity_count': vuln_features.low_severity_count,
-                
-                # ============================================================
-                # DETECTOR STATISTICS (9)
-                # ============================================================
-                'high_confidence_detectors': vuln_features.high_confidence_detectors,
-                'medium_confidence_detectors': vuln_features.medium_confidence_detectors,
-                'low_confidence_detectors': vuln_features.low_confidence_detectors,
-                'security_detectors_triggered': vuln_features.security_detectors_triggered,
-                'optimization_detectors_triggered': vuln_features.optimization_detectors_triggered,
-                'total_detector_hits': vuln_features.total_detector_hits,
-                'unique_vulnerability_types': vuln_features.unique_vulnerability_types,
-                'detectors_per_function': vuln_features.detectors_per_function,
-                'detectors_per_loc': vuln_features.detectors_per_loc,
-                
-                # ============================================================
-                # COMPOSITE RISK SCORES (4)
-                # ============================================================
-                'risk_score_simple': vuln_features.risk_score_simple,
-                'risk_score_weighted': vuln_features.risk_score_weighted,
-                'is_high_risk': vuln_features.is_high_risk,
-                'contract_complexity_category': vuln_features.contract_complexity_category,
-            })
-            
-            # ================================================================
-            # STEP 5: EXTRACT AST FEATURES (17 features)
-            # ================================================================
-            # CRITICAL: Pass pre-compiled Slither object (no re-compilation!)
-            ast_extractor = ASTFeatureExtractor(main_contract_file, slither_obj=slither)
-            ast_features = ast_extractor.extract_features(contract_name)
-            combined_features.update(ast_features)
-            
-            # ================================================================
-            # STEP 6: EXTRACT GRAPH FEATURES (25 features)
-            # ================================================================
-            try:
-                from chainguardian.feature_extraction.graph_extractor import GraphFeatureExtractor
-                
-                graph_extractor = GraphFeatureExtractor(slither)
-                graph_features = graph_extractor.extract_features(contract_name)
-                combined_features.update(graph_features)
-                
-                logger.debug(
-                    f"{contract_name}: Graph features - "
-                    f"{graph_features['cfg_num_cycles']} cycles, "
-                    f"{graph_features['cg_num_external_calls']} ext calls"
-                )
-            
-            except Exception as e:
-                logger.warning(f"{contract_name}: Graph extraction failed - {e}")
-                # Add default graph features
-                combined_features.update({
-                    # CFG features (8)
-                    'cfg_num_nodes': 0, 'cfg_num_edges': 0, 'cfg_num_cycles': 0,
-                    'cfg_max_depth': 0, 'cfg_avg_branching': 0.0, 'cfg_has_complex_loops': False,
-                    'cfg_num_exit_points': 0, 'cfg_cyclomatic_total': 0,
-                    # Call Graph features (10)
-                    'cg_num_nodes': 0, 'cg_num_edges': 0, 'cg_max_call_depth': 0,
-                    'cg_num_external_calls': 0, 'cg_external_call_ratio': 0.0,
-                    'cg_has_cyclic_calls': False, 'cg_num_public_entry_points': 0,
-                    'cg_num_internal_functions': 0, 'cg_avg_calls_per_function': 0.0,
-                    'cg_num_leaf_functions': 0,
-                    # Data Flow features (7)
-                    'dfg_num_state_vars': 0, 'dfg_num_tainted_flows': 0,
-                    'dfg_has_cross_function_flow': False, 'dfg_num_sensitive_sinks': 0,
-                    'dfg_num_external_sources': 0, 'dfg_taint_to_sink_ratio': 0.0,
-                    'dfg_num_unvalidated_inputs': 0
-                })
-            
-            # ================================================================
-            # STEP 7: EXTRACT SEMANTIC SECURITY FEATURES (8 features) - NEW!
-            # ================================================================
-            # WHY: Detect CEI violations, reentrancy guards, and safe patterns
-            # that pure syntactic analysis misses
-            try:
-                # Find the contract object in Slither's compilation
-                target_contract = None
-                for contract in slither.contracts:
-                    if contract.name == contract_name:
-                        target_contract = contract
-                        break
-                
-                if target_contract:
-                    semantic_features = extract_semantic_features(target_contract)
-                    combined_features.update(semantic_features)
-                    
-                    logger.debug(
-                        f"{contract_name}: Semantic features - "
-                        f"CEI score: {semantic_features['cei_pattern_score']:.2f}, "
-                        f"Violations: {semantic_features['cei_violations']}, "
-                        f"Guard: {semantic_features['has_reentrancy_guard']}"
-                    )
+                    inst_maj, inst_min, inst_patch = int(inst_parts[0]), int(inst_parts[1]), int(inst_parts[2])
+                except ValueError:
+                    continue
+
+                # Check lower bound (inclusive)
+                if (inst_maj, inst_min, inst_patch) < (lower_maj, lower_min, lower_patch):
+                    continue
+
+                # Check upper bound (exclusive)
+                if upper_maj is not None:
+                    if (inst_maj, inst_min, inst_patch) >= (upper_maj, upper_min, upper_patch):
+                        continue
+
+                candidates.append((installed, inst_maj, inst_min, inst_patch))
+
+            if not candidates:
+                range_str = f">={lower_version}"
+                if upper_version:
+                    range_str += f" <{upper_version}"
+                logger.warning(f"No matching version for range {range_str}")
+                return None
+
+            # Return highest matching version within range
+            candidates.sort(key=lambda x: (x[1], x[2], x[3]), reverse=True)
+            best_version = candidates[0][0]
+            logger.debug(f"Selected version {best_version} for range >={lower_version} <{upper_version or 'inf'}")
+            return best_version
+
+        except Exception as e:
+            logger.error(f"Failed to find version in range {lower_version}-{upper_version}: {e}")
+            return None
+
+    def _find_best_version(self, requested_version: str, caret: bool = False) -> Optional[str]:
+        """
+        Find best installed version matching requested version.
+
+        Args:
+            requested_version: Version string (e.g., '0.8.0')
+            caret: If True, match same major.minor (e.g., 0.8.x)
+
+        Returns:
+            Best matching installed version or None
+        """
+        try:
+            req_parts = requested_version.split('.')
+            if len(req_parts) < 3:
+                logger.warning(f"Invalid version format: {requested_version}")
+                return None
+
+            req_major, req_minor, req_patch = int(req_parts[0]), int(req_parts[1]), int(req_parts[2])
+
+            # Find matching versions
+            candidates = []
+            for installed in self._installed_versions:
+                inst_parts = installed.split('.')
+                if len(inst_parts) < 3:
+                    continue
+
+                try:
+                    inst_major, inst_minor, inst_patch = int(inst_parts[0]), int(inst_parts[1]), int(inst_parts[2])
+                except ValueError:
+                    continue
+
+                if caret:
+                    # Caret: same major.minor, any patch >= requested
+                    if inst_major == req_major and inst_minor == req_minor and inst_patch >= req_patch:
+                        candidates.append((installed, inst_major, inst_minor, inst_patch))
                 else:
-                    logger.warning(f"{contract_name}: Contract not found in compilation")
-                    raise ValueError(f"Contract {contract_name} not found")
-            
-            except Exception as e:
-                logger.warning(f"{contract_name}: Semantic feature extraction failed - {e}")
-                # Add default semantic features
-                combined_features.update({
-                    'cei_violations': 0,
-                    'cei_safe_functions': 0,
-                    'cei_pattern_score': 1.0,
-                    'has_reentrancy_guard': False,
-                    'functions_with_reentrancy_guard': 0,
-                    'state_before_call_count': 0,
-                    'state_after_call_count': 0,
-                    'unchecked_calls_in_critical_context': 0,
-                })
-            
-            logger.info(f"✓ {contract_name}: {len(combined_features)} features extracted")
-            
-            # ================================================================
-            # ERROR HANDLING: EXPECTED FAILURES
-            # ================================================================
-        except (ImportError, ValueError, RuntimeError, SyntaxError, FileNotFoundError, EnvironmentError) as e:
-            # Categorize expected failures
-            if isinstance(e, ImportError):
-                failure_reason = "IMPORT_ERROR"
-            elif isinstance(e, ValueError):
-                failure_reason = "VERSION_MISMATCH"
-            elif isinstance(e, RuntimeError):
-                failure_reason = "SLITHER_INCOMPATIBILITY"
-            elif isinstance(e, SyntaxError):
-                failure_reason = "COMPILATION_ERROR"
-            elif isinstance(e, FileNotFoundError):
-                failure_reason = "NO_SOURCE_FILES"
-            elif isinstance(e, EnvironmentError):
-                failure_reason = "COMPILER_NOT_INSTALLED"
-            else:
-                failure_reason = "UNKNOWN_ERROR"
-            
-            logger.debug(f"{contract_name}: {failure_reason}")
-            
-            # ============================================================
-            # POPULATE ALL 89 FEATURES WITH DEFAULTS
-            # ============================================================
-            combined_features.update(self._get_default_features(failure_reason, str(e)))
-        
-        # ================================================================
-        # ERROR HANDLING: UNEXPECTED FAILURES
-        # ================================================================
+                    # Exact or range: any version >= requested
+                    if (inst_major, inst_minor, inst_patch) >= (req_major, req_minor, req_patch):
+                        candidates.append((installed, inst_major, inst_minor, inst_patch))
+
+            if not candidates:
+                logger.warning(
+                    f"No matching version for {requested_version} (caret={caret}). "
+                    f"Need: {req_major}.{req_minor}.{req_patch}+"
+                )
+                return None
+
+            # Return highest matching version (sort by major, minor, patch)
+            candidates.sort(key=lambda x: (x[1], x[2], x[3]), reverse=True)
+            best_version = candidates[0][0]
+            logger.debug(f"Selected version {best_version} for requirement {requested_version} (caret={caret})")
+            return best_version
+
         except Exception as e:
-            # Unexpected errors
-            logger.error(
-                f"{contract_name}: UNEXPECTED ERROR - {type(e).__name__}: {e}",
-                exc_info=True
-            )
-            combined_features.update(self._get_default_features("UNEXPECTED_ERROR", str(e)))
-        
-        # ================================================================
-        # SAVE TO DATABASE (Thread-safe)
-        # ================================================================
+            logger.error(f"Failed to find best version for {requested_version}: {e}")
+            return None
+
+    def _compile_contract(self, contract_path: Path) -> Slither:
+        """
+        Compile contract with appropriate Solidity version.
+
+        Thread-safe version switching with compilation lock.
+        Handles external dependencies with common remappings.
+
+        Args:
+            contract_path: Path to .sol file
+
+        Returns:
+            Slither object
+
+        Raises:
+            Various exceptions for compilation failures
+        """
         with self._lock:
-            #self.features.append(combined_features)
-            try:
-                contract_id = self.db.save_contract_and_features(combined_features)
-                logger.debug(f"Saved to database: contract_id={contract_id}")
-            except Exception as e:
-                logger.error(f"Failed to save to database: {e}")
-        
-        return combined_features
-    
-    def _get_default_features(self, failure_reason: str, error_message: str) -> Dict:
-        """
-        Get default feature values for failed extractions.
-        
-        Args:
-            failure_reason: Categorized failure type
-            error_message: Full error message
-            
-        Returns:
-            Dict with all 89 features set to safe defaults
-        """
-        return {
-            # VULNERABILITY FLAGS (23) - All False
-            'has_reentrancy': False,
-            'has_access_control_issues': False,
-            'has_timestamp_dependency': False,
-            'has_unchecked_call': False,
-            'has_reentrancy_unlimited': False,
-            'has_reentrancy_benign': False,
-            'has_reentrancy_events': False,
-            'has_unchecked_transfer': False,
-            'has_controlled_delegatecall': False,
-            'has_delegatecall_loop': False,
-            'has_uninitialized_state': False,
-            'has_uninitialized_storage': False,
-            'has_uninitialized_local': False,
-            'has_tx_origin': False,
-            'has_inline_assembly': False,
-            'has_locked_ether': False,
-            'has_msg_value_loop': False,
-            'has_shadowing_state': False,
-            'has_shadowing_builtin': False,
-            'has_shadowing_abstract': False,
-            'has_unused_state_vars': False,
-            'has_unused_return_values': False,
-            'has_incorrect_solc_version': False,
-            'has_floating_pragma': False,
-            'has_outdated_compiler': False,
-            
-            # SEVERITY COUNTS (3) - All 0
-            'high_severity_count': 0,
-            'medium_severity_count': 0,
-            'low_severity_count': 0,
-            
-            # AST FEATURES (17) - All 0
-            'num_functions': 0,
-            'num_external_calls': 0,
-            'num_state_vars': 0,
-            'num_modifiers': 0,
-            'max_cyclomatic_complexity': 0,
-            'num_low_level_calls': 0,
-            'lines_of_code': 0,
-            'num_contracts_in_file': 1,
-            'num_dependencies': 0,
-            'avg_function_complexity': 0.0,
-            'num_functions_high_complexity': 0,
-            'num_comments': 0,
-            'comment_to_code_ratio': 0.0,
-            'num_payable_functions': 0,
-            'num_library_calls': 0,
-            'inheritance_depth': 0,
-            'num_unused_functions': 0,
-            
-            # DETECTOR STATISTICS (9) - All 0
-            'high_confidence_detectors': 0,
-            'medium_confidence_detectors': 0,
-            'low_confidence_detectors': 0,
-            'security_detectors_triggered': 0,
-            'optimization_detectors_triggered': 0,
-            'total_detector_hits': 0,
-            'unique_vulnerability_types': 0,
-            'detectors_per_function': 0.0,
-            'detectors_per_loc': 0.0,
-            
-            # RISK SCORES (4) - Defaults
-            'risk_score_simple': 0.0,
-            'risk_score_weighted': 0.0,
-            'is_high_risk': False,
-            'contract_complexity_category': 'simple',
-            
-            # GRAPH FEATURES (25) - All 0
-            'cfg_num_nodes': 0, 'cfg_num_edges': 0, 'cfg_num_cycles': 0,
-            'cfg_max_depth': 0, 'cfg_avg_branching': 0.0, 'cfg_has_complex_loops': False,
-            'cfg_num_exit_points': 0, 'cfg_cyclomatic_total': 0,
-            'cg_num_nodes': 0, 'cg_num_edges': 0, 'cg_max_call_depth': 0,
-            'cg_num_external_calls': 0, 'cg_external_call_ratio': 0.0,
-            'cg_has_cyclic_calls': False, 'cg_num_public_entry_points': 0,
-            'cg_num_internal_functions': 0, 'cg_avg_calls_per_function': 0.0,
-            'cg_num_leaf_functions': 0,
-            'dfg_num_state_vars': 0, 'dfg_num_tainted_flows': 0,
-            'dfg_has_cross_function_flow': False, 'dfg_num_sensitive_sinks': 0,
-            'dfg_num_external_sources': 0, 'dfg_taint_to_sink_ratio': 0.0,
-            'dfg_num_unvalidated_inputs': 0,
-            
-            # SEMANTIC FEATURES (8) - Safe defaults
-            'cei_violations': 0,
-            'cei_safe_functions': 0,
-            'cei_pattern_score': 1.0,
-            'has_reentrancy_guard': False,
-            'functions_with_reentrancy_guard': 0,
-            'state_before_call_count': 0,
-            'state_after_call_count': 0,
-            'unchecked_calls_in_critical_context': 0,
-            
-            # ERROR TRACKING (2)
-            'failure_reason': failure_reason,
-            'error_message': error_message[:2000],  # Store full error (up to 2000 chars)
-        }
-    
-    def to_dataframe(self) -> pd.DataFrame:
-        """Convert collected features to pandas DataFrame."""
-        if not self.features:
-            logger.warning("No features collected yet")
-            return pd.DataFrame()
-        
-        df = pd.DataFrame(self.features)
-        logger.info(f"DataFrame: {len(df)} contracts × {len(df.columns)} features")
-        return df
-    
-    def print_diagnostic_summary(self):
-        """Print detailed diagnostic summary."""
-        if not self.features:
-            logger.warning("No features collected yet")
-            return
-        
-        print("\n" + "="*70)
-        print("FEATURE EXTRACTION DIAGNOSTIC SUMMARY")
-        print("="*70)
-        
-        total = len(self.features)
-        failures = {}
-        successes = 0
-        zero_feature_clean = 0
-        
-        for feature_dict in self.features:
-            failure_reason = feature_dict.get('failure_reason', None)
-            if failure_reason:
-                failures[failure_reason] = failures.get(failure_reason, 0) + 1
+            # Detect required version
+            required_version = self._detect_solidity_version(contract_path)
+
+            if required_version:
+                logger.debug(f"Switching to Solidity {required_version}")
+                try:
+                    subprocess.run(
+                        ["solc-select", "use", required_version],
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                        timeout=10
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to switch version to {required_version}: {e}")
+                    # Don't fail here, let Slither try anyway
+
+            # Strategy: Try multiple compilation approaches
+            compilation_strategies = []
+
+            # Strategy 1: Direct compilation
+            compilation_strategies.append(("direct", {}))
+
+            # Strategy 2: With remappings
+            remappings = self._get_dependency_remappings(contract_path)
+            if remappings:
+                compilation_strategies.append(("with_remappings", {"solc_remaps": remappings}))
+
+            # Strategy 3: With solc_working_dir set to contract directory
+            compilation_strategies.append((
+                "with_working_dir",
+                {"solc_working_dir": str(contract_path.parent)}
+            ))
+
+            # Strategy 4: Combined remappings + working dir
+            if remappings:
+                compilation_strategies.append((
+                    "combined",
+                    {"solc_remaps": remappings, "solc_working_dir": str(contract_path.parent)}
+                ))
+
+            # Try each strategy
+            last_error = None
+            for strategy_name, kwargs in compilation_strategies:
+                try:
+                    logger.debug(f"Trying compilation strategy: {strategy_name}")
+                    slither = Slither(str(contract_path), **kwargs)
+                    logger.debug(f"✓ Compiled successfully with strategy: {strategy_name}")
+                    return slither
+                except Exception as e:
+                    last_error = e
+                    error_str = str(e).lower()
+
+                    # If it's a version error, don't try other strategies
+                    if any(kw in error_str for kw in ['version', 'pragma', 'requires different']):
+                        logger.debug(f"Version mismatch detected, skipping remaining strategies")
+                        break
+
+                    logger.debug(f"Strategy {strategy_name} failed: {str(e)[:100]}")
+                    continue
+
+            # All strategies failed
+            if last_error:
+                logger.error(f"All compilation strategies failed for {contract_path.name}")
+                raise last_error
             else:
-                has_features = any([
-                    feature_dict.get('high_severity_count', 0) > 0,
-                    feature_dict.get('medium_severity_count', 0) > 0,
-                    feature_dict.get('low_severity_count', 0) > 0,
-                    feature_dict.get('num_functions', 0) > 0,
-                    feature_dict.get('num_external_calls', 0) > 0,
-                ])
-                
-                if has_features:
-                    successes += 1
-                else:
-                    zero_feature_clean += 1
-        
-        print("\n📊 Overall Results:")
-        print(f"   Total: {total}")
-        print(f"   ✅ Features: {successes} ({successes/total*100:.1f}%)")
-        print(f"   ⚪ Clean: {zero_feature_clean} ({zero_feature_clean/total*100:.1f}%)")
-        print(f"   ❌ Failed: {sum(failures.values())} ({sum(failures.values())/total*100:.1f}%)")
-        
-        if failures:
-            print("\n🔍 Failure Breakdown:")
-            status_map = {
-                "IMPORT_ERROR": ("EXPECTED ✓", "External libraries (@openzeppelin, etc.)"),
-                "VERSION_MISMATCH": ("INVESTIGATE ⚠️", "Check pragma handling"),
-                "SLITHER_INCOMPATIBILITY": ("EXPECTED ✓", "Contract too old (< 0.4.11)"),
-                "COMPILATION_ERROR": ("INVESTIGATE ❓", "Real syntax errors"),
-                "NO_SOURCE_FILES": ("CHECK DATA 📁", "Download issue"),
-                "COMPILER_NOT_INSTALLED": ("FIXABLE 🔧", "Install compiler version"),
-            }
-            
-            for reason, count in sorted(failures.items(), key=lambda x: x[1], reverse=True):
-                percentage = count / total * 100
-                status, description = status_map.get(reason, ("INVESTIGATE ❓", "Check logs"))
-                print(f"\n   {reason}: {count} ({percentage:.1f}%)")
-                print(f"      Status: {status}")
-                print(f"      Fix: {description}")
-        
-        print("\n" + "="*70)
-        print("🎯 RECOMMENDATIONS")
-        print("="*70)
-        
-        expected = sum([
-            failures.get('IMPORT_ERROR', 0),
-            failures.get('SLITHER_INCOMPATIBILITY', 0)
-        ])
-        
-        if expected > 0:
-            usable = successes + zero_feature_clean
-            total_usable = total - expected
-            rate = (usable / total_usable * 100) if total_usable > 0 else 0
-            
-            print(f"\n✅ EXPECTED FAILURES: {expected} contracts")
-            print("   Cannot be analyzed without infrastructure changes")
-            print(f"   Usable contracts: {usable}/{total_usable} ({rate:.0f}%)")
-        
-        if successes > 0:
-            print(f"\n✅ READY FOR ML: {successes} contracts with features")
-        
-        if zero_feature_clean > 0:
-            print(f"\n⚪ CLEAN CONTRACTS: {zero_feature_clean} (keep as negatives)")
-        
-        if failures.get('VERSION_MISMATCH', 0) > 10:
-            print(f"\n⚠️  WARNING: {failures['VERSION_MISMATCH']} VERSION_MISMATCH errors")
-            print("   Check error_message column in CSV for details")
-        
-        print("="*70 + "\n")
-    
-    def save_dataset(self, output_path: Path):
+                raise RuntimeError(f"Compilation failed for {contract_path.name}")
+
+    def _get_dependency_remappings(self, contract_path: Path) -> list:
         """
-        Save features as CSV and print diagnostics.
-        
-        🎓 NEW: Now exports from database instead of memory list
-        This means data is preserved even if script crashes
+        Auto-detect common dependency remappings for the contract.
+
+        Looks for node_modules, lib, or common dependency directories
+        relative to the contract location.
+
+        Args:
+            contract_path: Path to .sol file
+
+        Returns:
+            List of remapping strings (e.g., '@openzeppelin/=node_modules/@openzeppelin/')
         """
-        # Get data from database
-        df = self.db.get_all_features()
-        
-        if df.empty:
-            logger.warning("No data in database to export")
-            return
-        
-        # Save to CSV (for backwards compatibility)
-        df.to_csv(output_path, index=False)
-        logger.info(f"✅ Exported {len(df)} contracts from database to {output_path}")
-        
-        # Print stats from database
-        stats = self.db.get_stats()
-        logger.info(f"📊 Database stats: {stats}")
-        
-        self.print_diagnostic_summary()
+        remappings = []
+        contract_dir = contract_path.parent
+
+        # Common dependency locations to search
+        search_paths = [
+            contract_dir / "node_modules",
+            contract_dir.parent / "node_modules",
+            contract_dir.parent.parent / "node_modules",
+            contract_dir.parent.parent.parent / "node_modules",  # Go up more levels
+            contract_dir / "lib",
+            contract_dir.parent / "lib",
+        ]
+
+        # Also check if there's a parent "contracts" directory
+        # This helps with structures like: contracts/subfolder/Contract.sol importing ../Other.sol
+        current = contract_dir
+        for _ in range(5):  # Check up to 5 levels up
+            if current.name == "contracts":
+                search_paths.append(current.parent / "node_modules")
+                break
+            if current.parent == current:  # Reached root
+                break
+            current = current.parent
+
+        # Common remapping patterns
+        # Note: OpenZeppelin v3.x has structure: @openzeppelin/contracts/contracts/...
+        # So we need to map @openzeppelin/contracts/ to .../contracts/contracts/
+        common_deps = {
+            "@openzeppelin/contracts": ["contracts/contracts", "contracts"],  # Try nested structure first
+            "@chainlink/contracts": ["contracts"],
+            "@uniswap": [""],
+            "@aave": [""],
+            "hardhat": [""],  # For hardhat/console.sol
+        }
+
+        for dep, subpaths in common_deps.items():
+            for search_path in search_paths:
+                if not search_path.exists():
+                    continue
+
+                # Extract base dependency name (e.g., "@openzeppelin" from "@openzeppelin/contracts")
+                base_dep = dep.split("/")[0]
+                base_path = search_path / base_dep
+
+                if not base_path.exists():
+                    continue
+
+                # Try different subpath variations
+                for subpath in subpaths:
+                    if subpath:
+                        full_dep_path = base_path / subpath
+                    else:
+                        full_dep_path = base_path
+
+                    if full_dep_path.exists() and full_dep_path.is_dir():
+                        # Create remapping with absolute path
+                        # Format: @openzeppelin/contracts/=/absolute/path/to/@openzeppelin/contracts/contracts/
+                        remapping = f"{dep}/={full_dep_path.absolute()}/"
+                        if remapping not in remappings:
+                            remappings.append(remapping)
+                            logger.debug(f"Found dependency remapping: {remapping}")
+                        break  # Use first found location
+
+        return remappings
+
+    def analyze_contract(self, contract_path: Path, contract_name: str,
+                        metadata: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Extract features from contract using tier-based architecture.
+
+        Args:
+            contract_path: Path to .sol file
+            contract_name: Name of contract to analyze
+            metadata: Optional metadata (dataset, address, etc.)
+
+        Returns:
+            Dictionary with all extracted features + metadata
+        """
+        logger.info(f"📊 Analyzing {contract_name} in {self.mode} mode...")
+
+        try:
+            # STEP 1: Compile contract
+            slither = self._compile_contract(contract_path)
+
+            # STEP 2: Resolve target contract
+            contract = resolve_contract(slither, contract_name)
+            if not contract:
+                reason, msg = "CONTRACT_NOT_FOUND", f"No contract named {contract_name}"
+                return get_default_feature_dict(reason, msg, contract_name, str(contract_path))
+
+            # STEP 3: Run detectors once (shared across tiers)
+            logger.debug("Running Slither detectors...")
+            detector_results = slither.run_detectors()
+
+            # STEP 4: Extract features tier-by-tier
+            features = self._extract_all_features(slither, contract, detector_results)
+
+            # STEP 5: Add metadata
+            features['contract_name'] = contract_name
+            features['file_path'] = str(contract_path)
+            features['extraction_status'] = 'success'
+            features['extraction_mode'] = self.mode
+
+            if metadata:
+                features.update(metadata)
+
+            # STEP 6: Save to database
+            logger.debug("Saving features to database...")
+            self.db.save_contract_and_features(features)
+
+            logger.info(f"✓ {contract_name}: Extracted {len(features)} features successfully")
+            return features
+
+        except Exception as e:
+            # Categorize error and return defaults
+            reason, msg = categorize_error(e)
+            logger.error(f"✗ {contract_name}: {reason} - {msg}")
+            return get_default_feature_dict(reason, msg, contract_name, str(contract_path))
+
+    def _extract_all_features(self, slither: Slither, contract,
+                             detector_results: list) -> Dict[str, Any]:
+        """
+        Coordinate tier-based feature extraction.
+
+        Graceful degradation: Continue on partial failures.
+
+        Args:
+            slither: Slither object
+            contract: Contract object
+            detector_results: Pre-run detector results
+
+        Returns:
+            Dictionary with all features from enabled tiers
+        """
+        all_features = {}
+
+        # TIER 1: Core Features (always enabled)
+        try:
+            tier1 = extract_tier1_features(slither, contract, detector_results)
+            all_features.update(tier1)
+            logger.debug(f"✓ Tier 1: {len(tier1)} features")
+        except Exception as e:
+            logger.warning(f"Tier 1 extraction failed: {e}")
+
+        # TIER 2: Semantic + Graph
+        if 'tier2' in self.enabled_tiers:
+            try:
+                tier2 = extract_tier2_features(contract)
+                all_features.update(tier2)
+                logger.debug(f"✓ Tier 2: {len(tier2)} features")
+            except Exception as e:
+                logger.warning(f"Tier 2 extraction failed: {e}")
+        else:
+            tier2 = {}
+
+        # TIER 3: Advanced (SlithIR + Aggregations)
+        if 'tier3' in self.enabled_tiers:
+            try:
+                tier3 = extract_tier3_features(slither, contract)
+                all_features.update(tier3)
+
+                # Recompute aggregations with full context
+                aggregations = compute_tier3_aggregations(
+                    tier1_features=tier1 if 'tier1' in locals() else {},
+                    tier2_features=tier2 if 'tier2' in locals() else {},
+                    tier3_features=tier3
+                )
+                all_features.update(aggregations)
+
+                logger.debug(f"✓ Tier 3: {len(tier3)} features")
+            except Exception as e:
+                logger.warning(f"Tier 3 extraction failed: {e}")
+
+        # TIER 4: Individual Detectors
+        if 'tier4' in self.enabled_tiers:
+            try:
+                tier4 = extract_tier4_features(slither, contract, detector_results)
+                all_features.update(tier4)
+                logger.debug(f"✓ Tier 4: {len(tier4)} features")
+            except Exception as e:
+                logger.warning(f"Tier 4 extraction failed: {e}")
+
+        return all_features
+
+    def batch_extract(self, contracts: list, output_csv: Optional[Path] = None) -> pd.DataFrame:
+        """
+        Extract features from multiple contracts.
+
+        Args:
+            contracts: List of (contract_path, contract_name, metadata) tuples
+            output_csv: Optional path to save CSV
+
+        Returns:
+            DataFrame with all extracted features
+        """
+        logger.info(f"🚀 Starting batch extraction: {len(contracts)} contracts in {self.mode} mode")
+
+        results = []
+        for i, contract_info in enumerate(contracts, 1):
+            if len(contract_info) == 2:
+                contract_path, contract_name = contract_info
+                metadata = {}
+            else:
+                contract_path, contract_name, metadata = contract_info
+
+            logger.info(f"[{i}/{len(contracts)}] Processing {contract_name}...")
+
+            features = self.analyze_contract(
+                Path(contract_path),
+                contract_name,
+                metadata
+            )
+            results.append(features)
+
+        # Create DataFrame
+        df = pd.DataFrame(results)
+
+        if output_csv:
+            df.to_csv(output_csv, index=False)
+            logger.info(f"✅ Saved {len(df)} contracts to {output_csv}")
+
+        logger.info(f"✅ Batch extraction complete: {len(df)} contracts processed")
+        return df

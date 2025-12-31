@@ -1,0 +1,48 @@
+{
+  "total": 3058,
+  "success": 478,
+  "failed": 441,
+  "skipped_duplicate": 2139,
+  "skipped_limit": 0,
+  "by_dataset": {
+    "SolidiFI-benchmark": {
+      "total": 1700,
+      "success": 256,
+      "failed": 256,
+      "skipped": 1188
+    },
+    "contracts": {
+      "total": 624,
+      "success": 3,
+      "failed": 60,
+      "skipped": 561
+    },
+    "solidity-by-example": {
+      "total": 351,
+      "success": 0,
+      "failed": 54,
+      "skipped": 297
+    },
+    "damn-vulnerable-defi": {
+      "total": 299,
+      "success": 219,
+      "failed": 57,
+      "skipped": 23
+    },
+    "compound-protocol": {
+      "total": 84,
+      "success": 0,
+      "failed": 14,
+      "skipped": 70
+    }
+  },
+  "by_failure_reason": {
+    "IMPORT_ERROR": 331,
+    "COMPILATION_ERROR": 32,
+    "VERSION_MISMATCH": 74,
+    "CONTRACT_NOT_FOUND": 4
+  },
+  "start_time": "2025-12-30T23:54:17.108434",
+  "end_time": "2025-12-31T00:01:35.149989",
+  "duration_seconds": 438.041555
+}
